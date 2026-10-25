@@ -10,13 +10,13 @@ Thank you for your interest in contributing to RetroDeck, a retro car stereo for
 
 ## Where Things Are
 
-- `core/`: skins and their branding zones (`Skins.java`), the stereo renderer (`StereoView`), illumination colours, the module interface and the shared settings look (`Ui`).
+- `core/`: skins and their branding zones (`Skins.java`), the faceplates (`Faceplate`), the stereo renderer (`StereoView`), illumination colours, the module interface and the shared settings look (`Ui`).
 - `branding/`: the Vehicle Branding module: profiles and their storage, logo import and editing, placement, startup animations and branding packs.
 - `app/`: the RetroDeck shell: the stereo screen, the music player and Settings. Modules are registered in `RetroDeckApp`.
 
 ## Adding a Skin
 
-A skin is a `Skin` in `Skins.java`: colours, a box for each control, and boxes for the branding zones. Every box is a fraction of the screen. Zones must stay clear of the buttons, knob, presets and track text; `SkinTest` checks this for every skin, so run the tests.
+A skin is a `Skin` in `Skins.java`: colours, a box for each control, and boxes for the branding zones. How it looks (metal, plastic, glass, shadows) is drawn in `Faceplate.java`; check it with `./gradlew :core:testDebugUnitTest -Prender`, which writes PNGs of every skin to `core/build/skin-renders`. Every box is a fraction of the screen. Zones must stay clear of the buttons, knob, presets and track text; `SkinTest` checks this for every skin, so run the tests.
 
 ## Code Style
 

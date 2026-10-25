@@ -319,7 +319,9 @@ public class VehicleBrandingActivity extends Activity {
         final int request = role == VehicleProfile.MANUFACTURER ? PICK_LOGO : PICK_BADGE;
         final File[] files = importFolder().listFiles((dir, n) -> n.toLowerCase(Locale.US).matches(".+\\.(png|jpe?g|webp|svg)"));
         if (files == null || files.length == 0) {
-            if (!Pickers.open(this, IMAGE_TYPES, request)) explainFolder("image (PNG, JPEG, WebP or SVG)");
+            folderOrPicker("image (PNG, JPEG, WebP or SVG)", () -> {
+                if (!Pickers.open(this, IMAGE_TYPES, request)) explainFolder("image (PNG, JPEG, WebP or SVG)");
+            });
             return;
         }
         java.util.Arrays.sort(files);
@@ -350,6 +352,19 @@ public class VehicleBrandingActivity extends Activity {
         //noinspection ResultOfMethodCallIgnored
         f.setExecutable(true, false);
         return f;
+    }
+
+    /**
+     * Nothing in the import folder yet. Some devices have a picker that can't open the file, or one
+     * that only says there is no app, so the folder is always offered alongside it.
+     */
+    private void folderOrPicker(String what, Runnable picker) {
+        Ui.dialog(this).setTitle("Choose a file")
+                .setMessage("Open the file picker, or copy the " + what + " into RetroDeck's import folder with a file "
+                        + "manager, a USB cable or adb, and it will be listed here:\n\n" + importFolder().getPath())
+                .setPositiveButton("File picker", (d, w) -> picker.run())
+                .setNegativeButton("OK", null)
+                .show();
     }
 
     private void explainFolder(String what) {
@@ -615,7 +630,9 @@ public class VehicleBrandingActivity extends Activity {
     private void importPack() {
         final File[] files = importFolder().listFiles((dir, n) -> n.toLowerCase(Locale.US).endsWith(".zip"));
         if (files == null || files.length == 0) {
-            if (!Pickers.open(this, PACK_TYPES, IMPORT_PACK)) explainFolder("branding pack (.zip)");
+            folderOrPicker("branding pack (.zip)", () -> {
+                if (!Pickers.open(this, PACK_TYPES, IMPORT_PACK)) explainFolder("branding pack (.zip)");
+            });
             return;
         }
         java.util.Arrays.sort(files);

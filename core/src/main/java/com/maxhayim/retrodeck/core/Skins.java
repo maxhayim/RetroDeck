@@ -38,7 +38,7 @@ public final class Skins {
     /** Brushed silver, a black LCD window, a big volume knob and a cassette slot. */
     private static Skin classic() {
         Skin s = new Skin(CLASSIC, "Classic 1985", "1980s", 0xFF5B5F66, 0xFF2E3035, 0xFF141518, 0xFF0B0C0A,
-                0xFF1E1F22, 0xFF3A3D43, 0xFF17181B, 0xFFC9CDD4, Skin.LCD_SEGMENT, 0.012f);
+                0xFF1E1F22, 0xFF3A3D43, 0xFF17181B, 0xFF26282C, Skin.LCD_SEGMENT, 0.012f);
         s.knob = new Box(0.035f, 0.17f, 0.195f, 0.62f);
         s.lcd = new Box(0.23f, 0.15f, 0.77f, 0.62f);
         s.lcdText = new Box(0.415f, 0.18f, 0.755f, 0.42f);

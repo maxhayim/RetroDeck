@@ -19,38 +19,38 @@
 
 <h1>RetroDeck</h1>
 
-<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (a 1985 brushed-silver unit, a 1996 dot-matrix deck or a modern glass screen), and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (a 1985 brushed-aluminium unit, a 1996 dot-matrix deck or a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
 
 <p>Everything works offline. There is no account, no cloud service and no network access at all, and it needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
 
 <h2>Screenshots</h2>
 
+<p align="center"><img src="docs/screenshots/stereo-classic.jpg" alt="The Classic 1985 skin branded as a 1989 Halcyon Mesa GT, playing"/><br/><sub>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door, branded with the demo car's logo and badge</sub></p>
+
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/stereo.png" alt="The Classic 1985 skin with a manufacturer logo in the header and LCD, the model badge on the faceplate and a small logo in the corner"/><br/><sub>The Classic 1985 skin with a manufacturer logo in the header and LCD, the model badge on the faceplate and a small logo in the corner</sub></td>
-    <td width="50%"><img src="docs/screenshots/branding.png" alt="Settings → Personalization → Vehicle Branding, with the live preview"/><br/><sub>Settings → Personalization → Vehicle Branding, with the live preview</sub></td>
+    <td width="50%"><img src="docs/screenshots/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
+    <td width="50%"><img src="docs/screenshots/stereo-modern.jpg" alt="Modern Glass: one sheet of black glass over the display"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/logo-editor.png" alt="Adjusting the model badge: crop, rotation, opacity, brightness and tint, shown on the stereo as you go"/><br/><sub>Adjusting the model badge: crop, rotation, opacity, brightness and tint, shown on the stereo as you go</sub></td>
-    <td width="50%"><img src="docs/screenshots/placement.png" alt="Placing a logo in a skin's branding zones; the dashed boxes are the zones"/><br/><sub>Placing a logo in a skin's branding zones; the dashed boxes are the zones</sub></td>
+    <td width="50%"><img src="docs/screenshots/branding.jpg" alt="Settings → Personalization → Vehicle Branding, with the live preview"/><br/><sub>Settings → Personalization → Vehicle Branding, with the live preview</sub></td>
+    <td width="50%"><img src="docs/screenshots/logo-editor.jpg" alt="Adjusting the model badge: rotation and brightness, shown on the stereo as you go"/><br/><sub>Adjusting the model badge: rotation and brightness, shown on the stereo as you go</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/illumination.png" alt="Dashboard illumination: Green is shown here, and "From logos" picks the colour out of the logo"/><br/><sub>Dashboard illumination: Green is shown here, and "From logos" picks the colour out of the logo</sub></td>
-    <td width="50%"><img src="docs/screenshots/startup.png" alt="The classic incandescent glow startup, partway through"/><br/><sub>The classic incandescent glow startup, partway through</sub></td>
+    <td width="50%"><img src="docs/screenshots/placement.jpg" alt="Placing logos in the skin's branding zones (the dashed boxes)"/><br/><sub>Placing logos in the skin's branding zones (the dashed boxes)</sub></td>
+    <td width="50%"><img src="docs/screenshots/illumination.jpg" alt="Dashboard illumination: "From logos" takes the blue from the Halcyon logo"/><br/><sub>Dashboard illumination: "From logos" takes the blue from the Halcyon logo</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/digital.png" alt="The Digital 1996 skin"/><br/><sub>The Digital 1996 skin</sub></td>
-    <td width="50%"><img src="docs/screenshots/modern.png" alt="The Modern Glass skin"/><br/><sub>The Modern Glass skin</sub></td>
+    <td width="50%"><img src="docs/screenshots/startup.jpg" alt="The incandescent-glow startup, partway through"/><br/><sub>The incandescent-glow startup, partway through</sub></td>
+    <td width="50%"><img src="docs/screenshots/standby.jpg" alt="The standby screen"/><br/><sub>The standby screen</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/standby.png" alt="The standby screen"/><br/><sub>The standby screen</sub></td>
-    <td width="50%"><img src="docs/screenshots/profiles.png" alt="Two vehicle profiles, one of them imported from a branding pack"/><br/><sub>Two vehicle profiles, one of them imported from a branding pack</sub></td>
+    <td width="50%"><img src="docs/screenshots/profiles.jpg" alt="Two vehicle profiles, one imported from a branding pack"/><br/><sub>Two vehicle profiles, one imported from a branding pack</sub></td>
+    <td width="50%"><img src="docs/screenshots/pack-import.jpg" alt="Importing a branding pack"/><br/><sub>Importing a branding pack</sub></td>
   </tr>
 </table>
 
-<p align="center"><img src="docs/screenshots/pack-import.png" alt="A branding pack imported" width="49%"/><br/><sub>Importing a branding pack</sub></p>
-
-<p align="center"><sub>Captured from the running app at 1024×600. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
 
 <h2>Features</h2>
 
@@ -152,7 +152,7 @@ adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim
 
 <table>
   <tr><th>Module</th><th>What's in it</th></tr>
-  <tr><td><code>core</code></td><td>Skins and their branding zones, the stereo renderer (<code>StereoView</code>), illumination colours, the <code>RetroDeckModule</code> interface and the shared settings look.</td></tr>
+  <tr><td><code>core</code></td><td>Skins and their branding zones, the photoreal faceplates (<code>Faceplate</code>, drawn once at screen resolution), the stereo renderer (<code>StereoView</code>), illumination colours, the <code>RetroDeckModule</code> interface and the shared settings look.</td></tr>
   <tr><td><code>branding</code></td><td>The Vehicle Branding module: profiles and storage, logo import and editing, placement, the startup sequence and branding packs. It draws into the stereo through <code>StereoView.Overlay</code>, so the stereo doesn't depend on it.</td></tr>
   <tr><td><code>app</code></td><td>The shell: the stereo screen, the music player, and Settings, which lists the rows each registered module asks for.</td></tr>
 </table>
@@ -200,7 +200,7 @@ my-vehicle.zip
 
 <h2>Tested On</h2>
 
-<p>MOKA R8G (Android 14, 32-bit ARM), an Android TV box. The display was set to 1024×600 at 160 dpi with <code>adb shell wm size</code> and <code>wm density</code> to match a 7-inch head unit, and driven with a mouse and adb taps, using the signed v0.1.0 release APK. Checked:</p>
+<p>MOKA R8G (Android 14, 32-bit ARM), an Android TV box, using the signed v0.1.0 release APK and driven with a mouse and adb taps. It ran at 1024×600 and 160 dpi, like a 7-inch head unit, and at 1920×1080 and 240 dpi, like an HD one. Checked:</p>
 
 <ul>
   <li>Typing a manufacturer, model, year and trim.</li>
@@ -209,8 +209,7 @@ my-vehicle.zip
   <li>Dragging logos in the header and corner zones, and the show/hide switch. The default placements filled the LCD and faceplate zones.</li>
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
-  <li>All three skins.</li>
-  <li>The standby screen.</li>
+  <li>All three skins, at both sizes, and the standby screen.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
 </ul>
@@ -236,6 +235,8 @@ my-vehicle.zip
   <li>profile JSON;</li>
   <li>pack validation: paths, sizes, formats, dimensions and SVG content.</li>
 </ul>
+
+<p><code>./gradlew :core:testDebugUnitTest :branding:testDebugUnitTest -Prender</code> also draws every skin with Android's own graphics on your computer (add <code>-Prender.size=1920x1080</code> for HD) and writes PNGs to <code>core/build/skin-renders</code> and <code>branding/build/branding-renders</code>. It's for checking skin changes without a device; the first run downloads Robolectric's Android runtime.</p>
 
 <h2>License</h2>
 
