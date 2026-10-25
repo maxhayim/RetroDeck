@@ -25,7 +25,30 @@
 
 <h2>Screenshots</h2>
 
-<!-- SCREENSHOTS -->
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/stereo.png" alt="The Classic 1985 skin with a manufacturer logo in the header and LCD, the model badge on the faceplate and a small logo in the corner"/><br/><sub>The Classic 1985 skin with a manufacturer logo in the header and LCD, the model badge on the faceplate and a small logo in the corner</sub></td>
+    <td width="50%"><img src="docs/screenshots/branding.png" alt="Settings → Personalization → Vehicle Branding, with the live preview"/><br/><sub>Settings → Personalization → Vehicle Branding, with the live preview</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/logo-editor.png" alt="Adjusting the model badge: crop, rotation, opacity, brightness and tint, shown on the stereo as you go"/><br/><sub>Adjusting the model badge: crop, rotation, opacity, brightness and tint, shown on the stereo as you go</sub></td>
+    <td width="50%"><img src="docs/screenshots/placement.png" alt="Placing a logo in a skin's branding zones; the dashed boxes are the zones"/><br/><sub>Placing a logo in a skin's branding zones; the dashed boxes are the zones</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/illumination.png" alt="Dashboard illumination: Green is shown here, and "From logos" picks the colour out of the logo"/><br/><sub>Dashboard illumination: Green is shown here, and "From logos" picks the colour out of the logo</sub></td>
+    <td width="50%"><img src="docs/screenshots/startup.png" alt="The classic incandescent glow startup, partway through"/><br/><sub>The classic incandescent glow startup, partway through</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/digital.png" alt="The Digital 1996 skin"/><br/><sub>The Digital 1996 skin</sub></td>
+    <td width="50%"><img src="docs/screenshots/modern.png" alt="The Modern Glass skin"/><br/><sub>The Modern Glass skin</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/standby.png" alt="The standby screen"/><br/><sub>The standby screen</sub></td>
+    <td width="50%"><img src="docs/screenshots/profiles.png" alt="Two vehicle profiles, one of them imported from a branding pack"/><br/><sub>Two vehicle profiles, one of them imported from a branding pack</sub></td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/screenshots/pack-import.png" alt="A branding pack imported" width="49%"/><br/><sub>Importing a branding pack</sub></p>
 
 <p align="center"><sub>Captured from the running app at 1024×600. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
 
@@ -114,7 +137,14 @@ adb install RetroDeck-0.1.0.apk
 Android/data/com.maxhayim.retrodeck/files/import/
 </pre>
 
-<p>Copy files there with a file manager, a USB cable or <code>adb push</code>. Exports go to <code>files/export/</code> when there is nowhere else to save them. On Android 11 and newer, file managers may not show <code>Android/data</code>; use the picker or <code>adb</code> there.</p>
+<p>The folder appears the first time you open an import list. Copy files into it with a file manager or a USB cable. On Android 11 and newer, file managers may not show <code>Android/data</code>, and <code>adb push</code> straight into it can fail, so push to Download first and copy from there:</p>
+
+<pre>
+adb push halcyon-logo.svg /sdcard/Download/
+adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim.retrodeck/files/import/
+</pre>
+
+<p>Without a picker, exports go to <code>Download/RetroDeck/</code> on Android 10 and newer, and to <code>files/export/</code> beside the import folder on older versions.</p>
 
 <h2>How It Works</h2>
 
@@ -170,7 +200,42 @@ my-vehicle.zip
 
 <h2>Tested On</h2>
 
-<!-- TESTED -->
+<p>MOKA R8G (Android 14, 32-bit ARM), an Android TV box. The display was set to 1024×600 at 160 dpi with <code>adb shell wm size</code> and <code>wm density</code> to match a 7-inch head unit, and driven with a mouse and adb taps, using the signed v0.1.0 release APK. Checked:</p>
+
+<ul>
+  <li>Typing a manufacturer, model, year and trim.</li>
+  <li>Importing an SVG logo and a PNG badge from the import folder. This device's document picker is an empty stub, which is why the import folder exists.</li>
+  <li>Crop, rotation and brightness on a logo.</li>
+  <li>Placing logos by dragging them and with the sliders, in the header, LCD, faceplate and corner zones.</li>
+  <li>Each illumination preset, and "From logos".</li>
+  <li>All six startup styles, played in the editor and when the app opens.</li>
+  <li>All three skins.</li>
+  <li>The standby screen.</li>
+  <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
+  <li>A pack holding a <code>../</code> path, which was refused.</li>
+</ul>
+
+<p>Not tried:</p>
+
+<ul>
+  <li>A real car head unit.</li>
+  <li>Android below 14. Lint checks every call against minSdk 19, but nothing older has run it.</li>
+  <li>WebP and JPEG logos on a device. They are covered by the JVM tests.</li>
+  <li>Playing your own music, which needs a file picker.</li>
+  <li>A real file picker.</li>
+</ul>
+
+<p>The JVM tests cover:</p>
+
+<ul>
+  <li>zone layout and overlap;</li>
+  <li>placement and crop maths;</li>
+  <li>colours and colour extraction;</li>
+  <li>image format sniffing;</li>
+  <li>startup timing;</li>
+  <li>profile JSON;</li>
+  <li>pack validation: paths, sizes, formats, dimensions and SVG content.</li>
+</ul>
 
 <h2>License</h2>
 

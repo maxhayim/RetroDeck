@@ -342,6 +342,13 @@ public class VehicleBrandingActivity extends Activity {
         if (f == null) f = new File(getFilesDir(), "import");
         //noinspection ResultOfMethodCallIgnored
         f.mkdirs();
+        // Folders the app makes are private on newer Android; open this one so files can be copied in.
+        //noinspection ResultOfMethodCallIgnored
+        f.setReadable(true, false);
+        //noinspection ResultOfMethodCallIgnored
+        f.setWritable(true, false);
+        //noinspection ResultOfMethodCallIgnored
+        f.setExecutable(true, false);
         return f;
     }
 
@@ -472,7 +479,7 @@ public class VehicleBrandingActivity extends Activity {
         box.addView(note);
         box.addView(Ui.section(this, "Custom RGB"));
         box.addView(picker);
-        Ui.dialog(this).setTitle("Dashboard illumination").setView(Ui.scroll(this, box))
+        AlertDialog dialog = Ui.dialog(this).setTitle("Dashboard illumination").setView(Ui.scroll(this, box))
                 .setPositiveButton("Save", (d, w) -> save())
                 .setNegativeButton("Cancel", (d, w) -> {
                     profile = before;
@@ -482,7 +489,9 @@ public class VehicleBrandingActivity extends Activity {
                     profile = before;
                     refresh();
                 })
-                .show();
+                .create();
+        dialog.show();
+        Ui.beside(dialog);
     }
 
     private void chooseAccent() {
@@ -507,7 +516,7 @@ public class VehicleBrandingActivity extends Activity {
             box.addView(row);
         }
         box.addView(picker);
-        Ui.dialog(this).setTitle("Accent colour").setView(Ui.scroll(this, box))
+        AlertDialog dialog = Ui.dialog(this).setTitle("Accent colour").setView(Ui.scroll(this, box))
                 .setPositiveButton("Save", (d, w) -> save())
                 .setNegativeButton("Cancel", (d, w) -> {
                     profile = before;
@@ -517,7 +526,9 @@ public class VehicleBrandingActivity extends Activity {
                     profile = before;
                     refresh();
                 })
-                .show();
+                .create();
+        dialog.show();
+        Ui.beside(dialog);
     }
 
     private void openPreview() {
@@ -553,10 +564,28 @@ public class VehicleBrandingActivity extends Activity {
         return f;
     }
 
-    private void exportToAppFolder(String name) {
+    private void exportToAppFolder(final String name) {
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            // Android 10+ keeps app folders private; Download is reachable by USB, file managers and adb.
+            runExport(() -> downloadsStream(name), "Saved to Download/RetroDeck/" + name
+                    + "\n\nThis device has no file picker, so the pack went to the Download folder.");
+            return;
+        }
         final File out = new File(exportFolder(), name);
         runExport(() -> new FileOutputStream(out), "Saved to " + out.getPath()
                 + "\n\nThis device has no file picker, so packs are kept in RetroDeck's folder. Copy them with a USB cable or file manager.");
+    }
+
+    @android.annotation.TargetApi(29)
+    private OutputStream downloadsStream(String name) throws java.io.IOException {
+        android.content.ContentValues v = new android.content.ContentValues();
+        v.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name);
+        v.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, BrandingPack.MIME);
+        v.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS + "/RetroDeck");
+        Uri uri = getContentResolver().insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+        OutputStream out = uri == null ? null : getContentResolver().openOutputStream(uri);
+        if (out == null) throw new java.io.IOException("The Download folder isn't available.");
+        return out;
     }
 
     private interface Opener<T> {

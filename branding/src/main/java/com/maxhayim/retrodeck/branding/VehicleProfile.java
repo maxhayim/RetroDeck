@@ -55,7 +55,7 @@ public final class VehicleProfile {
         put(Zones.FACEPLATE, new Placement(false, 0.8f, 0.25f, 0.5f), new Placement(true, 0.9f, 0.5f, 0.5f));
         put(Zones.CORNER, new Placement(false, 0.8f, 0.5f, 0.5f), new Placement(false, 0.8f, 0.5f, 0.5f));
         put(Zones.VISUALIZER, new Placement(false, 0.9f, 0.5f, 0.5f), new Placement(false, 0.9f, 0.5f, 0.5f));
-        put(Zones.STARTUP, new Placement(true, 0.6f, 0.5f, 0.36f), new Placement(true, 0.3f, 0.5f, 0.88f));
+        put(Zones.STARTUP, new Placement(true, 0.65f, 0.5f, 0.42f), new Placement(true, 0.32f, 0.5f, 0.9f));
         put(Zones.STANDBY, new Placement(true, 0.8f, 0.5f, 0.5f), new Placement(false, 0.4f, 0.5f, 0.9f));
     }
 

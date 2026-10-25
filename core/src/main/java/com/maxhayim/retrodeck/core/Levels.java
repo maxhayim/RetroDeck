@@ -25,7 +25,7 @@ public interface Levels {
                 double v = base * (0.55 + 0.25 * Math.sin(t * (2.1 + i * 0.37) + i)
                         + 0.2 * Math.sin(t * (5.3 + i * 0.11) + i * 1.7));
                 v *= 0.85 + 0.15 * Math.sin(t * 8.0);
-                out[i] = (float) Math.max(0.03, Math.min(1.0, v));
+                out[i] = (float) Math.max(0.03, Math.min(1.0, v * 1.3));
             }
         }
     }

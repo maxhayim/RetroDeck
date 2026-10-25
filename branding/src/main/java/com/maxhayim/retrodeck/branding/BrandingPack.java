@@ -99,6 +99,11 @@ public final class BrandingPack {
         } catch (Limited.TooLargeException ex) {
             throw new InvalidPackException("The pack file is larger than " + (MAX_PACK_BYTES >> 20) + " MB.");
         } catch (java.util.zip.ZipException ex) {
+            // Android 14+ refuses ".." and absolute entry names itself, before pathProblem sees them.
+            String m = ex.getMessage();
+            if (m != null && m.contains("Invalid zip entry path")) {
+                throw new InvalidPackException("The pack contains an unsafe file path.");
+            }
             throw new InvalidPackException("This isn't a valid ZIP file.");
         }
 

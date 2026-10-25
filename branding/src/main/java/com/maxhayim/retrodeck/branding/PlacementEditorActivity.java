@@ -120,6 +120,8 @@ public class PlacementEditorActivity extends Activity {
         for (final String z : zones()) {
             zoneChips.addView(Ui.chip(this, Zones.shortLabel(z), z.equals(zone), v -> {
                 zone = z;
+                // Start with a logo that is shown here, so a drag never moves a hidden one.
+                if (!draft.placement(zone, role).visible && draft.placement(zone, 1 - role).visible) role = 1 - role;
                 showZone();
             }), Ui.margins(Ui.wrap(), this, 4, 0, 4, 0));
         }
@@ -212,6 +214,11 @@ public class PlacementEditorActivity extends Activity {
         Box b = skin.zone(zone);
         if (b == null) return false;
         int action = e.getActionMasked();
+        if (action == MotionEvent.ACTION_UP) {
+            // A drag shows a hidden logo; rebuild so the switch says so.
+            buildControls();
+            return true;
+        }
         if (action != MotionEvent.ACTION_DOWN && action != MotionEvent.ACTION_MOVE) return true;
         v.getParent().requestDisallowInterceptTouchEvent(true);
         RectF px = new RectF(b.left * v.getWidth(), b.top * v.getHeight(), b.right * v.getWidth(), b.bottom * v.getHeight());
@@ -219,6 +226,7 @@ public class PlacementEditorActivity extends Activity {
         Placement p = draft.placement(zone, role);
         p.x = c[0];
         p.y = c[1];
+        p.visible = true;
         horizontal.set(Math.round(p.x * 100));
         vertical.set(Math.round(p.y * 100));
         refresh();

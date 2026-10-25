@@ -297,6 +297,16 @@ public final class Ui {
         return new AlertDialog.Builder(c, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
     }
 
+    /** Moves a dialog to the left half of the screen, so a live preview on the right stays in view. */
+    public static void beside(AlertDialog d) {
+        android.view.Window w = d.getWindow();
+        if (w == null) return;
+        int width = d.getContext().getResources().getDisplayMetrics().widthPixels;
+        w.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        w.setLayout(Math.round(width * 0.46f), ViewGroup.LayoutParams.WRAP_CONTENT);
+        w.clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+
     public static LinearLayout.LayoutParams weight(float w) {
         return new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, w);
     }

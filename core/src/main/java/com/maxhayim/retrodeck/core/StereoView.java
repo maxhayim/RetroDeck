@@ -342,6 +342,8 @@ public class StereoView extends View {
 
     private void lcdText(int style) {
         text.reset();
+        // reset() keeps letter spacing on some Android versions.
+        spacing(text, 0f);
         text.setAntiAlias(true);
         if (style == Skin.LCD_MODERN) {
             text.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
@@ -375,7 +377,7 @@ public class StereoView extends View {
         if (skin.lcdStyle == Skin.LCD_SEGMENT) {
             // Unlit segments behind the lit ones, as on a real vacuum fluorescent display.
             text.setColor(Illumination.withAlpha(illumination, 0x1C));
-            c.drawText(fit(repeat('8', title.length()), t.width()), t.left, y2, text);
+            c.drawText(fit(ghost(title), t.width()), t.left, y2, text);
         }
         text.setColor(modern ? 0xFFF4F6FA : illumination);
         if (!modern) text.setShadowLayer(h * 0.04f, 0, 0, Illumination.withAlpha(illumination, 0x99));
@@ -494,27 +496,37 @@ public class StereoView extends View {
 
     private void drawButtons(Canvas c, float u) {
         text.reset();
+        // reset() keeps letter spacing on some Android versions.
+        spacing(text, 0f);
         text.setAntiAlias(true);
         text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
         text.setTextAlign(Paint.Align.CENTER);
         spacing(text, 0.08f);
+        // One legend size for the whole faceplate, the largest that fits every button.
+        float size = Float.MAX_VALUE;
+        text.setTextSize(100);
+        for (Skin.Control ctl : skin.controls) {
+            RectF b = px(ctl.box);
+            String widest = ctl.id.equals(Skin.PLAY) ? "PAUSE" : ctl.label;
+            size = Math.min(size, Math.min(b.height() * 0.34f, b.width() * 0.7f * 100 / text.measureText(widest)));
+        }
         for (Skin.Control ctl : skin.controls) {
             RectF b = px(ctl.box);
             String label = ctl.id.equals(Skin.PLAY) ? (state.playing ? "PAUSE" : "PLAY") : ctl.label;
-            drawLegend(c, b, label, ctl.id.equals(pressed), u);
+            drawLegend(c, b, label, ctl.id.equals(pressed), u, size);
         }
         List<Box> presets = skin.presetBoxes();
         for (int i = 0; i < presets.size(); i++) {
-            drawLegend(c, px(presets.get(i)), String.valueOf(i + 1), pressedPreset == i + 1, u);
+            drawLegend(c, px(presets.get(i)), String.valueOf(i + 1), pressedPreset == i + 1, u, size);
         }
     }
 
-    private void drawLegend(Canvas c, RectF b, String label, boolean down, float u) {
+    private void drawLegend(Canvas c, RectF b, String label, boolean down, float u, float size) {
         if (down) {
             paint.setColor(Illumination.withAlpha(illumination, 0x40));
             c.drawRoundRect(b, skin.corner * u, skin.corner * u, paint);
         }
-        text.setTextSize(Math.min(b.height() * 0.34f, b.width() * 0.26f));
+        text.setTextSize(size);
         text.setColor(illumination);
         text.setShadowLayer(u * 0.01f, 0, 0, Illumination.withAlpha(illumination, 0x88));
         c.drawText(label, b.centerX(), b.centerY() - (text.descent() + text.ascent()) / 2, text);
@@ -541,6 +553,8 @@ public class StereoView extends View {
         c.drawLine(cx + (float) Math.cos(a) * rad * 0.45f, cy + (float) Math.sin(a) * rad * 0.45f,
                 cx + (float) Math.cos(a) * rad * 0.82f, cy + (float) Math.sin(a) * rad * 0.82f, paint);
         text.reset();
+        // reset() keeps letter spacing on some Android versions.
+        spacing(text, 0f);
         text.setAntiAlias(true);
         text.setTextAlign(Paint.Align.CENTER);
         text.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
@@ -557,6 +571,8 @@ public class StereoView extends View {
         }
         float u = Math.min(w, h);
         text.reset();
+        // reset() keeps letter spacing on some Android versions.
+        spacing(text, 0f);
         text.setAntiAlias(true);
         text.setTextAlign(Paint.Align.CENTER);
         text.setTypeface(Typeface.create(skin.lcdStyle == Skin.LCD_MODERN ? Typeface.SANS_SERIF : Typeface.MONOSPACE,
@@ -680,9 +696,10 @@ public class StereoView extends View {
         return (s / 60) + ":" + two((int) (s % 60));
     }
 
-    private static String repeat(char ch, int n) {
+    /** An "8" behind each character, so unlit segments show around the lit ones; gaps stay dark. */
+    private static String ghost(String title) {
         StringBuilder b = new StringBuilder();
-        for (int i = 0; i < n; i++) b.append(ch);
+        for (int i = 0; i < title.length(); i++) b.append(title.charAt(i) == ' ' ? ' ' : '8');
         return b.toString();
     }
 
