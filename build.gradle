@@ -1,0 +1,12 @@
+plugins {
+    id 'com.android.application' version '8.7.3' apply false
+    id 'com.android.library' version '8.7.3' apply false
+}
+
+// One place for the SDK levels every module shares.
+ext {
+    // 19 = Android 4.4 KitKat, still common on older aftermarket car head units.
+    minSdk = 19
+    compileSdk = 35
+    targetSdk = 35
+}

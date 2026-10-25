@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Halcyon Motor Co. is a made-up brand for RetroDeck's demo and screenshots. Original artwork, MIT licensed. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 690 200" width="690" height="200">
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#c9d1db"/>
+      <stop offset="0.55" stop-color="#7d8794"/>
+      <stop offset="1" stop-color="#e6ebf0"/>
+    </linearGradient>
+  </defs>
+  <!-- Kingfisher wing chevron -->
+  <path d="M20 150 L110 40 L150 40 L95 110 L190 110 L170 150 Z" fill="url(#chrome)"/>
+  <path d="M60 150 L120 78 L150 78 L118 118 L176 118 L166 150 Z" fill="#1e88e5"/>
+  <text x="215" y="130" font-family="sans-serif" font-size="80" font-weight="bold" font-style="italic"
+        letter-spacing="4" fill="url(#chrome)">HALCYON</text>
+</svg>

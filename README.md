@@ -1,0 +1,199 @@
+<p align="center">
+  <img src="assets/logo.png" alt="RetroDeck Logo" width="200"/>
+</p>
+
+<p align="center">
+  <strong>A retro car stereo for Android head units, branded to match your own vehicle</strong>
+</p>
+
+<p align="center">
+  <a href="https://developer.android.com/about/versions/kitkat">
+    <img src="https://img.shields.io/badge/Android-4.4%2B-3DDC84" alt="Android 4.4+">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/Screens-1024%C3%97600%20and%20up-lightgrey" alt="1024x600 and up">
+  <img src="https://img.shields.io/badge/Network-none-FF9F43" alt="No network access">
+</p>
+
+<h1>RetroDeck</h1>
+
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (a 1985 brushed-silver unit, a 1996 dot-matrix deck or a modern glass screen), and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
+
+<p>Everything works offline. There is no account, no cloud service and no network access at all, and it needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
+
+<h2>Screenshots</h2>
+
+<!-- SCREENSHOTS -->
+
+<p align="center"><sub>Captured from the running app at 1024×600. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+
+<h2>Features</h2>
+
+<ul>
+  <li><strong>Vehicle profiles</strong>: any manufacturer, model, year and trim, typed in (no online database); create, duplicate, switch and delete profiles without reinstalling</li>
+  <li><strong>Your own logos</strong>: a manufacturer logo and a separate model badge, imported as PNG, JPEG, WebP or SVG, transparency kept</li>
+  <li><strong>Logo editor</strong>: crop, rotate, opacity, brightness and colour tint, all non-destructive; aspect ratio always kept unless you turn it off</li>
+  <li><strong>Placement</strong>: put each logo in the radio display header, the LCD, the faceplate, a corner badge, behind the visualizer, on the startup screen or on the standby screen; drag it or use sliders, with a live preview before saving</li>
+  <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text</li>
+  <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting, then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
+  <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
+  <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
+  <li><strong>Music</strong>: plays audio files from the device; SRC adds files, presets 1–6 jump to tracks, the knob sets the media volume, steering-wheel media keys work</li>
+  <li><strong>Old head units</strong>: Android 4.4 and newer, large images downsampled on import, 512 px logos on low-memory devices, the static faceplate drawn once and cached</li>
+</ul>
+
+<h2>Requirements</h2>
+
+<ul>
+  <li>An Android head unit, tablet or phone on <strong>Android 4.4 (KitKat) or newer</strong>, landscape; designed for 1024×600 and scales up</li>
+  <li>Your own logo images, if you want logos (names alone work too)</li>
+  <li>To install: the APK on a USB stick or SD card and a file manager on the head unit, or a computer with <a href="https://developer.android.com/tools/releases/platform-tools">ADB</a></li>
+</ul>
+
+<h2>Installation and Setup</h2>
+
+<h3>From a release (recommended)</h3>
+
+<ol>
+  <li>Download <code>RetroDeck-x.y.z.apk</code> from the <a href="../../releases/latest">latest release</a>.</li>
+  <li>Copy it to the head unit and open it with the file manager (allow installing from unknown sources if asked), or install it from a computer:
+<pre>
+adb install RetroDeck-0.1.0.apk
+</pre>
+  </li>
+</ol>
+
+<h3>From source</h3>
+
+<p>JDK 17 and Android SDK platform 35:</p>
+
+<pre>
+./gradlew assembleDebug                       # app/build/outputs/apk/debug/app-debug.apk
+./gradlew testDebugUnitTest :app:lintDebug    # JVM tests, and lint for anything newer than Android 4.4
+</pre>
+
+<h2>Usage</h2>
+
+<h3>The stereo</h3>
+
+<table>
+  <tr><th>Control</th><th>What it does</th></tr>
+  <tr><td><strong>PWR</strong></td><td>Standby: a black screen with the clock and your standby logo. Tap anywhere to turn it back on.</td></tr>
+  <tr><td><strong>SRC</strong></td><td>Adds music files from the device.</td></tr>
+  <tr><td><strong>|&lt;&lt; PLAY &gt;&gt;|</strong></td><td>Previous (or back to the start of the track), play/pause, next.</td></tr>
+  <tr><td><strong>1–6</strong></td><td>Jump to tracks 1 to 6.</td></tr>
+  <tr><td><strong>Knob</strong> or <strong>VOL−/VOL+</strong></td><td>Drag the knob up or down, or tap its top or bottom half. Sets the device's media volume.</td></tr>
+  <tr><td><strong>DISP</strong></td><td>Cycles the visualizer: spectrum bars, level ladder, oscilloscope, off. The choice is saved in the vehicle profile.</td></tr>
+  <tr><td><strong>MENU</strong></td><td>Settings.</td></tr>
+</table>
+
+<h3>Settings → Personalization → Vehicle Branding</h3>
+
+<table>
+  <tr><th>Row</th><th>What it does</th></tr>
+  <tr><td><strong>Vehicle Profiles</strong></td><td>Switch, create, duplicate or delete profiles.</td></tr>
+  <tr><td><strong>Manufacturer, Model, Model Year, Trim or Edition</strong></td><td>Any names you like; the year is four digits.</td></tr>
+  <tr><td><strong>Import Manufacturer Logo / Import Model Badge</strong></td><td>Pick an image, then adjust it. Tap again to replace, adjust or remove it.</td></tr>
+  <tr><td><strong>Adjust Logo Image</strong></td><td>Crop, rotation, opacity, brightness, tint and aspect ratio.</td></tr>
+  <tr><td><strong>Edit Logo Placement</strong></td><td>Choose a zone and a logo, then show it, size it and drag it into place.</td></tr>
+  <tr><td><strong>Radio Skin, Visualizer</strong></td><td>The profile's preferred skin and visualizer.</td></tr>
+  <tr><td><strong>Dashboard Illumination, Accent Colour</strong></td><td>Preset colours, RGB sliders or the colour of your logos.</td></tr>
+  <tr><td><strong>Startup Animation</strong></td><td>Style, length, the power-on and LCD steps, or off. Plays as you choose.</td></tr>
+  <tr><td><strong>Preview</strong></td><td>The whole thing full screen: startup, stereo and (with PWR) standby.</td></tr>
+  <tr><td><strong>Import/Export Branding Pack</strong></td><td>ZIP files with profiles and logos.</td></tr>
+  <tr><td><strong>Restore Defaults</strong></td><td>Reset this profile's layout, colours, skin and startup (names and logos stay), or delete everything.</td></tr>
+</table>
+
+<h3>Head units without a file picker</h3>
+
+<p>Some head units and Android TV builds have no working file picker, or one that only shows photos (so SVG logos and ZIP packs can't be picked). RetroDeck then also lists the images and packs in its own import folder, which needs no storage permission:</p>
+
+<pre>
+Android/data/com.maxhayim.retrodeck/files/import/
+</pre>
+
+<p>Copy files there with a file manager, a USB cable or <code>adb push</code>. Exports go to <code>files/export/</code> when there is nowhere else to save them. On Android 11 and newer, file managers may not show <code>Android/data</code>; use the picker or <code>adb</code> there.</p>
+
+<h2>How It Works</h2>
+
+<p>RetroDeck is three Gradle modules:</p>
+
+<table>
+  <tr><th>Module</th><th>What's in it</th></tr>
+  <tr><td><code>core</code></td><td>Skins and their branding zones, the stereo renderer (<code>StereoView</code>), illumination colours, the <code>RetroDeckModule</code> interface and the shared settings look.</td></tr>
+  <tr><td><code>branding</code></td><td>The Vehicle Branding module: profiles and storage, logo import and editing, placement, the startup sequence and branding packs. It draws into the stereo through <code>StereoView.Overlay</code>, so the stereo doesn't depend on it.</td></tr>
+  <tr><td><code>app</code></td><td>The shell: the stereo screen, the music player, and Settings, which lists the rows each registered module asks for.</td></tr>
+</table>
+
+<p><strong>Branding zones.</strong> Each skin lays out its controls and zones as fractions of the screen. A logo is fitted into its zone with its aspect ratio kept, scaled by at most 100 % and clamped inside the zone. A unit test checks that no zone of any skin touches a button, the knob, the presets or the track text.</p>
+
+<p><strong>Images.</strong> An imported file is copied to a temporary file (25 MB limit), recognised by its content, decoded with a power-of-two sample size so a huge photo never loads at full size, turned upright from its EXIF data, scaled to 1024 px (512 px on low-memory devices), trimmed of transparent margins and saved as PNG in the profile's folder. SVGs are drawn by AndroidSVG at that size. Crop, rotation and colour edits are applied when drawing and cached, so the stored image never changes.</p>
+
+<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Nothing is sent anywhere: the app has no <code>INTERNET</code> permission.</p>
+
+<p><strong>Startup.</strong> The sequence is a pure function of time (<code>StartupTimeline</code>), drawn over the stereo, which is already running underneath; a tap skips it and it never runs longer than six seconds. Each frame only draws the cached logo bitmaps with alpha and colour filters on a hardware layer.</p>
+
+<h3>Branding pack format</h3>
+
+<pre>
+my-vehicle.zip
+├── manifest.json        {"format": "retrodeck-branding-pack", "formatVersion": 1, "name": ..., "profiles": [...]}
+└── assets/
+    ├── p0-manufacturer.png
+    └── p0-model.png
+</pre>
+
+<p>Each profile in <code>profiles</code> holds the names, palette (illumination, custom and accent colours), skin, visualizer, startup settings, logo adjustments, placements per zone, and <code>"assets": {"manufacturer": "assets/...", "model": "assets/..."}</code>. Unknown fields are ignored, so newer packs of format 1 still import; a newer format version is refused. Before importing, RetroDeck checks:</p>
+
+<ul>
+  <li>only <code>manifest.json</code> and <code>assets/*.png|jpg|jpeg|webp|svg</code>; anything else (a script, an APK) fails the pack, and nothing in a pack is ever run</li>
+  <li>no <code>..</code>, absolute paths, backslashes or drive letters (zip slip)</li>
+  <li>sizes counted while unpacking (24 MB packed, 8 MB a file, 32 MB in all, 40 files), so a zip bomb stops early</li>
+  <li>each image's real format matches its extension, and its header says at most 4096 pixels a side</li>
+  <li>SVGs have no DOCTYPE or entities, scripts, embedded HTML or external links</li>
+  <li>every value is put back in range; unknown skins, presets and colours get defaults</li>
+</ul>
+
+<p>Logos from a pack are decoded and saved again as new PNG files, like a picked image. More in <a href="SECURITY.md">SECURITY.md</a>.</p>
+
+<h2>Known Limitations</h2>
+
+<ul>
+  <li><strong>The visualizer is simulated.</strong> It moves while music plays but doesn't follow the audio: reading the output mix on Android needs the microphone permission, which a car stereo shouldn't ask for.</li>
+  <li><strong>Media from SRC</strong> is a list of files. There is no radio tuner, Bluetooth audio or folder browsing yet.</li>
+  <li><strong>Animated WebP and GIF</strong> logos aren't supported; WebP files with transparency need Android 4.3 or newer, which RetroDeck's minimum already covers.</li>
+  <li><strong>SVG support</strong> is AndroidSVG's: text uses the device's fonts, and filters and some CSS are ignored. For an exact look, export the logo as PNG.</li>
+  <li><strong>Some head units</strong> keep their own status bar or volume overlay on top of full-screen apps.</li>
+</ul>
+
+<h2>Tested On</h2>
+
+<!-- TESTED -->
+
+<h2>License</h2>
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for details.
+Full license text: https://opensource.org/licenses/MIT
+
+<h2>Contributing</h2>
+
+<p>Pull requests are welcome, and new skins especially. Open an issue first to discuss ideas or report bugs. See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> and the <a href="CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+
+<h2>Related Projects</h2>
+
+<ul>
+  <li><a href="https://github.com/maxhayim/ShackScreen">ShackScreen</a>: a dashboard for the screen in your radio shack</li>
+  <li><a href="https://github.com/maxhayim/corner-player">Corner Player</a>: picture in picture for Android TV</li>
+  <li><a href="https://github.com/BigBadaboom/androidsvg">AndroidSVG</a>: the SVG renderer inside</li>
+</ul>
+
+<h2>Acknowledgments</h2>
+
+<p>SVG rendering by <a href="https://github.com/BigBadaboom/androidsvg">AndroidSVG</a> by Paul LeBeau (Apache License 2.0). RetroDeck is not related to RetroDECK, the emulation front end.<br>
+Android™ is a trademark of Google LLC, used here solely to describe compatibility.
+Vehicle manufacturer and model names and logos are the property of their respective owners; RetroDeck includes none, and you import only images you have the right to use.
+All other trademarks are the property of their respective owners.</p>

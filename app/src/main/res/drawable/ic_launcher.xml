@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A car stereo faceplate: amber LCD and a volume knob. Rasterised to PNG for Android 4.4 at build time. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="48" android:viewportHeight="48">
+    <path android:fillColor="#FF2E3035" android:pathData="M6,12h36a4,4 0,0 1,4 4v16a4,4 0,0 1,-4 4h-36a4,4 0,0 1,-4 -4v-16a4,4 0,0 1,4 -4z" />
+    <path android:fillColor="#FF0B0C0A" android:pathData="M17,16h21a1.5,1.5 0,0 1,1.5 1.5v8a1.5,1.5 0,0 1,-1.5 1.5h-21a1.5,1.5 0,0 1,-1.5 -1.5v-8a1.5,1.5 0,0 1,1.5 -1.5z" />
+    <path android:fillColor="#FFFFA81E" android:pathData="M19,22h2v3h-2zM22,20h2v5h-2zM25,18h2v7h-2zM28,21h2v4h-2zM31,19h2v6h-2zM34,22h2v3h-2z" />
+    <path android:fillColor="#FF5B5F66" android:pathData="M10,24m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+    <path android:fillColor="#FFFFA81E" android:pathData="M9.3,19.5h1.4v4h-1.4z" />
+    <path android:fillColor="#FF3A3D43" android:pathData="M16,29.5h4v3h-4zM21.5,29.5h4v3h-4zM27,29.5h4v3h-4zM32.5,29.5h4v3h-4z" />
+</vector>
