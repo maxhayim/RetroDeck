@@ -26,7 +26,8 @@ public final class BrandingRenderer implements StereoView.Overlay {
     private VehicleProfile profile;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final RectF dst = new RectF();
+    private final RectF dst = new RectF(), shadowDst = new RectF();
+    private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 
     private String selectedZone;
     private int selectedRole = -1;
@@ -73,6 +74,10 @@ public final class BrandingRenderer implements StereoView.Overlay {
             LogoAdjust a = profile.adjust[role];
             Box b = PlacementMath.layout(zoneBox, bm.getWidth(), bm.getHeight(), p, a.keepAspect);
             dst.set(b.left, b.top, b.right, b.bottom);
+            if (skin.lcdStyle != Skin.LCD_MODERN && Zones.onFaceplate(zone) && !Zones.LCD.equals(zone)
+                    && !Zones.VISUALIZER.equals(zone)) {
+                drawShadow(c, f, a, bm, alpha);
+            }
             paint.setAlpha(Math.round(255 * a.opacity * alpha));
             c.drawBitmap(bm, null, dst, paint);
             out = new RectF(dst);
@@ -89,6 +94,19 @@ public final class BrandingRenderer implements StereoView.Overlay {
             c.drawRect(out, s);
         }
         return out;
+    }
+
+    /** A badge on the faceplate stands slightly proud of it, so it casts a soft shadow below. */
+    private void drawShadow(Canvas c, File f, LogoAdjust a, Bitmap bm, float alpha) {
+        LogoCache.Shadow s = LogoCache.get().shadow(f, a);
+        if (s == null) return;
+        float sx = dst.width() / bm.getWidth(), sy = dst.height() / bm.getHeight();
+        float drop = dst.height() * 0.06f;
+        shadowDst.set(dst.left + s.dx * sx, dst.top + s.dy * sy + drop,
+                dst.left + (s.dx + s.alpha.getWidth()) * sx, dst.top + (s.dy + s.alpha.getHeight()) * sy + drop);
+        shadowPaint.setColor(0x000000);
+        shadowPaint.setAlpha(Math.round(0x90 * a.opacity * alpha));
+        c.drawBitmap(s.alpha, null, shadowDst, shadowPaint);
     }
 
     /** The rectangle a logo would occupy, without drawing it; used for dragging in the editor. */

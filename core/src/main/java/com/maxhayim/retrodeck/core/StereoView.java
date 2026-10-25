@@ -55,11 +55,17 @@ public class StereoView extends View {
     private final float[] bands = new float[Levels.BANDS];
     private final float[] peaks = new float[Levels.BANDS];
 
+    /** How long the display shows the volume after it changes. */
+    private static final long VOLUME_SHOWN_MS = 2500;
+
     private boolean showZones;
     private String highlightZone;
 
     private Bitmap background;
-    private Shader dotGrid;
+    private Shader dotGrid, mesh, glare;
+    private RectF glareFor;
+    private int lastVolume = -1;
+    private long volumeChangedAt = -10_000;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
@@ -149,6 +155,8 @@ public class StereoView extends View {
         if (background != null) background.recycle();
         background = null;
         dotGrid = null;
+        mesh = null;
+        glare = null;
         invalidate();
     }
 
@@ -194,6 +202,7 @@ public class StereoView extends View {
 
         boolean animating = state.playing && !Visualizers.OFF.equals(visualizer);
         if (animating || anyLevelAboveZero()) postInvalidateOnAnimation();
+        else if (now - volumeChangedAt < VOLUME_SHOWN_MS) postInvalidateDelayed(250);
         else postInvalidateDelayed(1000);
     }
 
@@ -214,17 +223,20 @@ public class StereoView extends View {
     }
 
     private Bitmap buildBackground(int w, int h) {
+        // Full colour keeps the metal and glass gradients smooth; low-RAM head units get 16-bit.
+        android.app.ActivityManager am = (android.app.ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        boolean lowRam = am != null && am.isLowRamDevice();
         try {
-            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
-            drawStatic(new Canvas(bm), w, h);
+            Bitmap bm = Bitmap.createBitmap(w, h, lowRam ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
+            Faceplate.draw(new Canvas(bm), skin, w, h);
             return bm;
         } catch (OutOfMemoryError e) {
-            // Low-memory head unit: draw the faceplate every frame instead.
+            // Not even that: draw a plain faceplate every frame instead.
             return null;
         }
     }
 
-    /** The faceplate, bezels and button bodies. */
+    /** A plain faceplate, for when there is no memory for the cached one. */
     private void drawStatic(Canvas c, int w, int h) {
         float u = Math.min(w, h);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -324,12 +336,34 @@ public class StereoView extends View {
             paint.setShader(dotGrid);
             c.drawRect(lcd, paint);
             paint.setShader(null);
+        } else if (skin.lcdStyle == Skin.LCD_SEGMENT) {
+            // The fine control-grid mesh a vacuum fluorescent display shows over its segments.
+            if (mesh == null) mesh = meshShader(Math.max(3, Math.round(u * 0.0055f)));
+            paint.setShader(mesh);
+            c.drawRect(lcd, paint);
+            paint.setShader(null);
         }
-        // Glass glare.
-        paint.setShader(new LinearGradient(0, lcd.top, 0, lcd.bottom, 0x16FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
-        c.drawRect(lcd.left, lcd.top, lcd.right, lcd.centerY(), paint);
+        // The front glass: a diagonal reflection and a bright rim along the top.
+        if (glare == null || !lcd.equals(glareFor)) {
+            glareFor = new RectF(lcd);
+            glare = new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * 0.45f, lcd.bottom,
+                    new int[]{0x20FFFFFF, 0x12FFFFFF, 0x03FFFFFF, 0x00FFFFFF, 0x07FFFFFF, 0x00FFFFFF},
+                    new float[]{0f, 0.30f, 0.40f, 0.60f, 0.66f, 0.76f}, Shader.TileMode.CLAMP);
+        }
+        paint.setShader(glare);
+        c.drawRect(lcd, paint);
         paint.setShader(null);
+        paint.setColor(0x22FFFFFF);
+        c.drawRect(lcd.left, lcd.top, lcd.right, lcd.top + Math.max(1, u * 0.002f), paint);
         c.restoreToCount(save);
+    }
+
+    private Shader meshShader(int cell) {
+        Bitmap tile = Bitmap.createBitmap(cell, cell, Bitmap.Config.ARGB_8888);
+        int line = 0x55000000;
+        for (int x = 0; x < cell; x++) tile.setPixel(x, 0, line);
+        for (int y = 0; y < cell; y++) tile.setPixel(0, y, line);
+        return new BitmapShader(tile, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
     }
 
     private Shader dotGridShader(int cell) {
@@ -364,9 +398,18 @@ public class StereoView extends View {
         float y1 = t.top + h * 0.20f;
         text.setTextAlign(Paint.Align.LEFT);
         String status = state.source + (state.track > 0 ? "   TRK " + two(state.track) : "");
+        boolean vfd = skin.lcdStyle == Skin.LCD_SEGMENT;
+        if (vfd) ghostText(c, status, t.left, y1, t.width() * 0.6f);
         c.drawText(status, t.left, y1, text);
         text.setTextAlign(Paint.Align.RIGHT);
-        c.drawText(state.durationMs > 0 ? time(state.positionMs) : clock.format(new Date()), t.right, y1, text);
+        long now = SystemClock.uptimeMillis();
+        if (state.volume != lastVolume) {
+            if (lastVolume >= 0) volumeChangedAt = now;
+            lastVolume = state.volume;
+        }
+        String right = now - volumeChangedAt < VOLUME_SHOWN_MS ? "VOL " + two(state.volume)
+                : state.durationMs > 0 ? time(state.positionMs) : clock.format(new Date());
+        c.drawText(right, t.right, y1, text);
 
         // Title.
         text.setTextAlign(Paint.Align.LEFT);
@@ -389,6 +432,7 @@ public class StereoView extends View {
         spacing(text, modern ? 0.02f : 0.08f);
         text.setColor(modern ? 0xFFAEB6C4 : Illumination.dim(illumination, 0.75f));
         String artist = modern ? state.artist : state.artist.toUpperCase(Locale.US);
+        if (skin.lcdStyle == Skin.LCD_SEGMENT) ghostText(c, fit(artist, t.width()), t.left, t.top + h * 0.90f, t.width());
         c.drawText(fit(artist, t.width()), t.left, t.top + h * 0.90f, text);
 
         if (state.durationMs > 0 && modern) {
@@ -399,6 +443,17 @@ public class StereoView extends View {
             paint.setColor(illumination);
             c.drawRect(t.left, y - u * 0.004f, t.left + t.width() * f, y, paint);
         }
+    }
+
+    /** Unlit segments behind a line of display text; keeps the paint's own colour. */
+    private void ghostText(Canvas c, String s, float x, float y, float width) {
+        int color = text.getColor();
+        Paint.Align align = text.getTextAlign();
+        text.setTextAlign(Paint.Align.LEFT);
+        text.setColor(Illumination.withAlpha(illumination, 0x16));
+        c.drawText(fit(ghost(s), width), x, y, text);
+        text.setColor(color);
+        text.setTextAlign(align);
     }
 
     private String fit(String s, float width) {
@@ -429,9 +484,15 @@ public class StereoView extends View {
                     c.drawRoundRect(rect, bw / 3, bw / 3, paint);
                 } else {
                     int lit = Math.round(lv * segs);
+                    float halo = Math.max(1, u * 0.004f);
                     for (int s = 0; s < segs; s++) {
                         float top = v.bottom - (s + 1) * sh + sh * 0.18f;
-                        paint.setColor(s < lit ? illumination : Illumination.withAlpha(illumination, 0x1A));
+                        if (s < lit) {
+                            // Lit phosphor bleeds light around itself.
+                            paint.setColor(Illumination.withAlpha(illumination, 0x30));
+                            c.drawRect(l - halo, top - halo, l + bw + halo, v.bottom - s * sh + halo, paint);
+                        }
+                        paint.setColor(s < lit ? illumination : Illumination.withAlpha(illumination, 0x16));
                         c.drawRect(l, top, l + bw, v.bottom - s * sh, paint);
                     }
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
@@ -522,14 +583,21 @@ public class StereoView extends View {
     }
 
     private void drawLegend(Canvas c, RectF b, String label, boolean down, float u, float size) {
+        float sink = 0;
         if (down) {
-            paint.setColor(Illumination.withAlpha(illumination, 0x40));
+            // A pressed key goes into its hole: darker, its legend lower, the backlight brighter around it.
+            sink = u * 0.004f;
+            paint.setColor(0x66000000);
+            c.drawRoundRect(b, skin.corner * u, skin.corner * u, paint);
+            paint.setColor(Illumination.withAlpha(illumination, 0x22));
             c.drawRoundRect(b, skin.corner * u, skin.corner * u, paint);
         }
         text.setTextSize(size);
         text.setColor(illumination);
-        text.setShadowLayer(u * 0.01f, 0, 0, Illumination.withAlpha(illumination, 0x88));
-        c.drawText(label, b.centerX(), b.centerY() - (text.descent() + text.ascent()) / 2, text);
+        text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(illumination, down ? 0xCC : 0x99));
+        // The legend sits on the key face, a little above the key's centre.
+        float faceY = skin.lcdStyle == Skin.LCD_MODERN ? b.centerY() : b.centerY() - b.height() * 0.04f;
+        c.drawText(label, b.centerX(), faceY + sink - (text.descent() + text.ascent()) / 2, text);
         text.clearShadowLayer();
     }
 
@@ -542,25 +610,29 @@ public class StereoView extends View {
         for (int i = 0; i <= 10; i++) {
             double a = Math.toRadians(135 + 270.0 * i / 10);
             boolean lit = i / 10f <= f + 1e-3f && state.volume > 0;
-            paint.setColor(lit ? illumination : Illumination.withAlpha(illumination, 0x30));
-            c.drawCircle(cx + (float) Math.cos(a) * rad * 1.25f, cy + (float) Math.sin(a) * rad * 1.25f,
-                    rad * 0.045f, paint);
+            float dx = cx + (float) Math.cos(a) * rad * 1.25f, dy = cy + (float) Math.sin(a) * rad * 1.25f;
+            if (lit) {
+                paint.setColor(Illumination.withAlpha(illumination, 0x38));
+                c.drawCircle(dx, dy, rad * 0.09f, paint);
+            }
+            paint.setColor(lit ? illumination : 0xFF1A1B1D);
+            c.drawCircle(dx, dy, rad * 0.045f, paint);
         }
+        // The pointer: a groove cut into the cap, lit from inside. The display shows the number.
         double a = Math.toRadians(135 + 270.0 * f);
-        paint.setColor(illumination);
-        paint.setStrokeWidth(rad * 0.08f);
+        float x1 = cx + (float) Math.cos(a) * rad * 0.40f, y1 = cy + (float) Math.sin(a) * rad * 0.40f;
+        float x2 = cx + (float) Math.cos(a) * rad * 0.74f, y2 = cy + (float) Math.sin(a) * rad * 0.74f;
         paint.setStrokeCap(Paint.Cap.ROUND);
-        c.drawLine(cx + (float) Math.cos(a) * rad * 0.45f, cy + (float) Math.sin(a) * rad * 0.45f,
-                cx + (float) Math.cos(a) * rad * 0.82f, cy + (float) Math.sin(a) * rad * 0.82f, paint);
-        text.reset();
-        // reset() keeps letter spacing on some Android versions.
-        spacing(text, 0f);
-        text.setAntiAlias(true);
-        text.setTextAlign(Paint.Align.CENTER);
-        text.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
-        text.setTextSize(rad * 0.32f);
-        text.setColor(illumination);
-        c.drawText(two(state.volume), cx, cy + rad * 0.12f, text);
+        paint.setStrokeWidth(rad * 0.11f);
+        paint.setColor(0xCC000000);
+        c.drawLine(x1, y1, x2, y2, paint);
+        paint.setStrokeWidth(rad * 0.16f);
+        paint.setColor(Illumination.withAlpha(illumination, 0x30));
+        c.drawLine(x1, y1, x2, y2, paint);
+        paint.setStrokeWidth(rad * 0.06f);
+        paint.setColor(illumination);
+        c.drawLine(x1, y1, x2, y2, paint);
+        paint.setStrokeCap(Paint.Cap.BUTT);
     }
 
     private void drawStandby(Canvas c, int w, int h) {

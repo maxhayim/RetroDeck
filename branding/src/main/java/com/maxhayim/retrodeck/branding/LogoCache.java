@@ -2,6 +2,7 @@ package com.maxhayim.retrodeck.branding;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -48,6 +49,42 @@ public final class LogoCache {
         return bm;
     }
 
+    /** A logo's soft shadow, made from its edited version. */
+    public static final class Shadow {
+        public final Bitmap alpha;
+        /** Where the shadow's top left sits relative to the logo's, in logo pixels. */
+        public final int dx, dy;
+
+        Shadow(Bitmap alpha, int dx, int dy) {
+            this.alpha = alpha;
+            this.dx = dx;
+            this.dy = dy;
+        }
+    }
+
+    private final LruCache<String, Shadow> shadows = new LruCache<>(8);
+
+    /** The blurred outline of the edited logo, so a badge can stand off the faceplate; null if unavailable. */
+    public Shadow shadow(File file, LogoAdjust a) {
+        Bitmap bm = get(file, a);
+        if (bm == null) return null;
+        String key = file.getPath() + "@" + file.lastModified() + "#" + a.signature();
+        Shadow s = shadows.get(key);
+        if (s != null && !s.alpha.isRecycled()) return s;
+        try {
+            Paint blur = new Paint();
+            blur.setMaskFilter(new BlurMaskFilter(Math.max(2, Math.min(bm.getWidth(), bm.getHeight()) * 0.05f),
+                    BlurMaskFilter.Blur.NORMAL));
+            int[] offset = new int[2];
+            Bitmap alpha = bm.extractAlpha(blur, offset);
+            s = new Shadow(alpha, offset[0], offset[1]);
+            shadows.put(key, s);
+            return s;
+        } catch (OutOfMemoryError e) {
+            return null;
+        }
+    }
+
     /** The optimised original, without edits; used by the logo editor's crop view. */
     public Bitmap original(File file) {
         return get(file, new LogoAdjust());
@@ -55,6 +92,7 @@ public final class LogoCache {
 
     public void clear() {
         cache.evictAll();
+        shadows.evictAll();
     }
 
     private static Bitmap render(File file, LogoAdjust a) {

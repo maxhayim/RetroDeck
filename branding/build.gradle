@@ -10,14 +10,22 @@ android {
         minSdk rootProject.ext.minSdk
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
+        // ./gradlew :branding:testDebugUnitTest -Prender (optionally -Prender.size=1920x1080) writes branded PNGs.
+        unitTests.all {
+            if (project.hasProperty('render')) systemProperty 'render', 'true'
+            if (project.hasProperty('render.size')) systemProperty 'render.size', project.property('render.size')
+            systemProperty 'demo.dir', rootProject.file('docs/demo').path
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
 }
 
 dependencies {
@@ -27,4 +35,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     // Android's org.json is a stub on the JVM; tests use the real one.
     testImplementation 'org.json:json:20231013'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
 }

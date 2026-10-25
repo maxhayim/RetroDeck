@@ -10,6 +10,15 @@ android {
         minSdk rootProject.ext.minSdk
     }
 
+    testOptions {
+        unitTests.includeAndroidResources = true
+        // ./gradlew :core:testDebugUnitTest -Prender (optionally -Prender.size=1920x1080) writes skin PNGs.
+        unitTests.all {
+            if (project.hasProperty('render')) systemProperty 'render', 'true'
+            if (project.hasProperty('render.size')) systemProperty 'render.size', project.property('render.size')
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -18,4 +27,6 @@ android {
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
+    // Renders the real views on the JVM with Android's own graphics, for the skin previews.
+    testImplementation 'org.robolectric:robolectric:4.14.1'
 }
