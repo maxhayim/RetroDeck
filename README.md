@@ -205,10 +205,10 @@ my-vehicle.zip
 <ul>
   <li>Typing a manufacturer, model, year and trim.</li>
   <li>Importing an SVG logo and a PNG badge from the import folder. This device's document picker is an empty stub, which is why the import folder exists.</li>
-  <li>Crop, rotation and brightness on a logo.</li>
-  <li>Placing logos by dragging them and with the sliders, in the header, LCD, faceplate and corner zones.</li>
-  <li>Each illumination preset, and "From logos".</li>
-  <li>All six startup styles, played in the editor and when the app opens.</li>
+  <li>Crop, rotation and brightness on a logo. Opacity and tint were not changed.</li>
+  <li>Dragging logos in the header and corner zones, and the show/hide switch. The default placements filled the LCD and faceplate zones.</li>
+  <li>The Amber and Green illumination presets, and "From logos".</li>
+  <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>All three skins.</li>
   <li>The standby screen.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
