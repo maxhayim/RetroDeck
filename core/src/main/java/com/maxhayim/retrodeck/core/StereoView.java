@@ -66,7 +66,10 @@ public class StereoView extends View {
     private static final int NIGHT_DIM = 0x70000000;
     /** Unlit segments behind smoked glass: there, but barely seen. */
     private static final int UNLIT = 0x06;
-    /** Smoked glass over a tinted display's filter, under its lit characters. */
+    /**
+     * Smoked glass over a tinted display. By day it is over everything, the characters too; at night
+     * the segments shine through it as bright as the backlit keys.
+     */
     private static final int SMOKE = 0x58000000;
     /** DSEG by keshikan (SIL Open Font License), in assets/fonts. Loaded once, shared by every view. */
     private static Typeface seg14, seg7;
@@ -434,6 +437,10 @@ public class StereoView extends View {
             c.drawRect(lcd, paint);
             paint.setShader(null);
         }
+        if (skin.lcdGlass != 0 && !keysLit) {
+            paint.setColor(SMOKE);
+            c.drawRect(lcd, paint);
+        }
         // The front glass: a diagonal reflection and a bright rim along the top.
         if (glare == null || !lcd.equals(glareFor)) {
             glareFor = new RectF(lcd);
@@ -472,8 +479,10 @@ public class StereoView extends View {
     private void drawGlass(Canvas c, RectF lcd, float u) {
         paint.setColor(skin.lcdGlass);
         c.drawRect(lcd, paint);
-        paint.setColor(SMOKE);
-        c.drawRect(lcd, paint);
+        if (keysLit) {
+            paint.setColor(SMOKE);
+            c.drawRect(lcd, paint);
+        }
         paint.setShader(new LinearGradient(0, lcd.top, 0, lcd.bottom,
                 new int[]{0x90000000, 0x00000000, 0x00000000, 0x60000000}, new float[]{0f, 0.18f, 0.8f, 1f},
                 Shader.TileMode.CLAMP));
@@ -664,15 +673,19 @@ public class StereoView extends View {
     }
 
     /** Lit phosphor: a near-white core with its colour bleeding around it. Unlit print stays faint. */
-    /** A phosphor display's lit segments are as bright as the backlit keys: near white at the core. */
+    /** At night a phosphor display's lit segments are as bright as the backlit keys: near white at the core. */
     private int bright(int color) {
-        return skin.phosphor != 0 ? Illumination.mix(color, 0xFFFFFFFF, 0.35f) : color;
+        return neon() ? Illumination.mix(color, 0xFFFFFFFF, 0.35f) : color;
+    }
+
+    private boolean neon() {
+        return skin.phosphor != 0 && keysLit;
     }
 
     private void segmentGlow(boolean lit, int ink, float h) {
         if (lit) {
             text.setColor(bright(ink));
-            text.setShadowLayer(h * 0.08f, 0, 0, Illumination.withAlpha(ink, 0xE0));
+            text.setShadowLayer(h * (neon() ? 0.08f : 0.06f), 0, 0, Illumination.withAlpha(ink, neon() ? 0xE0 : 0xB0));
         } else {
             text.setColor(Illumination.withAlpha(ink, UNLIT));
         }
@@ -744,7 +757,7 @@ public class StereoView extends View {
                         int col = skin.gradientBars ? Illumination.mix(illumination, accent, s / (float) (segs - 1)) : ink;
                         if (s < lit && !reflective) {
                             // Lit phosphor bleeds light around itself.
-                            paint.setColor(Illumination.withAlpha(col, skin.phosphor != 0 ? 0x50 : 0x30));
+                            paint.setColor(Illumination.withAlpha(col, neon() ? 0x50 : 0x30));
                             c.drawRect(l - halo, top - halo, l + bw + halo, v.bottom - s * sh + halo, paint);
                         }
                         paint.setColor(s < lit ? bright(col) : Illumination.withAlpha(col, reflective ? 0x10 : skin.phosphor != 0 ? UNLIT : 0x16));
