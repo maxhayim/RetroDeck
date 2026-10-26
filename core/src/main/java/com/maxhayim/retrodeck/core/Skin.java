@@ -78,6 +78,8 @@ public final class Skin {
      * phosphor does, or 0 to light it in the illumination colour.
      */
     public int phosphor;
+    /** The tint of a display's filter glass, seen where nothing is lit, or 0 for clear. */
+    public int lcdGlass;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */

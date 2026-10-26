@@ -407,6 +407,7 @@ public class StereoView extends View {
         int save = c.save();
         c.clipRect(lcd);
         if (skin.lcdStyle == Skin.LCD_REFLECTIVE) drawPanel(c, lcd, u);
+        if (skin.lcdGlass != 0) drawGlass(c, lcd, u);
 
         // Visualizer first, so its overlay logo sits behind the bars.
         Box vz = skin.zone(Zones.VISUALIZER);
@@ -461,6 +462,17 @@ public class StereoView extends View {
         paint.setShader(panel);
         c.drawRect(lcd, paint);
         paint.setShader(panelShade);
+        c.drawRect(lcd, paint);
+        paint.setShader(null);
+    }
+
+    /** Tinted filter glass: its colour, darker where the bezel overhangs it. */
+    private void drawGlass(Canvas c, RectF lcd, float u) {
+        paint.setColor(skin.lcdGlass);
+        c.drawRect(lcd, paint);
+        paint.setShader(new LinearGradient(0, lcd.top, 0, lcd.bottom,
+                new int[]{0x90000000, 0x00000000, 0x00000000, 0x60000000}, new float[]{0f, 0.18f, 0.8f, 1f},
+                Shader.TileMode.CLAMP));
         c.drawRect(lcd, paint);
         paint.setShader(null);
     }

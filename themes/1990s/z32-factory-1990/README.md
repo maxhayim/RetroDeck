@@ -1,6 +1,6 @@
 # Z32 Factory 1990
 
-**Era:** 1990s  ·  **Display:** Vacuum fluorescent behind black glass, lit the same by day and night, glowing sky blue whatever the dash lighting, like the real unit  ·  **Skin id:** `z32factory90`
+**Era:** 1990s  ·  **Display:** Vacuum fluorescent behind black glass, lit the same by day and night, pale blue characters behind plum-red filter glass, whatever the dash lighting  ·  **Skin id:** `z32factory90`
 
 A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into a carbon-look dash. Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
 
