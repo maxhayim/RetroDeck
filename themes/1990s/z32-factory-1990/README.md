@@ -1,21 +1,15 @@
 # Z32 Factory 1990
 
-**Era:** 1990s  ·  **Display:** Vacuum fluorescent behind black glass, lit the same by day and night, pale blue characters behind plum-red filter glass, whatever the dash lighting  ·  **Skin id:** `z32factory90`
+**Era:** 1990s  ·  **Display:** Vacuum fluorescent: pale blue segments behind plum-red filter glass and smoked black, muted by day and bright at night, whatever the dash lighting  ·  **Skin id:** `z32factory90`
 
-A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into a carbon-look dash. Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
+A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into the dash. Modelled in 3D and rendered with Blender (see tools/blender). Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
 
 ## Screenshots
 
-Taken from the running app (v0.3.1) on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/).
-
-![At night: the faceplate dark, the white legends backlit](z32-night.jpg)
-<sub>At night (Key Lighting on Auto, 21:23): the faceplate dark, the white legends backlit</sub>
-
-![By day: the legends are printed, not lit](z32-day.jpg)
-<sub>By day (Key Lighting Off): the legends are printed paint; the display stays lit</sub>
+Since v0.4.0 this skin is modelled in 3D, and it hasn't been re-shot on a device yet; the renders below show it. The Key Lighting setting, from the running app (v0.3.0):
 
 ![The Key Lighting setting](key-lighting.jpg)
-<sub>The Key Lighting setting (v0.3.0)</sub>
+<sub>The Key Lighting setting</sub>
 
 ## Day and night
 

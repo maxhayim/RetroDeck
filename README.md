@@ -31,12 +31,12 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-night.jpg" alt="Z32 Factory 1990 at night: the faceplate dark, the white legends backlit"/><br/><sub>Z32 Factory 1990 at night: a tuner and tape deck over a three-disc changer, white legends backlit, a fluorescent display behind black glass</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-night.jpg" alt="Z32 Factory 1990 at night (render)"/><br/><sub>Z32 Factory 1990 at night, modelled in 3D: backlit legends, and the display's icy blue behind smoked plum glass. A render; not yet re-shot on a device</sub></td>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/stereo-hifi.jpg" alt="Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/detachable-1998/stereo-detachable.jpg" alt="Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-day.jpg" alt="The same Z32 Factory 1990 by day: legends printed, not lit"/><br/><sub>The same unit by day: the legends are printed paint, not lit; the display stays lit</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-day.jpg" alt="Z32 Factory 1990 by day (render)"/><br/><sub>The same unit by day: satin black plastic, gloss doors, printed legends (render)</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/digital-1996/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
@@ -60,7 +60,7 @@
   </tr>
 </table>
 
-<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched; the two Z32 Factory 1990 images are labelled renders until it's re-shot. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
 
 <h2>Features</h2>
 
