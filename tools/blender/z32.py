@@ -395,13 +395,13 @@ fill = area("cabin", (W * 0.15, H * 0.3, 14), (math.radians(10), math.radians(-2
 
 
 # At night only a little street light reaches the dash, from above.
-street = area("street", (W / 2, H + 4, 12), (math.radians(-30), 0, 0), (30, 8), 70, (0.75, 0.82, 1.0))
+street = area("street", (W / 2, H + 4, 12), (math.radians(-30), 0, 0), (30, 8), 220, (0.75, 0.82, 1.0))
 
 
 def look(night):
     sun.hide_render = fill.hide_render = night
     street.hide_render = not night
-    bg.inputs["Color"].default_value = (0.006, 0.0065, 0.007, 1) if not night else (0.0004, 0.0004, 0.0005, 1)
+    bg.inputs["Color"].default_value = (0.006, 0.0065, 0.007, 1) if not night else (0.0012, 0.0012, 0.0015, 1)
     for m in (legend, well):
         m.node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = m["night"] if night else 0.0
 
