@@ -33,7 +33,7 @@ public class SkinRenderTest {
         File dir = new File("build/skin-renders");
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
-        for (Skin skin : Skins.all()) {
+        for (Skin skin : Skins.all()) for (String keys : new String[]{KeyLights.ON, KeyLights.OFF}) {
             StereoView v = new StereoView(RuntimeEnvironment.getApplication());
             v.setSkin(skin);
             StereoState s = new StereoState();
@@ -46,12 +46,13 @@ public class SkinRenderTest {
             s.durationMs = 240_000;
             v.setState(s);
             v.setIllumination(Illumination.preset(Illumination.AMBER));
+            v.setKeyLighting(keys);
             v.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
             v.layout(0, 0, w, h);
             Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             v.draw(new Canvas(bm));
-            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + ".png"))) {
+            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + (KeyLights.ON.equals(keys) ? "" : "-day") + ".png"))) {
                 bm.compress(Bitmap.CompressFormat.PNG, 100, out);
             }
         }

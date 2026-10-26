@@ -48,6 +48,10 @@ public class StereoView extends View {
     private int illumination = Illumination.preset(Illumination.AMBER);
     private int accent = 0xFFFF3B30;
     private String visualizer = Visualizers.BARS;
+    private String keyLighting = KeyLights.AUTO;
+    /** This frame's legend colour, and whether it is backlit. */
+    private int legend;
+    private boolean keysLit;
     private StereoState state = new StereoState();
     private Overlay overlay;
     private Listener listener;
@@ -57,6 +61,9 @@ public class StereoView extends View {
 
     /** How long the display shows the volume after it changes. */
     private static final long VOLUME_SHOWN_MS = 2500;
+
+    /** Darkens the faceplate when the key lights are on, as it is at night. */
+    private static final int NIGHT_DIM = 0x70000000;
 
     private boolean showZones;
     private String highlightZone;
@@ -106,6 +113,12 @@ public class StereoView extends View {
     /** The vehicle's second colour: visualizer peaks and the top of the level ladder. */
     public void setAccent(int color) {
         accent = color;
+        invalidate();
+    }
+
+    /** When the key legends are backlit: {@link KeyLights#AUTO}, ON or OFF. */
+    public void setKeyLighting(String mode) {
+        keyLighting = KeyLights.exists(mode) ? mode : KeyLights.AUTO;
         invalidate();
     }
 
@@ -195,6 +208,12 @@ public class StereoView extends View {
         drawOverlay(c, Zones.HEADER, false);
         drawOverlay(c, Zones.FACEPLATE, false);
         drawOverlay(c, Zones.CORNER, false);
+
+        keysLit = KeyLights.lit(keyLighting, java.util.Calendar.getInstance());
+        legend = !keysLit ? skin.keyPrint : skin.keyLight != 0 ? skin.keyLight : illumination;
+        // At night no daylight falls on the faceplate: it goes dark, and only the backlit legends and
+        // the display stand out.
+        if (keysLit) c.drawColor(NIGHT_DIM);
 
         drawLcd(c, u, now);
         drawButtons(c, u);
@@ -623,7 +642,7 @@ public class StereoView extends View {
             drawLegend(c, rect, skin.presetLabels[i], false, u, size, false);
             text.setTextSize(size * 0.75f);
             text.setTextAlign(Paint.Align.RIGHT);
-            text.setColor(Illumination.withAlpha(illumination, 0xC0));
+            text.setColor(Illumination.withAlpha(legend, 0xC0));
             c.drawText(String.valueOf(i + 1), b.right - b.width() * 0.08f, b.bottom - b.height() * 0.2f + (down ? u * 0.004f : 0), text);
             text.setTextAlign(Paint.Align.CENTER);
         }
@@ -658,14 +677,15 @@ public class StereoView extends View {
             paint.setColor(0x66000000);
             if (round) c.drawCircle(b.centerX(), b.centerY(), r, paint);
             else c.drawRoundRect(b, r, r, paint);
-            paint.setColor(Illumination.withAlpha(illumination, 0x22));
+            paint.setColor(Illumination.withAlpha(keysLit ? legend : 0xFF000000, 0x22));
             if (round) c.drawCircle(b.centerX(), b.centerY(), r, paint);
             else c.drawRoundRect(b, r, r, paint);
         }
         if (label == null) return;
         text.setTextSize(size);
-        text.setColor(illumination);
-        text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(illumination, down ? 0xCC : 0x99));
+        text.setColor(legend);
+        // Backlit legends glow; printed ones are just paint.
+        if (keysLit) text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(legend, down ? 0xCC : 0x99));
         // The legend sits on the key face, a little above the key's centre.
         float faceY = skin.lcdStyle == Skin.LCD_MODERN || round ? b.centerY() : b.centerY() - b.height() * 0.04f;
         c.drawText(label, b.centerX(), faceY + sink - (text.descent() + text.ascent()) / 2, text);
@@ -680,7 +700,7 @@ public class StereoView extends View {
         // Illuminated dial ring: 11 dots, lit up to the volume.
         for (int i = 0; i <= 10 && skin.knobDots; i++) {
             double a = Math.toRadians(135 + 270.0 * i / 10);
-            boolean lit = i / 10f <= f + 1e-3f && state.volume > 0;
+            boolean lit = keysLit && i / 10f <= f + 1e-3f && state.volume > 0;
             float dx = cx + (float) Math.cos(a) * rad * 1.25f, dy = cy + (float) Math.sin(a) * rad * 1.25f;
             if (lit) {
                 paint.setColor(Illumination.withAlpha(illumination, 0x38));
@@ -697,11 +717,13 @@ public class StereoView extends View {
         paint.setStrokeWidth(rad * 0.11f);
         paint.setColor(0xCC000000);
         c.drawLine(x1, y1, x2, y2, paint);
-        paint.setStrokeWidth(rad * 0.16f);
-        paint.setColor(Illumination.withAlpha(illumination, 0x30));
-        c.drawLine(x1, y1, x2, y2, paint);
+        if (keysLit) {
+            paint.setStrokeWidth(rad * 0.16f);
+            paint.setColor(Illumination.withAlpha(legend, 0x30));
+            c.drawLine(x1, y1, x2, y2, paint);
+        }
         paint.setStrokeWidth(rad * 0.06f);
-        paint.setColor(illumination);
+        paint.setColor(legend);
         c.drawLine(x1, y1, x2, y2, paint);
         paint.setStrokeCap(Paint.Cap.BUTT);
     }

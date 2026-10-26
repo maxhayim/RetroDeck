@@ -153,6 +153,9 @@ public final class Skins {
         Skin s = new Skin(FACTORY, "Z32 Factory 1990", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF93A89C,
                 0xFF0A0B0C, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_REFLECTIVE, 0.008f);
         s.knobDots = false;
+        // White legends: printed by day, backlit white at night.
+        s.keyLight = 0xFFF4F6F8;
+        s.keyPrint = 0xFFC4C8CD;
         // The radio and tape deck.
         s.knob = new Box(0.044f, 0.07f, 0.168f, 0.305f);
         s.trim("BASS|BAL", 0.046f, 0.35f, 0.098f, 0.44f)

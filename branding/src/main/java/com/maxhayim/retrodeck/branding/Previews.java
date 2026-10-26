@@ -27,6 +27,7 @@ final class Previews {
         v.setSkin(Skins.get(p.skin));
         v.setIllumination(p.illuminationColor());
         v.setAccent(p.accentColor);
+        v.setKeyLighting(p.keyLighting);
         v.setVisualizer(p.visualizer);
         v.invalidate();
     }

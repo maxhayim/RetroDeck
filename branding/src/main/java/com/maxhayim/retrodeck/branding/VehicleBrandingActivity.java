@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.maxhayim.retrodeck.core.AspectFrame;
 import com.maxhayim.retrodeck.core.Illumination;
+import com.maxhayim.retrodeck.core.KeyLights;
 import com.maxhayim.retrodeck.core.Pickers;
 import com.maxhayim.retrodeck.core.Skin;
 import com.maxhayim.retrodeck.core.Skins;
@@ -58,7 +59,7 @@ public class VehicleBrandingActivity extends Activity {
     private List<VehicleProfile> pendingExport;
 
     private Ui.Row rowProfiles, rowManufacturer, rowModel, rowYear, rowTrim, rowLogo, rowBadge, rowEditLogo,
-            rowPlacement, rowSkin, rowVisualizer, rowIllumination, rowAccent, rowStartup;
+            rowPlacement, rowSkin, rowVisualizer, rowIllumination, rowAccent, rowKeys, rowStartup;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -127,6 +128,7 @@ public class VehicleBrandingActivity extends Activity {
         rowVisualizer = add(l, "Visualizer", v -> chooseVisualizer());
         rowIllumination = add(l, "Dashboard Illumination", v -> chooseIllumination());
         rowAccent = add(l, "Accent Colour", v -> chooseAccent());
+        rowKeys = add(l, "Key Lighting", v -> chooseKeyLighting());
         rowStartup = add(l, "Startup Animation", v -> startActivity(new Intent(this, StartupEditorActivity.class)));
         add(l, "Preview", v -> openPreview()).value("Startup, stereo and standby, full screen");
 
@@ -168,6 +170,7 @@ public class VehicleBrandingActivity extends Activity {
         rowVisualizer.value(Visualizers.label(profile.visualizer));
         rowIllumination.value(Illumination.label(profile.illumination) + "  ·  " + Illumination.hex(profile.illuminationColor()));
         rowAccent.value(Illumination.hex(profile.accentColor));
+        rowKeys.value(KeyLights.label(profile.keyLighting) + "  ·  " + KeyLights.describe(profile.keyLighting));
         rowStartup.value(profile.startup.enabled
                 ? StartupConfig.label(profile.startup.preset) + (StartupConfig.INSTANT.equals(profile.startup.preset) ? ""
                 : String.format(Locale.US, "  ·  %.1f s", profile.startup.durationMs / 1000f))
@@ -451,6 +454,21 @@ public class VehicleBrandingActivity extends Activity {
         }
         Ui.dialog(this).setTitle("Visualizer").setSingleChoiceItems(names, checked, (d, w) -> {
             profile.visualizer = Visualizers.ALL[w];
+            save();
+            d.dismiss();
+        }).show();
+    }
+
+    /** Backlit legends at night, printed ones by day, like keys that light with the headlights. */
+    private void chooseKeyLighting() {
+        String[] names = new String[KeyLights.ALL.length];
+        int checked = 0;
+        for (int i = 0; i < names.length; i++) {
+            names[i] = KeyLights.label(KeyLights.ALL[i]) + ": " + KeyLights.describe(KeyLights.ALL[i]);
+            if (KeyLights.ALL[i].equals(profile.keyLighting)) checked = i;
+        }
+        Ui.dialog(this).setTitle("Key lighting").setSingleChoiceItems(names, checked, (d, w) -> {
+            profile.keyLighting = KeyLights.ALL[w];
             save();
             d.dismiss();
         }).show();

@@ -1,6 +1,7 @@
 package com.maxhayim.retrodeck.branding;
 
 import com.maxhayim.retrodeck.core.Illumination;
+import com.maxhayim.retrodeck.core.KeyLights;
 import com.maxhayim.retrodeck.core.Skins;
 import com.maxhayim.retrodeck.core.Visualizers;
 import com.maxhayim.retrodeck.core.Zones;
@@ -32,6 +33,7 @@ public final class ProfileJson {
         palette.put("illumination", p.illumination);
         palette.put("custom", Illumination.hex(p.customColor));
         palette.put("accent", Illumination.hex(p.accentColor));
+        palette.put("keys", p.keyLighting);
         o.put("palette", palette);
 
         JSONObject logos = new JSONObject();
@@ -102,6 +104,8 @@ public final class ProfileJson {
             p.illumination = isMode(mode) ? mode : Illumination.AMBER;
             p.customColor = Illumination.parse(palette.optString("custom", null), p.customColor) | 0xFF000000;
             p.accentColor = Illumination.parse(palette.optString("accent", null), p.accentColor) | 0xFF000000;
+            String keys = palette.optString("keys", KeyLights.AUTO);
+            p.keyLighting = KeyLights.exists(keys) ? keys : KeyLights.AUTO;
         }
 
         JSONObject logos = o.optJSONObject("logos");

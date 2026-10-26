@@ -55,6 +55,10 @@ public final class Skin {
     public int presetRows = 1;
     /** A printed name on each preset key besides its number, as on tape decks (REW, FF), or null. */
     public String[] presetLabels;
+    /** Backlit legend colour, or 0 to light them in the illumination colour. */
+    public int keyLight;
+    /** Legend colour by day, when the backlight is off: the paint printed on the keys. */
+    public int keyPrint = 0xFFB4B9C0;
     /** A lit scale of dots around the volume knob. */
     public boolean knobDots = true;
     /** Visualizer segments shade from the illumination colour at the bottom to the accent at the top. */

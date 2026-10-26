@@ -1,6 +1,7 @@
 package com.maxhayim.retrodeck.branding;
 
 import com.maxhayim.retrodeck.core.Illumination;
+import com.maxhayim.retrodeck.core.KeyLights;
 import com.maxhayim.retrodeck.core.Skins;
 import com.maxhayim.retrodeck.core.Visualizers;
 import com.maxhayim.retrodeck.core.Zones;
@@ -35,6 +36,8 @@ public final class VehicleProfile {
     public int customColor = 0xFFFF7A00;
     /** Second vehicle colour, used for visualizer peaks and the start-up glow. */
     public int accentColor = 0xFFFF3B30;
+    /** When the key legends are backlit; see KeyLights. */
+    public String keyLighting = KeyLights.AUTO;
     public StartupConfig startup = new StartupConfig();
 
     /** zone -> {manufacturer placement, model placement}. */
@@ -110,6 +113,7 @@ public final class VehicleProfile {
         p.illumination = illumination;
         p.customColor = customColor;
         p.accentColor = accentColor;
+        p.keyLighting = keyLighting;
         p.startup = startup.copy();
         p.placements.clear();
         for (Map.Entry<String, Placement[]> e : placements.entrySet()) {

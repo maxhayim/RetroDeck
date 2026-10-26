@@ -79,6 +79,7 @@
   <li><strong>Placement</strong>: put each logo in the radio display header, the LCD, the faceplate, a corner badge, behind the visualizer, on the startup screen or on the standby screen; drag it or use sliders, with a live preview before saving</li>
   <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text</li>
   <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting, then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
+  <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights. At night the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too. On Z32 Factory 1990 the legends are white, printed by day and backlit at night</li>
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
   <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
   <li><strong>Music</strong>: plays audio files from the device; SRC adds files, presets 1–6 jump to tracks, the knob sets the media volume, steering-wheel media keys work</li>
@@ -228,6 +229,7 @@ my-vehicle.zip
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
+  <li>Key lighting (day and night legends) has only been drawn by the render tests so far, not yet on a device.</li>
   <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>

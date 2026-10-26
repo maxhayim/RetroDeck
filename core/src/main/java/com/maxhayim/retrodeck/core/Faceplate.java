@@ -27,8 +27,11 @@ final class Faceplate {
 
     private static final int AA = Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG;
 
-    /** Key bodies: hard shiny plastic, soft rubber, or slim keys with a bright cut metal edge. */
-    private static final int KEY_HARD = 0, KEY_RUBBER = 1, KEY_SLIM = 2;
+    /**
+     * Key bodies: hard shiny plastic, soft rubber, slim keys with a bright cut metal edge, or the
+     * near-black satin plastic of factory units.
+     */
+    private static final int KEY_HARD = 0, KEY_RUBBER = 1, KEY_SLIM = 2, KEY_BLACK = 3;
 
     private final Canvas c;
     private final Skin skin;
@@ -220,7 +223,7 @@ final class Faceplate {
         float r = skin.corner * u;
         int ink = skin.printColor, faint = 0xFF7E848C;
         float small = u * 0.014f;
-        keys(r, KEY_HARD);
+        keys(r, KEY_BLACK);
         RectF k = px(skin.knob);
         knob(k, true, false);
         print("PUSH ON", k.left, k.top - u * 0.006f, small, ink, false);
@@ -315,7 +318,7 @@ final class Faceplate {
     }
 
     private void button(Skin.Control ctl, float r, int kind) {
-        if (ctl.round) roundKey(px(ctl.box), kind == KEY_RUBBER);
+        if (ctl.round) roundKey(px(ctl.box), kind);
         else key(px(ctl.box), r, kind);
     }
 
@@ -328,22 +331,22 @@ final class Faceplate {
         c.drawRoundRect(pocket, fr * 1.5f, fr * 1.5f, p);
         inner(pocket, fr * 1.5f, u * 0.01f, u * 0.004f, 0xFF);
         drop(r, fr, u * 0.01f, u * 0.005f, 0xE0);
-        p.setShader(new LinearGradient(0, r.top, 0, r.bottom, new int[]{0xFF34363B, 0xFF222428, 0xFF141518},
+        p.setShader(new LinearGradient(0, r.top, 0, r.bottom, new int[]{0xFF202124, 0xFF121315, 0xFF09090A},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         c.drawRoundRect(r, fr, fr, p);
         p.setShader(null);
         save(r, fr);
         overlay(grain(256, 41, 14), 0.7f);
         c.restore();
-        bevel(r, fr, u * 0.003f, 0x60FFFFFF, 0x90000000);
+        bevel(r, fr, u * 0.003f, 0x40FFFFFF, 0x90000000);
         RectF f = new RectF(r);
         f.inset(u * 0.009f, u * 0.009f);
-        p.setShader(new LinearGradient(0, f.top, 0, f.bottom, 0xFF1E2023, 0xFF111214, Shader.TileMode.CLAMP));
+        p.setShader(new LinearGradient(0, f.top, 0, f.bottom, 0xFF0F1011, 0xFF070708, Shader.TileMode.CLAMP));
         c.drawRoundRect(f, fr * 0.6f, fr * 0.6f, p);
         p.setShader(null);
         save(f, fr * 0.6f);
-        overlay(grain(256, 42, 10), 0.6f);
-        light(f, 0x12, 0x30);
+        overlay(grain(256, 42, 8), 0.5f);
+        light(f, 0x0C, 0x30);
         c.restore();
         bevel(f, fr * 0.6f, Math.max(1, u * 0.002f), 0x90000000, 0x30FFFFFF);
     }
@@ -356,7 +359,7 @@ final class Faceplate {
         p.setColor(0xFF030304);
         c.drawRoundRect(rec, r * 1.5f, r * 1.5f, p);
         bevel(rec, r * 1.5f, Math.max(1, u * 0.002f), 0x90000000, 0x40FFFFFF);
-        p.setShader(new LinearGradient(0, s.top, 0, s.bottom, new int[]{0xFF26292D, 0xFF121315, 0xFF0A0A0C},
+        p.setShader(new LinearGradient(0, s.top, 0, s.bottom, new int[]{0xFF1A1C1F, 0xFF0B0C0D, 0xFF050506},
                 new float[]{0f, 0.4f, 1f}, Shader.TileMode.CLAMP));
         c.drawRoundRect(s, r, r, p);
         p.setShader(null);
@@ -384,7 +387,7 @@ final class Faceplate {
         p.setColor(0xFF030304);
         c.drawRoundRect(rec, r * 1.5f, r * 1.5f, p);
         bevel(rec, r * 1.5f, Math.max(1, u * 0.002f), 0x90000000, 0x40FFFFFF);
-        p.setShader(new LinearGradient(0, s.top, 0, s.bottom, 0xFF1D1F22, 0xFF0C0D0F, Shader.TileMode.CLAMP));
+        p.setShader(new LinearGradient(0, s.top, 0, s.bottom, 0xFF131416, 0xFF070708, Shader.TileMode.CLAMP));
         c.drawRoundRect(s, r, r, p);
         p.setShader(null);
         // The window: darker, glossier, with a bright lower lip.
@@ -411,7 +414,8 @@ final class Faceplate {
     }
 
     /** A round key standing in a round hole; rubber is matt, hard plastic has a gloss spot. */
-    private void roundKey(RectF b, boolean rubber) {
+    private void roundKey(RectF b, int kind) {
+        boolean rubber = kind == KEY_RUBBER, black = kind == KEY_BLACK;
         float cx = b.centerX(), cy = b.centerY(), r = Math.min(b.width(), b.height()) / 2;
         p.setColor(0xFF060607);
         c.drawCircle(cx, cy, r + u * 0.006f, p);
@@ -420,10 +424,10 @@ final class Faceplate {
         s.setColor(0xF0000000);
         s.setMaskFilter(new BlurMaskFilter(u * 0.008f, BlurMaskFilter.Blur.NORMAL));
         c.drawCircle(cx, cy + u * 0.006f, r, s);
-        p.setShader(new LinearGradient(0, cy - r, 0, cy + r, 0xFF4A4D53, 0xFF0D0E10, Shader.TileMode.CLAMP));
+        p.setShader(new LinearGradient(0, cy - r, 0, cy + r, black ? 0xFF2A2C2F : 0xFF4A4D53, black ? 0xFF060607 : 0xFF0D0E10, Shader.TileMode.CLAMP));
         c.drawCircle(cx, cy, r, p);
         float fr = r * 0.86f, fy = cy - r * 0.05f;
-        p.setShader(new LinearGradient(0, fy - fr, 0, fy + fr, 0xFF34363B, 0xFF18191C, Shader.TileMode.CLAMP));
+        p.setShader(new LinearGradient(0, fy - fr, 0, fy + fr, black ? 0xFF18191B : 0xFF34363B, black ? 0xFF0B0B0C : 0xFF18191C, Shader.TileMode.CLAMP));
         c.drawCircle(cx, fy, fr, p);
         p.setShader(new RadialGradient(cx - fr * 0.35f, fy - fr * 0.45f, fr * 0.8f,
                 rubber ? 0x18FFFFFF : 0x34FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
@@ -495,7 +499,7 @@ final class Faceplate {
      * keys sit closer to the plate and have a bright cut edge.
      */
     private void key(RectF b, float r, int kind) {
-        boolean rubber = kind == KEY_RUBBER, slim = kind == KEY_SLIM;
+        boolean rubber = kind == KEY_RUBBER, slim = kind == KEY_SLIM, black = kind == KEY_BLACK;
         RectF hole = new RectF(b);
         hole.inset(-u * 0.006f, -u * 0.006f);
         float hr = r + u * 0.006f;
@@ -508,20 +512,22 @@ final class Faceplate {
 
         // Side walls, then the face, which sits a little high so more wall shows below it.
         p.setShader(new LinearGradient(0, b.top, 0, b.bottom,
-                rubber ? 0xFF3A3C41 : 0xFF484B51, rubber ? 0xFF111214 : 0xFF0E0F11, Shader.TileMode.CLAMP));
+                black ? 0xFF2B2D30 : rubber ? 0xFF3A3C41 : 0xFF484B51, black ? 0xFF060607 : rubber ? 0xFF111214 : 0xFF0E0F11,
+                Shader.TileMode.CLAMP));
         c.drawRoundRect(b, r, r, p);
         p.setShader(null);
         float ch = Math.min(b.height() * 0.1f, u * 0.009f);
         RectF face = new RectF(b.left + ch, b.top + ch * 0.6f, b.right - ch, b.bottom - ch * 1.5f);
         float fr = Math.max(1, r - ch * 0.6f);
         p.setShader(new LinearGradient(0, face.top, 0, face.bottom,
-                rubber ? 0xFF2D2F33 : 0xFF2E3034, rubber ? 0xFF1E1F22 : 0xFF1A1B1E, Shader.TileMode.CLAMP));
+                black ? 0xFF161719 : rubber ? 0xFF2D2F33 : 0xFF2E3034, black ? 0xFF0C0C0D : rubber ? 0xFF1E1F22 : 0xFF1A1B1E,
+                Shader.TileMode.CLAMP));
         c.drawRoundRect(face, fr, fr, p);
         p.setShader(null);
         save(face, fr);
         overlay(grain(128, 11, rubber ? 26 : 12), rubber ? 0.8f : 0.5f);
         p.setShader(new LinearGradient(0, face.top, 0, face.top + face.height() * (rubber ? 0.7f : 0.45f),
-                rubber ? 0x14FFFFFF : 0x24FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+                rubber ? 0x14FFFFFF : black ? 0x16FFFFFF : 0x24FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
         c.drawRect(face, p);
         p.setShader(null);
         c.restore();
