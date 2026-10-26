@@ -66,6 +66,8 @@ public class StereoView extends View {
     private static final int NIGHT_DIM = 0x70000000;
     /** Unlit segments behind smoked glass: there, but barely seen. */
     private static final int UNLIT = 0x06;
+    /** Smoked glass over a tinted display: heavy over the tint, light over what's lit. */
+    private static final int SMOKE_TINT = 0x80000000, SMOKE = 0x1E000000;
     /** DSEG by keshikan (SIL Open Font License), in assets/fonts. Loaded once, shared by every view. */
     private static Typeface seg14, seg7;
 
@@ -432,6 +434,11 @@ public class StereoView extends View {
             c.drawRect(lcd, paint);
             paint.setShader(null);
         }
+        // The smoked glass is in front of the characters too.
+        if (skin.lcdGlass != 0) {
+            paint.setColor(SMOKE);
+            c.drawRect(lcd, paint);
+        }
         // The front glass: a diagonal reflection and a bright rim along the top.
         if (glare == null || !lcd.equals(glareFor)) {
             glareFor = new RectF(lcd);
@@ -469,6 +476,8 @@ public class StereoView extends View {
     /** Tinted filter glass: its colour, darker where the bezel overhangs it. */
     private void drawGlass(Canvas c, RectF lcd, float u) {
         paint.setColor(skin.lcdGlass);
+        c.drawRect(lcd, paint);
+        paint.setColor(SMOKE_TINT);
         c.drawRect(lcd, paint);
         paint.setShader(new LinearGradient(0, lcd.top, 0, lcd.bottom,
                 new int[]{0x90000000, 0x00000000, 0x00000000, 0x60000000}, new float[]{0f, 0.18f, 0.8f, 1f},
