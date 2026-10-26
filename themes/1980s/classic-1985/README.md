@@ -13,7 +13,7 @@ Taken from the running app on an Android TV box at 1920×1080 (240 dpi), branded
 
 ## Day and night
 
-Drawn by the render tests (Android's own graphics on a computer, no logos), not taken on a device. At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).
+Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).
 
 | Night | Day |
 |---|---|

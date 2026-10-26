@@ -117,7 +117,9 @@ public class StereoView extends View {
 
     public void setIllumination(int color) {
         illumination = color;
-        invalidate();
+        // A rendered skin's night legends are tinted into its cached picture.
+        if (skin.art != null) dropBackground();
+        else invalidate();
     }
 
     public int getIllumination() { return illumination; }
@@ -283,7 +285,7 @@ public class StereoView extends View {
             for (Skin.Control ctl : skin.controls) if (ctl.id.equals(pressed)) key = ctl.box;
         }
         if (key == null) return;
-        if (pressedArt == null) pressedArt = loadArt(skin.art + (keysLit ? "/night-pressed.webp" : "/day-pressed.webp"), w, h);
+        if (pressedArt == null) pressedArt = withGlow(loadArt(skin.art + (keysLit ? "/night-pressed.webp" : "/day-pressed.webp"), w, h), w, h);
         if (pressedArt == null) return;
         android.graphics.Rect r = new android.graphics.Rect(Math.round(key.left * w), Math.round(key.top * h),
                 Math.round(key.right * w), Math.round(key.bottom * h));
@@ -306,10 +308,37 @@ public class StereoView extends View {
         }
     }
 
+    /**
+     * At night, the backlit legends of a rendered skin that has them as a separate layer (glow.webp,
+     * white), in the legend colour: the dash lighting, unless the skin has its own.
+     */
+    private Bitmap withGlow(Bitmap base, int w, int h) {
+        if (base == null || !keysLit) return base;
+        Bitmap glow = loadArt(skin.art + "/glow.webp", w, h);
+        if (glow == null) return base;
+        try {
+            if (!base.isMutable()) {
+                Bitmap copy = base.copy(base.getConfig(), true);
+                if (copy == null) return base;
+                base.recycle();
+                base = copy;
+            }
+            Paint add = new Paint(Paint.FILTER_BITMAP_FLAG);
+            add.setColorFilter(new android.graphics.LightingColorFilter(legend & 0xFFFFFF, 0));
+            add.setXfermode(new android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.ADD));
+            new Canvas(base).drawBitmap(glow, 0, 0, add);
+        } catch (OutOfMemoryError e) {
+            // The faceplate without its lit legends is still usable.
+        } finally {
+            glow.recycle();
+        }
+        return base;
+    }
+
     private Bitmap buildBackground(int w, int h) {
         if (skin.art != null) {
             artNight = keysLit;
-            Bitmap art = loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h);
+            Bitmap art = withGlow(loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h), w, h);
             if (art != null) return art;
         }
         // Full colour keeps the metal and glass gradients smooth; low-RAM head units get 16-bit.

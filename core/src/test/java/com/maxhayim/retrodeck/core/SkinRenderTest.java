@@ -66,6 +66,7 @@ public class SkinRenderTest {
     /** Every box of a skin as JSON, for the 3D models in tools/blender, so they match the touch areas. */
     private static String layout(Skin s) {
         StringBuilder b = new StringBuilder("{\"id\":\"").append(s.id).append('"');
+        b.append(",\"corner\":").append(s.corner).append(",\"lcdStyle\":").append(s.lcdStyle);
         box(b, "knob", s.knob);
         box(b, "lcd", s.lcd);
         box(b, "lcdText", s.lcdText);

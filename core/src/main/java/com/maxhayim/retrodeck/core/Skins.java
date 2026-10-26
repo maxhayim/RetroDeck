@@ -45,6 +45,7 @@ public final class Skins {
     private static Skin classic() {
         Skin s = new Skin(CLASSIC, "Classic 1985", "1980s", 0xFF5B5F66, 0xFF2E3035, 0xFF141518, 0xFF0B0C0A,
                 0xFF1E1F22, 0xFF3A3D43, 0xFF17181B, 0xFF26282C, Skin.LCD_SEGMENT, 0.012f);
+        s.art = "skins/" + CLASSIC;
         s.knob = new Box(0.035f, 0.17f, 0.195f, 0.62f);
         s.lcd = new Box(0.23f, 0.15f, 0.77f, 0.62f);
         s.lcdText = new Box(0.415f, 0.18f, 0.755f, 0.42f);
@@ -69,6 +70,7 @@ public final class Skins {
     private static Skin digital() {
         Skin s = new Skin(DIGITAL, "Digital 1996", "1990s", 0xFF26282C, 0xFF0F1012, 0xFF050506, 0xFF07100D,
                 0xFF000000, 0xFF2A2C31, 0xFF0A0A0C, 0xFF9AA0A8, Skin.LCD_DOT, 0.03f);
+        s.art = "skins/" + DIGITAL;
         s.knob = new Box(0.02f, 0.14f, 0.16f, 0.54f);
         s.lcd = new Box(0.18f, 0.14f, 0.82f, 0.54f);
         s.lcdText = new Box(0.345f, 0.17f, 0.81f, 0.38f);
@@ -93,6 +95,7 @@ public final class Skins {
     private static Skin modern() {
         Skin s = new Skin(MODERN, "Modern Glass", "2020s", 0xFF151922, 0xFF07080B, 0xFF000000, 0xFF0C1018,
                 0xFF1C2230, 0xFF1A202C, 0xFF2A3242, 0xFF8C96A8, Skin.LCD_MODERN, 0.025f);
+        s.art = "skins/" + MODERN;
         s.lcd = new Box(0.03f, 0.15f, 0.97f, 0.70f);
         s.lcdText = new Box(0.33f, 0.20f, 0.95f, 0.46f);
         s.control(Skin.POWER, "PWR", 0.03f, 0.76f, 0.12f, 0.94f)
@@ -119,6 +122,7 @@ public final class Skins {
     private static Skin hifi() {
         Skin s = new Skin(HIFI, "Hi-Fi 1984", "1980s", 0xFF2A2B2E, 0xFF111214, 0xFF060607, 0xFF0A0B09,
                 0xFF141518, 0xFF26282C, 0xFF101113, 0xFFC2AC82, Skin.LCD_SEGMENT, 0.005f);
+        s.art = "skins/" + HIFI;
         s.knob = new Box(0.035f, 0.19f, 0.185f, 0.55f);
         s.lcd = new Box(0.23f, 0.18f, 0.77f, 0.62f);
         s.lcdText = new Box(0.405f, 0.21f, 0.755f, 0.44f);
@@ -206,6 +210,7 @@ public final class Skins {
     private static Skin detachable() {
         Skin s = new Skin(DETACHABLE, "Detachable 1998", "1990s", 0xFF3A3E45, 0xFF16181B, 0xFF060607, 0xFF040A12,
                 0xFF000000, 0xFF2C2F35, 0xFF0B0C0E, 0xFF9DA4AE, Skin.LCD_DOT, 0.03f);
+        s.art = "skins/" + DETACHABLE;
         s.gradientBars = true;
         s.knob = new Box(0.74f, 0.12f, 0.96f, 0.62f);
         s.lcd = new Box(0.10f, 0.15f, 0.70f, 0.58f);

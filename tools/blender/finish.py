@@ -3,8 +3,9 @@ Turns a skin's Blender renders into the app's images.
 
     python3 tools/blender/finish.py <render dir> <skin id>
 
-Night images get the bloom a camera sees around backlit legends; then every image is saved as
-WebP in core/src/main/assets/skins/<skin id>/.
+Night images get the bloom a camera sees around backlit legends, or, when the skin has its legends
+as a separate glow layer for the app to tint, that layer does; then every image is saved as WebP in
+core/src/main/assets/skins/<skin id>/.
 """
 import os
 import sys
@@ -25,9 +26,10 @@ def bloom(im):
     return ImageChops.add(im, ImageChops.multiply(wide, Image.new("RGB", im.size, (110, 110, 110))))
 
 
-for name in ("day", "night", "day-pressed", "night-pressed"):
+glow = os.path.exists(os.path.join(src, "glow.png"))
+for name in ("day", "night", "day-pressed", "night-pressed") + (("glow",) if glow else ()):
     im = Image.open(os.path.join(src, name + ".png")).convert("RGB")
-    if name.startswith("night"):
+    if name == "glow" or (name.startswith("night") and not glow):
         im = bloom(im)
     im.save(os.path.join(out, name + ".webp"), quality=88, method=6)
     print(name, os.path.getsize(os.path.join(out, name + ".webp")) // 1024, "KB")
