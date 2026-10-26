@@ -62,8 +62,9 @@ public class StereoView extends View {
     private String highlightZone;
 
     private Bitmap background;
-    private Shader dotGrid, mesh, glare;
-    private RectF glareFor;
+    private Shader dotGrid, mesh, glare, panel, panelShade;
+    private RectF glareFor, panelFor;
+    private int panelColor;
     private int lastVolume = -1;
     private long volumeChangedAt = -10_000;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
@@ -157,6 +158,7 @@ public class StereoView extends View {
         dotGrid = null;
         mesh = null;
         glare = null;
+        panel = null;
         invalidate();
     }
 
@@ -273,6 +275,8 @@ public class StereoView extends View {
         }
 
         for (Skin.Control ctl : skin.controls) drawButtonBody(c, p, ctl.box, r);
+        for (Skin.Control ctl : skin.decor) drawButtonBody(c, p, ctl.box, r);
+        for (Skin.Control ctl : skin.trims) drawButtonBody(c, p, ctl.box, r);
         for (Box b : skin.presetBoxes()) drawButtonBody(c, p, b, r);
 
         if (skin.knob != null) {
@@ -320,6 +324,7 @@ public class StereoView extends View {
         RectF lcd = px(skin.lcd);
         int save = c.save();
         c.clipRect(lcd);
+        if (skin.lcdStyle == Skin.LCD_REFLECTIVE) drawPanel(c, lcd, u);
 
         // Visualizer first, so its overlay logo sits behind the bars.
         Box vz = skin.zone(Zones.VISUALIZER);
@@ -358,6 +363,25 @@ public class StereoView extends View {
         c.restoreToCount(save);
     }
 
+    /**
+     * A reflective LCD's panel, lit from behind in the illumination colour through a grey-green
+     * polariser, with a shadow where the bezel overhangs it.
+     */
+    private void drawPanel(Canvas c, RectF lcd, float u) {
+        if (panel == null || panelColor != illumination || !lcd.equals(panelFor)) {
+            panelColor = illumination;
+            panelFor = new RectF(lcd);
+            int top = Illumination.mix(0xFFA9BBB0, illumination, 0.38f);
+            panel = new LinearGradient(0, lcd.top, 0, lcd.bottom, top, Illumination.dim(top, 0.8f), Shader.TileMode.CLAMP);
+            panelShade = new LinearGradient(0, lcd.top, 0, lcd.top + u * 0.03f, 0x70000000, 0x00000000, Shader.TileMode.CLAMP);
+        }
+        paint.setShader(panel);
+        c.drawRect(lcd, paint);
+        paint.setShader(panelShade);
+        c.drawRect(lcd, paint);
+        paint.setShader(null);
+    }
+
     private Shader meshShader(int cell) {
         Bitmap tile = Bitmap.createBitmap(cell, cell, Bitmap.Config.ARGB_8888);
         int line = 0x55000000;
@@ -388,18 +412,20 @@ public class StereoView extends View {
 
     private void drawTrackText(Canvas c, RectF t, float u) {
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
+        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
+        int ink = skin.lcdInk(illumination);
         lcdText(skin.lcdStyle);
         float h = t.height();
 
         // Status line: source, track, clock.
         text.setTextSize(h * 0.17f);
-        text.setColor(Illumination.dim(illumination, modern ? 1f : 0.85f));
+        text.setColor(reflective ? ink : Illumination.dim(illumination, modern ? 1f : 0.85f));
         spacing(text, modern ? 0.05f : 0.12f);
         float y1 = t.top + h * 0.20f;
         text.setTextAlign(Paint.Align.LEFT);
         String status = state.source + (state.track > 0 ? "   TRK " + two(state.track) : "");
-        boolean vfd = skin.lcdStyle == Skin.LCD_SEGMENT;
-        if (vfd) ghostText(c, status, t.left, y1, t.width() * 0.6f);
+        boolean segments = skin.lcdStyle == Skin.LCD_SEGMENT || reflective;
+        if (segments) ghostText(c, status, t.left, y1, t.width() * 0.6f);
         c.drawText(status, t.left, y1, text);
         text.setTextAlign(Paint.Align.RIGHT);
         long now = SystemClock.uptimeMillis();
@@ -417,22 +443,22 @@ public class StereoView extends View {
         spacing(text, modern ? 0f : 0.06f);
         String title = modern ? state.title : state.title.toUpperCase(Locale.US);
         float y2 = t.top + h * 0.62f;
-        if (skin.lcdStyle == Skin.LCD_SEGMENT) {
-            // Unlit segments behind the lit ones, as on a real vacuum fluorescent display.
-            text.setColor(Illumination.withAlpha(illumination, 0x1C));
+        if (segments) {
+            // Unlit segments behind the lit ones, as on a real vacuum fluorescent display or LCD.
+            text.setColor(Illumination.withAlpha(ink, reflective ? 0x12 : 0x1C));
             c.drawText(fit(ghost(title), t.width()), t.left, y2, text);
         }
-        text.setColor(modern ? 0xFFF4F6FA : illumination);
-        if (!modern) text.setShadowLayer(h * 0.04f, 0, 0, Illumination.withAlpha(illumination, 0x99));
+        text.setColor(modern ? 0xFFF4F6FA : ink);
+        if (!modern && !reflective) text.setShadowLayer(h * 0.04f, 0, 0, Illumination.withAlpha(illumination, 0x99));
         c.drawText(fit(title, t.width()), t.left, y2, text);
         text.clearShadowLayer();
 
         // Artist.
         text.setTextSize(h * 0.17f);
         spacing(text, modern ? 0.02f : 0.08f);
-        text.setColor(modern ? 0xFFAEB6C4 : Illumination.dim(illumination, 0.75f));
+        text.setColor(modern ? 0xFFAEB6C4 : reflective ? Illumination.withAlpha(ink, 0xD0) : Illumination.dim(illumination, 0.75f));
         String artist = modern ? state.artist : state.artist.toUpperCase(Locale.US);
-        if (skin.lcdStyle == Skin.LCD_SEGMENT) ghostText(c, fit(artist, t.width()), t.left, t.top + h * 0.90f, t.width());
+        if (segments) ghostText(c, fit(artist, t.width()), t.left, t.top + h * 0.90f, t.width());
         c.drawText(fit(artist, t.width()), t.left, t.top + h * 0.90f, text);
 
         if (state.durationMs > 0 && modern) {
@@ -450,7 +476,8 @@ public class StereoView extends View {
         int color = text.getColor();
         Paint.Align align = text.getTextAlign();
         text.setTextAlign(Paint.Align.LEFT);
-        text.setColor(Illumination.withAlpha(illumination, 0x16));
+        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
+        text.setColor(Illumination.withAlpha(skin.lcdInk(illumination), reflective ? 0x10 : 0x16));
         c.drawText(fit(ghost(s), width), x, y, text);
         text.setColor(color);
         text.setTextAlign(align);
@@ -465,6 +492,8 @@ public class StereoView extends View {
     private void drawVisualizer(Canvas c, RectF v, float u) {
         if (Visualizers.OFF.equals(visualizer)) return;
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
+        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
+        int ink = skin.lcdInk(illumination);
         int n = bands.length;
         if (Visualizers.BARS.equals(visualizer)) {
             float gap = v.width() * 0.012f;
@@ -487,17 +516,19 @@ public class StereoView extends View {
                     float halo = Math.max(1, u * 0.004f);
                     for (int s = 0; s < segs; s++) {
                         float top = v.bottom - (s + 1) * sh + sh * 0.18f;
-                        if (s < lit) {
+                        // Colour displays shade each column from the illumination up into the accent.
+                        int col = skin.gradientBars ? Illumination.mix(illumination, accent, s / (float) (segs - 1)) : ink;
+                        if (s < lit && !reflective) {
                             // Lit phosphor bleeds light around itself.
-                            paint.setColor(Illumination.withAlpha(illumination, 0x30));
+                            paint.setColor(Illumination.withAlpha(col, 0x30));
                             c.drawRect(l - halo, top - halo, l + bw + halo, v.bottom - s * sh + halo, paint);
                         }
-                        paint.setColor(s < lit ? illumination : Illumination.withAlpha(illumination, 0x16));
+                        paint.setColor(s < lit ? col : Illumination.withAlpha(col, reflective ? 0x10 : 0x16));
                         c.drawRect(l, top, l + bw, v.bottom - s * sh, paint);
                     }
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
                     if (pk > lit) {
-                        paint.setColor(accent);
+                        paint.setColor(reflective ? ink : accent);
                         float top = v.bottom - (pk + 1) * sh + sh * 0.18f;
                         c.drawRect(l, top, l + bw, v.bottom - pk * sh, paint);
                     }
@@ -525,7 +556,7 @@ public class StereoView extends View {
             }
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(Math.max(2, u * 0.005f));
-            paint.setColor(illumination);
+            paint.setColor(ink);
             c.drawPath(path, paint);
             paint.setStyle(Paint.Style.FILL);
         }
@@ -539,8 +570,10 @@ public class StereoView extends View {
 
     private void drawLadder(Canvas c, float x, float y, float w, float h, float level, String label) {
         lcdText(skin.lcdStyle);
+        int ink = skin.lcdInk(illumination);
+        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
         text.setTextSize(h * 0.8f);
-        text.setColor(illumination);
+        text.setColor(ink);
         float lw = h * 1.1f;
         c.drawText(label, x, y + h * 0.82f, text);
         int segs = 24;
@@ -548,8 +581,8 @@ public class StereoView extends View {
         int lit = Math.round(level * segs);
         for (int s = 0; s < segs; s++) {
             boolean hot = s >= segs - 4;
-            int col = hot ? accent : illumination;
-            paint.setColor(s < lit ? col : Illumination.withAlpha(col, 0x1C));
+            int col = hot && !reflective ? accent : ink;
+            paint.setColor(s < lit ? col : Illumination.withAlpha(col, reflective ? 0x12 : 0x1C));
             float l = x + lw + s * sw;
             c.drawRect(l, y, l + sw * 0.75f, y + h, paint);
         }
@@ -563,40 +596,78 @@ public class StereoView extends View {
         text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
         text.setTextAlign(Paint.Align.CENTER);
         spacing(text, 0.08f);
-        // One legend size for the whole faceplate, the largest that fits every button.
-        float size = Float.MAX_VALUE;
-        text.setTextSize(100);
-        for (Skin.Control ctl : skin.controls) {
-            RectF b = px(ctl.box);
-            String widest = ctl.id.equals(Skin.PLAY) ? "PAUSE" : ctl.label;
-            size = Math.min(size, Math.min(b.height() * 0.34f, b.width() * 0.7f * 100 / text.measureText(widest)));
+        // One legend size for the working keys, the largest that fits every one; the keys that are only
+        // part of the design get their own, as they are often smaller.
+        float size = legendSize(skin.controls);
+        List<Box> presets = skin.presetBoxes();
+        if (skin.presetLabels != null) {
+            for (int i = 0; i < presets.size(); i++) size = Math.min(size, fitLegend(px(presets.get(i)), skin.presetLabels[i]));
         }
+        float decorSize = legendSize(skin.decor);
         for (Skin.Control ctl : skin.controls) {
             RectF b = px(ctl.box);
             String label = ctl.id.equals(Skin.PLAY) ? (state.playing ? "PAUSE" : "PLAY") : ctl.label;
-            drawLegend(c, b, label, ctl.id.equals(pressed), u, size);
+            drawLegend(c, b, label, ctl.id.equals(pressed), u, size, ctl.round);
         }
-        List<Box> presets = skin.presetBoxes();
+        for (Skin.Control ctl : skin.decor) drawLegend(c, px(ctl.box), ctl.label, false, u, decorSize, ctl.round);
         for (int i = 0; i < presets.size(); i++) {
-            drawLegend(c, px(presets.get(i)), String.valueOf(i + 1), pressedPreset == i + 1, u, size);
+            RectF b = px(presets.get(i));
+            boolean down = pressedPreset == i + 1;
+            if (skin.presetLabels == null) {
+                drawLegend(c, b, String.valueOf(i + 1), down, u, size, false);
+                continue;
+            }
+            // A tape key: its function on the key, the preset number small in the corner.
+            rect.set(b.left, b.top - b.height() * 0.12f, b.right, b.bottom - b.height() * 0.12f);
+            drawLegend(c, b, null, down, u, size, false);
+            drawLegend(c, rect, skin.presetLabels[i], false, u, size, false);
+            text.setTextSize(size * 0.75f);
+            text.setTextAlign(Paint.Align.RIGHT);
+            text.setColor(Illumination.withAlpha(illumination, 0xC0));
+            c.drawText(String.valueOf(i + 1), b.right - b.width() * 0.08f, b.bottom - b.height() * 0.2f + (down ? u * 0.004f : 0), text);
+            text.setTextAlign(Paint.Align.CENTER);
         }
     }
 
-    private void drawLegend(Canvas c, RectF b, String label, boolean down, float u, float size) {
+    private float legendSize(List<Skin.Control> keys) {
+        float size = Float.MAX_VALUE;
+        for (Skin.Control ctl : keys) {
+            RectF b = px(ctl.box);
+            if (ctl.round) {
+                // The legend has to fit inside the circle.
+                float d = Math.min(b.width(), b.height()) * 0.72f;
+                b.set(b.centerX() - d / 2, b.centerY() - d / 2, b.centerX() + d / 2, b.centerY() + d / 2);
+            }
+            size = Math.min(size, fitLegend(b, Skin.PLAY.equals(ctl.id) ? "PAUSE" : ctl.label));
+        }
+        return size;
+    }
+
+    private float fitLegend(RectF b, String label) {
+        text.setTextSize(100);
+        return Math.min(b.height() * 0.34f, b.width() * 0.7f * 100 / Math.max(1, text.measureText(label)));
+    }
+
+    /** A key's lit legend; a null label draws only the pressed look. */
+    private void drawLegend(Canvas c, RectF b, String label, boolean down, float u, float size, boolean round) {
         float sink = 0;
         if (down) {
             // A pressed key goes into its hole: darker, its legend lower, the backlight brighter around it.
             sink = u * 0.004f;
+            float r = round ? Math.min(b.width(), b.height()) / 2 : skin.corner * u;
             paint.setColor(0x66000000);
-            c.drawRoundRect(b, skin.corner * u, skin.corner * u, paint);
+            if (round) c.drawCircle(b.centerX(), b.centerY(), r, paint);
+            else c.drawRoundRect(b, r, r, paint);
             paint.setColor(Illumination.withAlpha(illumination, 0x22));
-            c.drawRoundRect(b, skin.corner * u, skin.corner * u, paint);
+            if (round) c.drawCircle(b.centerX(), b.centerY(), r, paint);
+            else c.drawRoundRect(b, r, r, paint);
         }
+        if (label == null) return;
         text.setTextSize(size);
         text.setColor(illumination);
         text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(illumination, down ? 0xCC : 0x99));
         // The legend sits on the key face, a little above the key's centre.
-        float faceY = skin.lcdStyle == Skin.LCD_MODERN ? b.centerY() : b.centerY() - b.height() * 0.04f;
+        float faceY = skin.lcdStyle == Skin.LCD_MODERN || round ? b.centerY() : b.centerY() - b.height() * 0.04f;
         c.drawText(label, b.centerX(), faceY + sink - (text.descent() + text.ascent()) / 2, text);
         text.clearShadowLayer();
     }
@@ -607,7 +678,7 @@ public class StereoView extends View {
         float cx = k.centerX(), cy = k.centerY(), rad = Math.min(k.width(), k.height()) / 2 * 0.80f;
         float f = state.volume / (float) StereoState.MAX_VOLUME;
         // Illuminated dial ring: 11 dots, lit up to the volume.
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 0; i <= 10 && skin.knobDots; i++) {
             double a = Math.toRadians(135 + 270.0 * i / 10);
             boolean lit = i / 10f <= f + 1e-3f && state.volume > 0;
             float dx = cx + (float) Math.cos(a) * rad * 1.25f, dy = cy + (float) Math.sin(a) * rad * 1.25f;

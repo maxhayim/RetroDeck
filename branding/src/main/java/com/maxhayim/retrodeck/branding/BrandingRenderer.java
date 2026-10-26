@@ -139,6 +139,7 @@ public final class BrandingRenderer implements StereoView.Overlay {
         text.setTextSize(size);
         // Printed on the faceplate in paint; shown on the LCD and black screens in light.
         boolean lit = Zones.LCD.equals(zoneId) || !Zones.onFaceplate(zoneId);
+        if (lit && Zones.LCD.equals(zoneId)) illumination = skin.lcdInk(illumination);
         int color = lit ? illumination : skin.lcdStyle == Skin.LCD_MODERN ? 0xFFE8ECF2 : skin.printColor;
         text.setColor(Illumination.withAlpha(color, Math.round(255 * alpha)));
         c.drawText(name, b.left, b.bottom, text);

@@ -59,6 +59,20 @@ public final class Illumination {
         return (color & 0xFF000000) | (r << 16) | (g << 8) | b;
     }
 
+    /** Between two colours: 0 is a, 1 is b. */
+    public static int mix(int a, int b, float f) {
+        f = Math.max(0f, Math.min(1f, f));
+        int r = Math.round(((a >> 16) & 0xFF) * (1 - f) + ((b >> 16) & 0xFF) * f);
+        int g = Math.round(((a >> 8) & 0xFF) * (1 - f) + ((b >> 8) & 0xFF) * f);
+        int bl = Math.round((a & 0xFF) * (1 - f) + (b & 0xFF) * f);
+        return 0xFF000000 | (r << 16) | (g << 8) | bl;
+    }
+
+    /** Perceived lightness, 0 for black to 1 for white. */
+    public static float luminance(int color) {
+        return (0.2126f * ((color >> 16) & 0xFF) + 0.7152f * ((color >> 8) & 0xFF) + 0.0722f * (color & 0xFF)) / 255f;
+    }
+
     public static int withAlpha(int color, int alpha) {
         return (Math.max(0, Math.min(255, alpha)) << 24) | (color & 0x00FFFFFF);
     }

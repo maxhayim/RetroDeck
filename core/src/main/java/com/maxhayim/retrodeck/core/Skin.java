@@ -13,20 +13,31 @@ import java.util.Map;
  */
 public final class Skin {
 
-    /** LCD lettering. */
-    public static final int LCD_SEGMENT = 0, LCD_DOT = 1, LCD_MODERN = 2;
+    /**
+     * Display types: a vacuum fluorescent display (lit segments on dark glass), a dot-matrix one, a
+     * modern screen, and a reflective LCD (dark segments on a backlit grey-green panel).
+     */
+    public static final int LCD_SEGMENT = 0, LCD_DOT = 1, LCD_MODERN = 2, LCD_REFLECTIVE = 3;
 
     /** One button on the faceplate. */
     public static final class Control {
-        public final String id, label;
+        /** What the key does, or null for a key that is only part of the look (it lights but does nothing). */
+        public final String id;
+        public final String label;
         public final Box box;
+        /** A round key, drawn as the largest circle in its box. */
+        public final boolean round;
 
-        Control(String id, String label, Box box) {
+        Control(String id, String label, Box box, boolean round) {
             this.id = id;
             this.label = label;
             this.box = box;
+            this.round = round;
         }
     }
+
+    /** Dark segments on a reflective LCD, whatever the backlight colour. */
+    public static final int REFLECTIVE_INK = 0xFF141B18;
 
     public static final String POWER = "power", SOURCE = "source", PREV = "prev", PLAY = "play", NEXT = "next",
             DISPLAY = "display", MENU = "menu", VOL_DOWN = "vol_down", VOL_UP = "vol_up", PRESET = "preset";
@@ -38,10 +49,24 @@ public final class Skin {
     /** The volume knob, or null when the skin uses VOL buttons. */
     public Box knob;
     public Box lcd, lcdText;
-    /** Six preset buttons share this strip, or null for none. */
+    /** Six preset buttons share this box, or null for none. */
     public Box presets;
+    /** Presets in one row of six, or two rows of three. */
+    public int presetRows = 1;
+    /** A printed name on each preset key besides its number, as on tape decks (REW, FF), or null. */
+    public String[] presetLabels;
+    /** A lit scale of dots around the volume knob. */
+    public boolean knobDots = true;
+    /** Visualizer segments shade from the illumination colour at the bottom to the accent at the top. */
+    public boolean gradientBars;
+    /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
+    public final List<Control> decor = new ArrayList<>();
+    /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
+    public final List<Control> trims = new ArrayList<>();
     /** A decorative tape or CD slot, or null. */
     public Box slot;
+    /** A second, larger door, like a disc changer's under the radio, or null. */
+    public Box changer;
     public final List<Control> controls = new ArrayList<>();
     private final Map<String, Box> zones = new LinkedHashMap<>();
 
@@ -63,8 +88,27 @@ public final class Skin {
     }
 
     Skin control(String id, String label, float l, float t, float r, float b) {
-        controls.add(new Control(id, label, new Box(l, t, r, b)));
+        return control(id, label, new Box(l, t, r, b), false);
+    }
+
+    Skin control(String id, String label, Box box, boolean round) {
+        if (id == null) decor.add(new Control(null, label, box, round));
+        else controls.add(new Control(id, label, box, round));
         return this;
+    }
+
+    Skin decor(String label, float l, float t, float r, float b) {
+        return control(null, label, new Box(l, t, r, b), false);
+    }
+
+    Skin trim(String label, float l, float t, float r, float b) {
+        trims.add(new Control(null, label, new Box(l, t, r, b), true));
+        return this;
+    }
+
+    /** The colour the display draws text and bars in: the illumination, or dark ink on a reflective LCD. */
+    public int lcdInk(int illumination) {
+        return lcdStyle == LCD_REFLECTIVE ? REFLECTIVE_INK : illumination;
     }
 
     Skin zone(String zone, float l, float t, float r, float b) {
@@ -84,23 +128,29 @@ public final class Skin {
         return Collections.unmodifiableList(new ArrayList<>(zones.keySet()));
     }
 
-    /** The six preset button boxes, or an empty list. */
+    /** The six preset button boxes, left to right and then top to bottom, or an empty list. */
     public List<Box> presetBoxes() {
         List<Box> out = new ArrayList<>();
         if (presets == null) return out;
-        float gap = presets.width() * 0.015f;
-        float w = (presets.width() - gap * 5) / 6f;
+        int rows = presetRows == 2 ? 2 : 1, cols = 6 / rows;
+        float gap = presets.width() * (rows == 2 ? 0.03f : 0.015f);
+        float w = (presets.width() - gap * (cols - 1)) / cols;
+        float vgap = rows == 2 ? presets.height() * 0.08f : 0;
+        float h = (presets.height() - vgap * (rows - 1)) / rows;
         for (int i = 0; i < 6; i++) {
-            float l = presets.left + i * (w + gap);
-            out.add(new Box(l, presets.top, l + w, presets.bottom));
+            int row = i / cols, col = i % cols;
+            float l = presets.left + col * (w + gap), t = presets.top + row * (h + vgap);
+            out.add(new Box(l, t, l + w, t + h));
         }
         return out;
     }
 
-    /** Everything a logo must never cover: buttons, knob, presets and the track text. */
+    /** Everything a logo must never cover: buttons (working or not), knob, presets and the track text. */
     public List<Box> keepClear() {
         List<Box> out = new ArrayList<>();
         for (Control c : controls) out.add(c.box);
+        for (Control c : decor) out.add(c.box);
+        for (Control c : trims) out.add(c.box);
         out.addAll(presetBoxes());
         if (knob != null) out.add(knob);
         if (lcdText != null) out.add(lcdText);
