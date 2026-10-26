@@ -31,12 +31,12 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-night.jpg" alt="Z32 Factory 1990 at night: the faceplate dark, the white legends backlit"/><br/><sub>Z32 Factory 1990 at night: a tuner and tape deck over a three-disc changer, white legends backlit, the logo on the tape door</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-night.jpg" alt="Z32 Factory 1990 at night (render)"/><br/><sub>Z32 Factory 1990 at night: a tuner and tape deck over a three-disc changer, white legends backlit. A render, not yet re-shot on a device since its display changed</sub></td>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/stereo-hifi.jpg" alt="Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/detachable-1998/stereo-detachable.jpg" alt="Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-day.jpg" alt="The same Z32 Factory 1990 by day: legends printed, not lit"/><br/><sub>The same unit by day: the legends are printed paint, not lit</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-day.jpg" alt="Z32 Factory 1990 by day (render)"/><br/><sub>The same unit by day: the legends are printed paint, not lit (render)</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/digital-1996/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
@@ -60,7 +60,7 @@
   </tr>
 </table>
 
-<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched; the two Z32 Factory 1990 images are labelled renders until it's re-shot. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
 
 <h2>Features</h2>
 
@@ -69,7 +69,7 @@
     <ul>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
-      <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a backlit reflective LCD; the tape keys double as presets</li>
+      <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a fluorescent display behind black glass; the tape keys double as presets</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
@@ -209,6 +209,20 @@ my-vehicle.zip
 
 <p>Logos from a pack are decoded and saved again as new PNG files, like a picked image. More in <a href="SECURITY.md">SECURITY.md</a>.</p>
 
+<h2>Logos and Trademarks</h2>
+
+<p>Car makers' names and logos are their trademarks, and the logo artwork is usually also protected by copyright. RetroDeck is not affiliated with, endorsed by or sponsored by any car maker or stereo brand.</p>
+
+<ul>
+  <li><strong>Your own logos, for your own car</strong>: import whatever logo you like into your own head unit. That's what the Vehicle Branding module is for.</li>
+  <li><strong>RetroDeck ships no real logos</strong>, and its skins carry no brand names. The places where a maker's badge sat on the real units are branding zones that you fill yourself.</li>
+  <li><strong>Screenshots and demos use made-up brands</strong>, like Halcyon and the Mesa GT in <a href="docs/demo/">docs/demo</a>. They are original designs, not copies or look-alikes of real badges: a logo that's confusingly similar to a real one can infringe too.</li>
+  <li><strong>Branding packs</strong> include the logos you imported. Only share a pack publicly if you have the right to share its logos, for example ones you made yourself. RetroDeck reminds you of this when you export.</li>
+  <li><strong>Skins modelled on real units</strong> copy the period look (materials, layout, key shapes), never brand names or logos. A skin may name a car in plain words to say what it's modelled on.</li>
+</ul>
+
+<p>This is not legal advice; the rules differ between countries.</p>
+
 <h2>Known Limitations</h2>
 
 <ul>
@@ -231,7 +245,7 @@ my-vehicle.zip
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
-  <li>Key lighting on Z32 Factory 1990: Auto at 20:51 (night look) and Off (day look). Always on, and the other skins' day look, have only been drawn by the render tests.</li>
+  <li>Key lighting on Z32 Factory 1990 (v0.3.0, before its display became a fluorescent one): Auto at 20:51 (night look) and Off (day look). Always on, and the other skins' day look, have only been drawn by the render tests.</li>
   <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>

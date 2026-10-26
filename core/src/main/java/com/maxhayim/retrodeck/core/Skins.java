@@ -147,11 +147,11 @@ public final class Skins {
     /**
      * A 1990s factory stack, as fitted by the car maker: a tuner and tape deck over a three-disc
      * changer, in black plastic set into a textured dash. Tape keys double as presets, and the
-     * changer's reflective LCD shows dark segments on a backlit panel.
+     * display is a fluorescent one behind black glass, lit the same by day and night.
      */
     private static Skin factory() {
-        Skin s = new Skin(FACTORY, "Z32 Factory 1990", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF93A89C,
-                0xFF0A0B0C, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_REFLECTIVE, 0.008f);
+        Skin s = new Skin(FACTORY, "Z32 Factory 1990", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF06090A,
+                0xFF0A0B0C, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_SEGMENT, 0.008f);
         s.knobDots = false;
         // White legends: printed by day, backlit white at night.
         s.keyLight = 0xFFF4F6F8;

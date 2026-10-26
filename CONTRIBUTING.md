@@ -18,6 +18,13 @@ Thank you for your interest in contributing to RetroDeck, a retro car stereo for
 
 A skin is a `Skin` in `Skins.java`: colours, a box for each control, and boxes for the branding zones. How it looks (metal, plastic, glass, shadows) is drawn in `Faceplate.java`; check it with `./gradlew :core:testDebugUnitTest -Prender`, which writes PNGs of every skin to `core/build/skin-renders`. Every box is a fraction of the screen. Zones must stay clear of the buttons, knob, presets and track text; `SkinTest` checks this for every skin, so run the tests.
 
+## Logos and Brand Names
+
+- Never add real brand logos, badges or trademarked artwork: not in skins, screenshots, demo packs, tests or docs.
+- Skins may be modelled on real stereos, but copy only the look (materials, layout, key shapes). Leave off brand names and logos; where the unit had a maker's badge, add a branding zone instead.
+- Demo and test logos must be your own original designs, like Halcyon in `docs/demo`. Don't make look-alikes of real badges: a confusingly similar logo can infringe as well.
+- Screenshots in pull requests use the demo brand or no logos.
+
 ## Code Style
 
 - Plain Java 17 and the Android SDK, no extra libraries unless they really pay for themselves (AndroidSVG is the one so far).

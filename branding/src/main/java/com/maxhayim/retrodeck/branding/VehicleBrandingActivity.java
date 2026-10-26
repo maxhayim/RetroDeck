@@ -625,6 +625,14 @@ public class VehicleBrandingActivity extends Activity {
         T open() throws Exception;
     }
 
+    /** Logos are usually someone's trademark and artwork: fine on your own car, not to hand out. */
+    private static final String SHARE_NOTE = "This pack contains your logos. Only share it if you have the right to share them.";
+
+    private static boolean hasLogos(List<VehicleProfile> profiles) {
+        for (VehicleProfile p : profiles) if (p.hasLogo(VehicleProfile.MANUFACTURER) || p.hasLogo(VehicleProfile.MODEL)) return true;
+        return false;
+    }
+
     private void runExport(final Opener<OutputStream> opener, final String doneMessage) {
         final List<VehicleProfile> profiles = pendingExport;
         if (profiles == null) return;
@@ -640,7 +648,9 @@ public class VehicleBrandingActivity extends Activity {
             main.post(() -> {
                 dismiss(progress);
                 if (err != null) error("Couldn't export", err);
-                else Ui.dialog(this).setTitle("Branding pack exported").setMessage(doneMessage).setPositiveButton("OK", null).show();
+                else Ui.dialog(this).setTitle("Branding pack exported")
+                        .setMessage(doneMessage + (hasLogos(profiles) ? "\n\n" + SHARE_NOTE : ""))
+                        .setPositiveButton("OK", null).show();
             });
         }, "pack-export").start();
     }

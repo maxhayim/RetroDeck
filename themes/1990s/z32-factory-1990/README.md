@@ -1,18 +1,12 @@
 # Z32 Factory 1990
 
-**Era:** 1990s  ·  **Display:** Reflective LCD on the changer: dark segments on a grey-green panel, backlit in the illumination colour  ·  **Skin id:** `z32factory90`
+**Era:** 1990s  ·  **Display:** Vacuum fluorescent behind black glass, lit the same by day and night, in the illumination colour (the real unit's was cyan)  ·  **Skin id:** `z32factory90`
 
 A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into a carbon-look dash. Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
 
 ## Screenshots
 
-Taken from the running app on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/). Taken with v0.3.0.
-
-![At night: the faceplate dark, the white legends backlit](z32-night.jpg)
-<sub>At night: the faceplate dark, the white legends backlit</sub>
-
-![By day: the legends are printed, not lit](z32-day.jpg)
-<sub>By day: the legends are printed, not lit</sub>
+The display changed in v0.3.1 from a grey-green LCD to a fluorescent one behind black glass, like the real unit, and hasn't been re-shot on a device yet. The renders below show it. The Key Lighting setting, from the running app (v0.3.0):
 
 ![The Key Lighting setting](key-lighting.jpg)
 <sub>The Key Lighting setting</sub>

@@ -245,7 +245,7 @@ final class Faceplate {
 
         tapeDoor(px(skin.slot));
         changerDoor(px(skin.changer));
-        window(px(skin.lcd), u * 0.012f, r, 0xFF6F8378, 0xFF93A89C);
+        window(px(skin.lcd), u * 0.012f, r, 0xFF040506, 0xFF0A0D10);
         print("DISC SELECT", w * 0.628f, h * 0.752f, small * 0.9f, ink, true);
         print("APS", w * 0.7925f, h * 0.843f, small * 0.85f, ink, true);
     }
