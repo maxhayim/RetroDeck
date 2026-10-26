@@ -6,10 +6,16 @@ A car maker's factory stack from around 1990: a tuner and tape deck over a three
 
 ## Screenshots
 
-Since v0.4.0 this skin is modelled in 3D, and it hasn't been re-shot on a device yet; the renders below show it. The Key Lighting setting, from the running app (v0.3.0):
+Taken from the running app (v0.4.0) on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/). The faceplate is the 3D render; the display, logos and knob pointer are drawn live on top.
+
+![At night](z32-night.jpg)
+<sub>At night (Key Lighting on Auto, 19:24): the cabin dark, the legends backlit, the display bright behind smoked plum glass</sub>
+
+![By day](z32-day.jpg)
+<sub>By day (Key Lighting Off): satin black plastic, gloss doors, printed legends, the display muted under the smoked glass</sub>
 
 ![The Key Lighting setting](key-lighting.jpg)
-<sub>The Key Lighting setting</sub>
+<sub>The Key Lighting setting (v0.3.0)</sub>
 
 ## Day and night
 

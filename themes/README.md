@@ -15,7 +15,7 @@ Every RetroDeck skin, by era. Each page has screenshots from a real device, day 
 
 <table>
   <tr>
-    <td width="50%" valign="top"><a href="1990s/z32-factory-1990/"><img src="1990s/z32-factory-1990/render-night.jpg" alt="Z32 Factory 1990"/></a><br/><b><a href="1990s/z32-factory-1990/">Z32 Factory 1990</a></b><br/><sub>Vacuum fluorescent behind black glass, lit the same by day and night, glowing cyan whatever the dash lighting, like the real unit</sub></td>
+    <td width="50%" valign="top"><a href="1990s/z32-factory-1990/"><img src="1990s/z32-factory-1990/z32-night.jpg" alt="Z32 Factory 1990"/></a><br/><b><a href="1990s/z32-factory-1990/">Z32 Factory 1990</a></b><br/><sub>Vacuum fluorescent behind black glass, lit the same by day and night, glowing cyan whatever the dash lighting, like the real unit</sub></td>
     <td width="50%" valign="top"><a href="1990s/digital-1996/"><img src="1990s/digital-1996/stereo-digital.jpg" alt="Digital 1996"/></a><br/><b><a href="1990s/digital-1996/">Digital 1996</a></b><br/><sub>Dot matrix</sub></td>
   </tr>
   <tr>

@@ -31,12 +31,12 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-night.jpg" alt="Z32 Factory 1990 at night (render)"/><br/><sub>Z32 Factory 1990 at night, modelled in 3D: backlit legends, and the display's icy blue behind smoked plum glass. A render; not yet re-shot on a device</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-night.jpg" alt="Z32 Factory 1990 at night: backlit legends, the display bright behind smoked plum glass"/><br/><sub>Z32 Factory 1990 at night, modelled in 3D: backlit legends, and the display's icy blue behind smoked plum glass</sub></td>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/stereo-hifi.jpg" alt="Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/detachable-1998/stereo-detachable.jpg" alt="Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/render-day.jpg" alt="Z32 Factory 1990 by day (render)"/><br/><sub>The same unit by day: satin black plastic, gloss doors, printed legends (render)</sub></td>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/z32-day.jpg" alt="The same Z32 Factory 1990 by day"/><br/><sub>The same unit by day: satin black plastic, gloss doors, printed legends, the display muted</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/digital-1996/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
@@ -60,7 +60,7 @@
   </tr>
 </table>
 
-<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched; the two Z32 Factory 1990 images are labelled renders until it's re-shot. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
 
 <h2>Features</h2>
 
@@ -245,7 +245,7 @@ my-vehicle.zip
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
-  <li>Key lighting on Z32 Factory 1990 (v0.3.1): Auto at 21:23 (night look) and Off (day look). Always on, and the other skins' day look, have only been drawn by the render tests.</li>
+  <li>Z32 Factory 1990, modelled in 3D (v0.4.0): Auto at 19:24 (night look), Off (day look), and a pressed key by day and night. Always on, and the other skins' day look, have only been drawn by the render tests.</li>
   <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
