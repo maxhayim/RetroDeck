@@ -9,7 +9,7 @@ public final class Skins {
     public static final String CLASSIC = "classic85";
     public static final String DIGITAL = "digital96";
     public static final String MODERN = "modern";
-    public static final String FACTORY = "factory94";
+    public static final String FACTORY = "z32factory90";
     public static final String HIFI = "hifi84";
     public static final String DETACHABLE = "detach98";
 
@@ -150,7 +150,7 @@ public final class Skins {
      * changer's reflective LCD shows dark segments on a backlit panel.
      */
     private static Skin factory() {
-        Skin s = new Skin(FACTORY, "Factory 1994", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF93A89C,
+        Skin s = new Skin(FACTORY, "Z32 Factory 1990", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF93A89C,
                 0xFF0A0B0C, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_REFLECTIVE, 0.008f);
         s.knobDots = false;
         // The radio and tape deck.

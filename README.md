@@ -19,7 +19,7 @@
 
 <h1>RetroDeck</h1>
 
-<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (six of them, from a 1984 hi-fi deck and a 1994 factory stack to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (six of them, from a 1984 hi-fi deck and a 1990 factory stack to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
 
 <p>Everything works offline. There is no account, no cloud service and no network access at all, and it needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
 
@@ -59,7 +59,7 @@
     <ul>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
-      <li>Factory 1994: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a backlit reflective LCD; the tape keys double as presets</li>
+      <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a backlit reflective LCD; the tape keys double as presets</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
@@ -219,7 +219,7 @@ my-vehicle.zip
   <li>Dragging logos in the header and corner zones, and the show/hide switch. The default placements filled the LCD and faceplate zones.</li>
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
-  <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen. Hi-Fi 1984, Factory 1994 and Detachable 1998 are newer and have only been drawn by the render tests so far.</li>
+  <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen. Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 are newer and have only been drawn by the render tests so far.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
 </ul>
