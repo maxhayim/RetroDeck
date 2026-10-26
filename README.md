@@ -29,12 +29,12 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/stereo-z32.jpg" alt="Z32 Factory 1990: a tuner and tape deck over a three-disc changer with a backlit reflective LCD; the logo sits on the tape door"/><br/><sub>Z32 Factory 1990: a tuner and tape deck over a three-disc changer with a backlit reflective LCD; the logo sits on the tape door</sub></td>
+    <td width="50%"><img src="docs/screenshots/z32-night.jpg" alt="Z32 Factory 1990 at night: the faceplate dark, the white legends backlit"/><br/><sub>Z32 Factory 1990 at night: a tuner and tape deck over a three-disc changer, white legends backlit, the logo on the tape door</sub></td>
     <td width="50%"><img src="docs/screenshots/stereo-hifi.jpg" alt="Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/stereo-detachable.jpg" alt="Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
-    <td width="50%"></td>
+    <td width="50%"><img src="docs/screenshots/z32-day.jpg" alt="The same Z32 Factory 1990 by day: legends printed, not lit"/><br/><sub>The same unit by day: the legends are printed paint, not lit</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
@@ -229,7 +229,7 @@ my-vehicle.zip
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
-  <li>Key lighting (day and night legends) has only been drawn by the render tests so far, not yet on a device.</li>
+  <li>Key lighting on Z32 Factory 1990: Auto at 20:51 (night look) and Off (day look). Always on, and the other skins' day look, have only been drawn by the render tests.</li>
   <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
