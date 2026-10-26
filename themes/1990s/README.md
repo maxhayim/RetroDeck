@@ -2,7 +2,7 @@
 
 ## [Z32 Factory 1990](z32-factory-1990/)
 
-[![Z32 Factory 1990](z32-factory-1990/render-night.jpg)](z32-factory-1990/)
+[![Z32 Factory 1990](z32-factory-1990/z32-night.jpg)](z32-factory-1990/)
 
 A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into a carbon-look dash. Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
 

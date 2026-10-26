@@ -6,10 +6,16 @@ A car maker's factory stack from around 1990: a tuner and tape deck over a three
 
 ## Screenshots
 
-The display changed in v0.3.1 from a grey-green LCD to a fluorescent one behind black glass, like the real unit, and hasn't been re-shot on a device yet. The renders below show it. The Key Lighting setting, from the running app (v0.3.0):
+Taken from the running app (v0.3.1) on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/).
+
+![At night: the faceplate dark, the white legends backlit](z32-night.jpg)
+<sub>At night (Key Lighting on Auto, 21:23): the faceplate dark, the white legends backlit</sub>
+
+![By day: the legends are printed, not lit](z32-day.jpg)
+<sub>By day (Key Lighting Off): the legends are printed paint; the display stays lit</sub>
 
 ![The Key Lighting setting](key-lighting.jpg)
-<sub>The Key Lighting setting</sub>
+<sub>The Key Lighting setting (v0.3.0)</sub>
 
 ## Day and night
 
