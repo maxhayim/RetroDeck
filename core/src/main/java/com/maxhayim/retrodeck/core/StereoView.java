@@ -71,6 +71,9 @@ public class StereoView extends View {
     private String highlightZone;
 
     private Bitmap background;
+    /** For a rendered skin: the faceplate with every key pressed in, and whether both are the night ones. */
+    private Bitmap pressedArt;
+    private boolean artNight;
     private Shader dotGrid, mesh, glare, panel, panelShade;
     private RectF glareFor, panelFor;
     private int panelColor;
@@ -170,6 +173,8 @@ public class StereoView extends View {
     private void dropBackground() {
         if (background != null) background.recycle();
         background = null;
+        if (pressedArt != null) pressedArt.recycle();
+        pressedArt = null;
         dotGrid = null;
         mesh = null;
         glare = null;
@@ -202,23 +207,30 @@ public class StereoView extends View {
             return;
         }
 
+        keysLit = KeyLights.lit(keyLighting, java.util.Calendar.getInstance());
+        legend = !keysLit ? skin.keyPrint : skin.keyLight != 0 ? skin.keyLight : illumination;
+        boolean art = skin.art != null;
+        // A rendered skin has a picture for day and one for night.
+        if (art && background != null && artNight != keysLit) dropBackground();
         if (background == null) background = buildBackground(w, h);
         if (background != null) c.drawBitmap(background, 0, 0, null);
         else drawStatic(c, w, h);
+        art = art && background != null;
 
         float u = Math.min(w, h);
-        drawOverlay(c, Zones.HEADER, false);
-        drawOverlay(c, Zones.FACEPLATE, false);
-        drawOverlay(c, Zones.CORNER, false);
+        // Logos are printed on the faceplate: at night they fall dark with it.
+        int logos = keysLit && art ? 0x60 : 0xFF;
+        drawOverlay(c, Zones.HEADER, logos);
+        drawOverlay(c, Zones.FACEPLATE, logos);
+        drawOverlay(c, Zones.CORNER, logos);
 
-        keysLit = KeyLights.lit(keyLighting, java.util.Calendar.getInstance());
-        legend = !keysLit ? skin.keyPrint : skin.keyLight != 0 ? skin.keyLight : illumination;
         // At night no daylight falls on the faceplate: it goes dark, and only the backlit legends and
-        // the display stand out.
-        if (keysLit) c.drawColor(NIGHT_DIM);
+        // the display stand out. A rendered night picture is already dark.
+        if (keysLit && !art) c.drawColor(NIGHT_DIM);
 
         drawLcd(c, u, now);
-        drawButtons(c, u);
+        if (art) drawPressedArt(c, w, h);
+        else drawButtons(c, u);
         drawKnob(c);
 
         if (showZones) drawZoneOutlines(c, u);
@@ -235,17 +247,64 @@ public class StereoView extends View {
     }
 
     private void drawOverlay(Canvas c, String zone, boolean standby) {
+        drawOverlay(c, zone, standby, 0xFF);
+    }
+
+    private void drawOverlay(Canvas c, String zone, int alpha) {
+        drawOverlay(c, zone, false, alpha);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void drawOverlay(Canvas c, String zone, boolean standby, int alpha) {
         if (overlay == null) return;
         Box b = skin.zone(zone);
         if (b == null) return;
         RectF r = px(b);
-        int save = c.save();
+        int save = alpha < 0xFF ? c.saveLayerAlpha(r, alpha, Canvas.ALL_SAVE_FLAG) : c.save();
         c.clipRect(r);
         overlay.drawZone(c, skin, zone, r, illumination, standby);
         c.restoreToCount(save);
     }
 
+    /** A pressed key of a rendered skin: that key's patch of the all-pressed picture. */
+    private void drawPressedArt(Canvas c, int w, int h) {
+        Box key = null;
+        if (pressedPreset > 0) {
+            List<Box> presets = skin.presetBoxes();
+            if (pressedPreset <= presets.size()) key = presets.get(pressedPreset - 1);
+        } else if (pressed != null) {
+            for (Skin.Control ctl : skin.controls) if (ctl.id.equals(pressed)) key = ctl.box;
+        }
+        if (key == null) return;
+        if (pressedArt == null) pressedArt = loadArt(skin.art + (keysLit ? "/night-pressed.webp" : "/day-pressed.webp"), w, h);
+        if (pressedArt == null) return;
+        android.graphics.Rect r = new android.graphics.Rect(Math.round(key.left * w), Math.round(key.top * h),
+                Math.round(key.right * w), Math.round(key.bottom * h));
+        c.drawBitmap(pressedArt, r, r, null);
+    }
+
+    /** A rendered faceplate scaled to the view, or null if it can't be read or there's no memory. */
+    private Bitmap loadArt(String path, int w, int h) {
+        android.app.ActivityManager am = (android.app.ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        android.graphics.BitmapFactory.Options o = new android.graphics.BitmapFactory.Options();
+        o.inPreferredConfig = am != null && am.isLowRamDevice() ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;
+        try (java.io.InputStream in = getContext().getAssets().open(path)) {
+            Bitmap raw = android.graphics.BitmapFactory.decodeStream(in, null, o);
+            if (raw == null || (raw.getWidth() == w && raw.getHeight() == h)) return raw;
+            Bitmap scaled = Bitmap.createScaledBitmap(raw, w, h, true);
+            if (scaled != raw) raw.recycle();
+            return scaled;
+        } catch (java.io.IOException | OutOfMemoryError e) {
+            return null;
+        }
+    }
+
     private Bitmap buildBackground(int w, int h) {
+        if (skin.art != null) {
+            artNight = keysLit;
+            Bitmap art = loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h);
+            if (art != null) return art;
+        }
         // Full colour keeps the metal and glass gradients smooth; low-RAM head units get 16-bit.
         android.app.ActivityManager am = (android.app.ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
         boolean lowRam = am != null && am.isLowRamDevice();
@@ -746,12 +805,6 @@ public class StereoView extends View {
             for (int i = 0; i < presets.size(); i++) size = Math.min(size, fitLegend(px(presets.get(i)), skin.presetLabels[i]));
         }
         float decorSize = legendSize(skin.decor);
-        if (keysLit && skin.bulbs != null) {
-            // Light from the bulbs leaks around each key's edge.
-            for (Skin.Control ctl : skin.controls) keyLeak(c, px(ctl.box), ctl.round, u);
-            for (Skin.Control ctl : skin.decor) keyLeak(c, px(ctl.box), ctl.round, u);
-            for (Box b : presets) keyLeak(c, px(b), false, u);
-        }
         for (Skin.Control ctl : skin.controls) {
             RectF b = px(ctl.box);
             String label = ctl.id.equals(Skin.PLAY) ? (state.playing ? "PAUSE" : "PLAY") : ctl.label;
@@ -812,44 +865,13 @@ public class StereoView extends View {
         }
         if (label == null) return;
         text.setTextSize(size);
-        int color = keysLit ? Illumination.dim(legend, bulbLight(b.centerX(), b.centerY(), u)) : legend;
-        text.setColor(color);
+        text.setColor(legend);
         // Backlit legends glow; printed ones are just paint.
-        if (keysLit) text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(color, down ? 0xCC : 0x99));
+        if (keysLit) text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(legend, down ? 0xCC : 0x99));
         // The legend sits on the key face, a little above the key's centre.
         float faceY = skin.lcdStyle == Skin.LCD_MODERN || round ? b.centerY() : b.centerY() - b.height() * 0.04f;
         c.drawText(label, b.centerX(), faceY + sink - (text.descent() + text.ascent()) / 2, text);
         text.clearShadowLayer();
-    }
-
-    /** How much bulb light reaches a point: full beside a bulb, fading to about half far from one. */
-    private float bulbLight(float x, float y, float u) {
-        if (skin.bulbs == null) return 1f;
-        float best = Float.MAX_VALUE;
-        for (int i = 0; i + 1 < skin.bulbs.length; i += 2) {
-            float dx = x - skin.bulbs[i] * getWidth(), dy = y - skin.bulbs[i + 1] * getHeight();
-            best = Math.min(best, (float) Math.sqrt(dx * dx + dy * dy));
-        }
-        return 1f - 0.5f * Math.min(1f, best / (u * 0.45f));
-    }
-
-    private void keyLeak(Canvas c, RectF b, boolean round, float u) {
-        float f = bulbLight(b.centerX(), b.centerY(), u);
-        paint.setStyle(Paint.Style.STROKE);
-        // Wider, fainter passes make a soft glow; blur filters are slow or missing on old head units.
-        for (int pass = 0; pass < 3; pass++) {
-            paint.setStrokeWidth(Math.max(1, u * (0.003f + pass * 0.005f)));
-            paint.setColor(Illumination.withAlpha(legend, Math.round((0x34 >> pass) * f * f)));
-            float g = u * 0.002f;
-            if (round) {
-                c.drawCircle(b.centerX(), b.centerY(), Math.min(b.width(), b.height()) / 2 + g, paint);
-            } else {
-                rect.set(b.left - g, b.top - g, b.right + g, b.bottom + g);
-                float r = skin.corner * u;
-                c.drawRoundRect(rect, r, r, paint);
-            }
-        }
-        paint.setStyle(Paint.Style.FILL);
     }
 
     private void drawKnob(Canvas c) {

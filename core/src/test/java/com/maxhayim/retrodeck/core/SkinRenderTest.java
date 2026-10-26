@@ -33,6 +33,11 @@ public class SkinRenderTest {
         File dir = new File("build/skin-renders");
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
+        for (Skin skin : Skins.all()) {
+            try (java.io.Writer out = new java.io.FileWriter(new File(dir, skin.id + ".json"))) {
+                out.write(layout(skin));
+            }
+        }
         for (Skin skin : Skins.all()) for (String keys : new String[]{KeyLights.ON, KeyLights.OFF}) {
             StereoView v = new StereoView(RuntimeEnvironment.getApplication());
             v.setSkin(skin);
@@ -56,5 +61,50 @@ public class SkinRenderTest {
                 bm.compress(Bitmap.CompressFormat.PNG, 100, out);
             }
         }
+    }
+
+    /** Every box of a skin as JSON, for the 3D models in tools/blender, so they match the touch areas. */
+    private static String layout(Skin s) {
+        StringBuilder b = new StringBuilder("{\"id\":\"").append(s.id).append('"');
+        box(b, "knob", s.knob);
+        box(b, "lcd", s.lcd);
+        box(b, "lcdText", s.lcdText);
+        box(b, "slot", s.slot);
+        box(b, "changer", s.changer);
+        b.append(",\"keys\":[");
+        String sep = "";
+        for (Skin.Control c : s.controls) { b.append(sep); key(b, c.id, c.label, c.box, c.round); sep = ","; }
+        for (Skin.Control c : s.decor) { b.append(sep); key(b, null, c.label, c.box, c.round); sep = ","; }
+        java.util.List<Box> presets = s.presetBoxes();
+        for (int i = 0; i < presets.size(); i++) {
+            b.append(sep);
+            key(b, "preset" + (i + 1), s.presetLabels != null ? s.presetLabels[i] + "|" + (i + 1) : String.valueOf(i + 1), presets.get(i), false);
+        }
+        b.append("],\"trims\":[");
+        sep = "";
+        for (Skin.Control c : s.trims) { b.append(sep); key(b, null, c.label, c.box, true); sep = ","; }
+        b.append("],\"zones\":{");
+        sep = "";
+        for (String z : Zones.ALL) {
+            Box zb = s.zone(z);
+            if (zb == null) continue;
+            b.append(sep).append('"').append(z).append("\":").append(arr(zb));
+            sep = ",";
+        }
+        return b.append("}}").toString();
+    }
+
+    private static void box(StringBuilder b, String name, Box x) {
+        if (x != null) b.append(",\"").append(name).append("\":").append(arr(x));
+    }
+
+    private static void key(StringBuilder b, String id, String label, Box x, boolean round) {
+        b.append("{\"id\":").append(id == null ? "null" : "\"" + id + "\"")
+                .append(",\"label\":\"").append(label.replace("\\", "\\\\").replace("\"", "\\\"")).append('"')
+                .append(",\"box\":").append(arr(x)).append(",\"round\":").append(round).append('}');
+    }
+
+    private static String arr(Box x) {
+        return "[" + x.left + "," + x.top + "," + x.right + "," + x.bottom + "]";
     }
 }

@@ -18,6 +18,18 @@ Thank you for your interest in contributing to RetroDeck, a retro car stereo for
 
 A skin is a `Skin` in `Skins.java`: colours, a box for each control, and boxes for the branding zones. How it looks (metal, plastic, glass, shadows) is drawn in `Faceplate.java`; check it with `./gradlew :core:testDebugUnitTest -Prender`, which writes PNGs of every skin to `core/build/skin-renders`. Every box is a fraction of the screen. Zones must stay clear of the buttons, knob, presets and track text; `SkinTest` checks this for every skin, so run the tests.
 
+## Rendered Skins
+
+Some skins are modelled in 3D and rendered with [Blender](https://www.blender.org/) (free), instead of being drawn in code: their faceplate is a set of pictures in `core/src/main/assets/skins/<id>/` (day, night, and both with every key pressed in). The model reads the skin's layout from the app, so keys always sit on their touch areas:
+
+```bash
+./gradlew :core:testDebugUnitTest -Prender -Prender.size=1920x1080   # writes core/build/skin-renders/<id>.json
+blender -b --factory-startup -P tools/blender/z32.py -- core/build/skin-renders/z32factory90.json /tmp/z32
+python3 tools/blender/finish.py /tmp/z32 z32factory90
+```
+
+Add `ONLY=day PCT=50` in front of `blender` for a quick half-size look while you work. The display, logos and the knob's pointer are still drawn by the app on top.
+
 ## Logos and Brand Names
 
 - Never add real brand logos, badges or trademarked artwork: not in skins, screenshots, demo packs, tests or docs.

@@ -68,8 +68,11 @@ public final class Skin {
      * clock and printed indicators that light, instead of text in a font.
      */
     public boolean segmentFont;
-    /** The bulbs behind the keys, as x,y pairs in screen fractions, or null for even backlighting. */
-    public float[] bulbs;
+    /**
+     * An asset folder of rendered faceplates (tools/blender), or null to draw one: day and night, and
+     * the same with every key pressed in. Legends are part of the pictures.
+     */
+    public String art;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
