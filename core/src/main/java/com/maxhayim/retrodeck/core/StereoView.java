@@ -64,6 +64,8 @@ public class StereoView extends View {
 
     /** Darkens the faceplate when the key lights are on, as it is at night. */
     private static final int NIGHT_DIM = 0x70000000;
+    /** DSEG by keshikan (SIL Open Font License), in assets/fonts. Loaded once, shared by every view. */
+    private static Typeface seg14, seg7;
 
     private boolean showZones;
     private String highlightZone;
@@ -353,7 +355,8 @@ public class StereoView extends View {
             drawVisualizer(c, px(vz), u);
         }
         drawOverlay(c, Zones.LCD, false);
-        drawTrackText(c, px(skin.lcdText), u);
+        if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
+        else drawTrackText(c, px(skin.lcdText), u);
 
         if (skin.lcdStyle == Skin.LCD_DOT) {
             if (dotGrid == null) dotGrid = dotGridShader(Math.max(3, Math.round(u * 0.006f)));
@@ -490,6 +493,126 @@ public class StereoView extends View {
         }
     }
 
+    private boolean loadSegmentFonts() {
+        if (seg14 == null) {
+            try {
+                seg14 = Typeface.createFromAsset(getContext().getAssets(), "fonts/DSEG14Classic-BoldItalic.ttf");
+                seg7 = Typeface.createFromAsset(getContext().getAssets(), "fonts/DSEG7Classic-BoldItalic.ttf");
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * A fluorescent display as fitted to factory units around 1990: a row of printed indicators that light
+     * when they apply, a 7-segment clock, and 14-segment characters in fixed cells, every unlit segment
+     * faintly visible behind the glass.
+     */
+    private void drawSegmentText(Canvas c, RectF t, float u) {
+        int ink = skin.lcdInk(illumination);
+        float h = t.height();
+        text.reset();
+        spacing(text, 0f);
+        text.setAntiAlias(true);
+        text.setTextAlign(Paint.Align.LEFT);
+
+        // Indicators, printed on the glass like ST and FM.
+        text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        text.setTextSize(h * 0.14f);
+        spacing(text, 0.06f);
+        float y1 = t.top + h * 0.20f, x = t.left;
+        String[] names = {"ST", state.source, "PLAY", "RPT"};
+        boolean[] lit = {state.playing, true, state.playing, false};
+        for (int i = 0; i < names.length; i++) {
+            segmentGlow(lit[i], ink, h);
+            c.drawText(names[i], x, y1, text);
+            text.clearShadowLayer();
+            x += text.measureText(names[i]) + h * 0.16f;
+        }
+
+        // Track and time on the right, in 7-segment digits; the volume while it changes.
+        long now = SystemClock.uptimeMillis();
+        if (state.volume != lastVolume) {
+            if (lastVolume >= 0) volumeChangedAt = now;
+            lastVolume = state.volume;
+        }
+        boolean volume = now - volumeChangedAt < VOLUME_SHOWN_MS;
+        String right = volume ? "VOL " + two(state.volume)
+                : (state.track > 0 ? two(state.track) + " " : "") + (state.durationMs > 0 ? time(state.positionMs) : clock.format(new Date()));
+        text.setTypeface(volume ? seg14 : seg7);
+        text.setTextSize(h * 0.19f);
+        spacing(text, 0f);
+        text.setTextAlign(Paint.Align.RIGHT);
+        segmentLine(c, segments(right, volume), t.right, y1 + h * 0.02f, ink, h, volume ? '~' : '8');
+        text.setTextAlign(Paint.Align.LEFT);
+
+        // Title and artist in fixed 14-segment cells.
+        text.setTypeface(seg14);
+        text.setTextSize(h * 0.30f);
+        spacing(text, 0.04f);
+        segmentCells(c, state.title, t.left, t.top + h * 0.64f, t.width(), ink, h);
+        text.setTextSize(h * 0.17f);
+        spacing(text, 0.08f);
+        segmentCells(c, state.artist, t.left, t.top + h * 0.93f, t.width(), ink, h);
+    }
+
+    /** A full row of character cells, unlit ones included, with the text lit from the left. */
+    private void segmentCells(Canvas c, String s, float x, float y, float width, int ink, float h) {
+        int cells = Math.max(1, (int) (width / text.measureText("~")));
+        StringBuilder all = new StringBuilder();
+        for (int i = 0; i < cells; i++) all.append('~');
+        text.setColor(Illumination.withAlpha(ink, 0x14));
+        c.drawText(all.toString(), x, y, text);
+        String lit = segments(s, true);
+        if (lit.length() > cells) lit = lit.substring(0, cells);
+        segmentGlow(true, ink, h);
+        c.drawText(lit, x, y, text);
+        text.clearShadowLayer();
+    }
+
+    /** One run of digits, its unlit segments behind it. */
+    private void segmentLine(Canvas c, String s, float x, float y, int ink, float h, char all) {
+        StringBuilder g = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            g.append(ch == '.' || ch == ':' ? ch : all);
+        }
+        text.setColor(Illumination.withAlpha(ink, 0x14));
+        c.drawText(g.toString(), x, y, text);
+        segmentGlow(true, ink, h);
+        c.drawText(s, x, y, text);
+        text.clearShadowLayer();
+    }
+
+    /** Lit phosphor: a near-white core with its colour bleeding around it. Unlit print stays faint. */
+    private void segmentGlow(boolean lit, int ink, float h) {
+        if (lit) {
+            text.setColor(Illumination.mix(ink, 0xFFFFFFFF, 0.22f));
+            text.setShadowLayer(h * 0.06f, 0, 0, Illumination.withAlpha(ink, 0xB0));
+        } else {
+            text.setColor(Illumination.withAlpha(ink, 0x1C));
+        }
+    }
+
+    /**
+     * What a segment display can show: capitals, digits and a little punctuation, accents dropped. A
+     * blank cell is "!" in the DSEG fonts, as their space is narrower than a character.
+     */
+    static String segments(String s, boolean letters) {
+        String plain = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD).toUpperCase(Locale.US);
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < plain.length(); i++) {
+            char ch = plain.charAt(i);
+            if (Character.getType(ch) == Character.NON_SPACING_MARK) continue;
+            boolean ok = ch >= '0' && ch <= '9' || ch == '.' || ch == ':' || ch == '-'
+                    || letters && (ch >= 'A' && ch <= 'Z' || "/'+*()?,".indexOf(ch) >= 0);
+            b.append(ok ? ch : '!');
+        }
+        return b.toString();
+    }
+
     /** Unlit segments behind a line of display text; keeps the paint's own colour. */
     private void ghostText(Canvas c, String s, float x, float y, float width) {
         int color = text.getColor();
@@ -623,6 +746,12 @@ public class StereoView extends View {
             for (int i = 0; i < presets.size(); i++) size = Math.min(size, fitLegend(px(presets.get(i)), skin.presetLabels[i]));
         }
         float decorSize = legendSize(skin.decor);
+        if (keysLit && skin.bulbs != null) {
+            // Light from the bulbs leaks around each key's edge.
+            for (Skin.Control ctl : skin.controls) keyLeak(c, px(ctl.box), ctl.round, u);
+            for (Skin.Control ctl : skin.decor) keyLeak(c, px(ctl.box), ctl.round, u);
+            for (Box b : presets) keyLeak(c, px(b), false, u);
+        }
         for (Skin.Control ctl : skin.controls) {
             RectF b = px(ctl.box);
             String label = ctl.id.equals(Skin.PLAY) ? (state.playing ? "PAUSE" : "PLAY") : ctl.label;
@@ -683,13 +812,44 @@ public class StereoView extends View {
         }
         if (label == null) return;
         text.setTextSize(size);
-        text.setColor(legend);
+        int color = keysLit ? Illumination.dim(legend, bulbLight(b.centerX(), b.centerY(), u)) : legend;
+        text.setColor(color);
         // Backlit legends glow; printed ones are just paint.
-        if (keysLit) text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(legend, down ? 0xCC : 0x99));
+        if (keysLit) text.setShadowLayer(u * 0.012f, 0, 0, Illumination.withAlpha(color, down ? 0xCC : 0x99));
         // The legend sits on the key face, a little above the key's centre.
         float faceY = skin.lcdStyle == Skin.LCD_MODERN || round ? b.centerY() : b.centerY() - b.height() * 0.04f;
         c.drawText(label, b.centerX(), faceY + sink - (text.descent() + text.ascent()) / 2, text);
         text.clearShadowLayer();
+    }
+
+    /** How much bulb light reaches a point: full beside a bulb, fading to about half far from one. */
+    private float bulbLight(float x, float y, float u) {
+        if (skin.bulbs == null) return 1f;
+        float best = Float.MAX_VALUE;
+        for (int i = 0; i + 1 < skin.bulbs.length; i += 2) {
+            float dx = x - skin.bulbs[i] * getWidth(), dy = y - skin.bulbs[i + 1] * getHeight();
+            best = Math.min(best, (float) Math.sqrt(dx * dx + dy * dy));
+        }
+        return 1f - 0.5f * Math.min(1f, best / (u * 0.45f));
+    }
+
+    private void keyLeak(Canvas c, RectF b, boolean round, float u) {
+        float f = bulbLight(b.centerX(), b.centerY(), u);
+        paint.setStyle(Paint.Style.STROKE);
+        // Wider, fainter passes make a soft glow; blur filters are slow or missing on old head units.
+        for (int pass = 0; pass < 3; pass++) {
+            paint.setStrokeWidth(Math.max(1, u * (0.003f + pass * 0.005f)));
+            paint.setColor(Illumination.withAlpha(legend, Math.round((0x34 >> pass) * f * f)));
+            float g = u * 0.002f;
+            if (round) {
+                c.drawCircle(b.centerX(), b.centerY(), Math.min(b.width(), b.height()) / 2 + g, paint);
+            } else {
+                rect.set(b.left - g, b.top - g, b.right + g, b.bottom + g);
+                float r = skin.corner * u;
+                c.drawRoundRect(rect, r, r, paint);
+            }
+        }
+        paint.setStyle(Paint.Style.FILL);
     }
 
     private void drawKnob(Canvas c) {

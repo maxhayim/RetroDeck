@@ -296,7 +296,7 @@ Full license text: https://opensource.org/licenses/MIT
 
 <h2>Acknowledgments</h2>
 
-<p>SVG rendering by <a href="https://github.com/BigBadaboom/androidsvg">AndroidSVG</a> by Paul LeBeau (Apache License 2.0). RetroDeck is not related to RetroDECK, the emulation front end.<br>
+<p>SVG rendering by <a href="https://github.com/BigBadaboom/androidsvg">AndroidSVG</a> by Paul LeBeau (Apache License 2.0). Segment display characters by <a href="https://github.com/keshikan/DSEG">DSEG</a> by keshikan (SIL Open Font License 1.1, included in <code>core/src/main/assets/fonts</code>). RetroDeck is not related to RetroDECK, the emulation front end.<br>
 Android™ is a trademark of Google LLC, used here solely to describe compatibility.
 Vehicle manufacturer and model names and logos are the property of their respective owners; RetroDeck includes none, and you import only images you have the right to use.
 All other trademarks are the property of their respective owners.</p>

@@ -153,6 +153,9 @@ public final class Skins {
         Skin s = new Skin(FACTORY, "Z32 Factory 1990", "1990s", 0xFF26282C, 0xFF141517, 0xFF070708, 0xFF06090A,
                 0xFF0A0B0C, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_SEGMENT, 0.008f);
         s.knobDots = false;
+        s.segmentFont = true;
+        // A few bulbs light each unit's keys, so legends near one are brighter.
+        s.bulbs = new float[]{0.21f, 0.20f, 0.47f, 0.32f, 0.79f, 0.24f, 0.13f, 0.66f, 0.62f, 0.80f, 0.86f, 0.86f};
         // White legends: printed by day, backlit white at night.
         s.keyLight = 0xFFF4F6F8;
         s.keyPrint = 0xFFC4C8CD;

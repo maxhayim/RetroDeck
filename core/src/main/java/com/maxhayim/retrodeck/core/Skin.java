@@ -63,6 +63,13 @@ public final class Skin {
     public boolean knobDots = true;
     /** Visualizer segments shade from the illumination colour at the bottom to the accent at the top. */
     public boolean gradientBars;
+    /**
+     * A fluorescent display with real segments: 14-segment letters in fixed character cells, a 7-segment
+     * clock and printed indicators that light, instead of text in a font.
+     */
+    public boolean segmentFont;
+    /** The bulbs behind the keys, as x,y pairs in screen fractions, or null for even backlighting. */
+    public float[] bulbs;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
