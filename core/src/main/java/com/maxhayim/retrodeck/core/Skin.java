@@ -73,6 +73,11 @@ public final class Skin {
      * the same with every key pressed in. Legends are part of the pictures.
      */
     public String art;
+    /**
+     * A display that glows in its own colour whatever the dash lighting, as a fluorescent display's
+     * phosphor does, or 0 to light it in the illumination colour.
+     */
+    public int phosphor;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
@@ -120,9 +125,9 @@ public final class Skin {
         return this;
     }
 
-    /** The colour the display draws text and bars in: the illumination, or dark ink on a reflective LCD. */
+    /** The colour the display draws text and bars in: its own phosphor, the illumination, or dark ink on a reflective LCD. */
     public int lcdInk(int illumination) {
-        return lcdStyle == LCD_REFLECTIVE ? REFLECTIVE_INK : illumination;
+        return lcdStyle == LCD_REFLECTIVE ? REFLECTIVE_INK : phosphor != 0 ? phosphor : illumination;
     }
 
     Skin zone(String zone, float l, float t, float r, float b) {

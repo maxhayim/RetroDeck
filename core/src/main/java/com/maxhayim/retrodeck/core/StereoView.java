@@ -648,7 +648,7 @@ public class StereoView extends View {
     /** Lit phosphor: a near-white core with its colour bleeding around it. Unlit print stays faint. */
     private void segmentGlow(boolean lit, int ink, float h) {
         if (lit) {
-            text.setColor(Illumination.mix(ink, 0xFFFFFFFF, 0.22f));
+            text.setColor(ink);
             text.setShadowLayer(h * 0.06f, 0, 0, Illumination.withAlpha(ink, 0xB0));
         } else {
             text.setColor(Illumination.withAlpha(ink, 0x1C));
@@ -729,7 +729,8 @@ public class StereoView extends View {
                     }
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
                     if (pk > lit) {
-                        paint.setColor(reflective ? ink : accent);
+                        // One-colour displays have no second colour for the peaks.
+                        paint.setColor(reflective || skin.phosphor != 0 ? ink : accent);
                         float top = v.bottom - (pk + 1) * sh + sh * 0.18f;
                         c.drawRect(l, top, l + bw, v.bottom - pk * sh, paint);
                     }
