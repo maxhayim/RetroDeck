@@ -70,7 +70,7 @@ public class StereoView extends View {
      * Smoked glass over a tinted display. By day it is over everything, the characters too; at night
      * the segments shine through it as bright as the backlit keys.
      */
-    private static final int SMOKE = 0x58000000;
+    private static final int SMOKE = 0x58000000, SMOKE_NIGHT = 0xA8000000;
     /** DSEG by keshikan (SIL Open Font License), in assets/fonts. Loaded once, shared by every view. */
     private static Typeface seg14, seg7;
 
@@ -480,7 +480,8 @@ public class StereoView extends View {
         paint.setColor(skin.lcdGlass);
         c.drawRect(lcd, paint);
         if (keysLit) {
-            paint.setColor(SMOKE);
+            // In the dark cabin the plum is barely seen.
+            paint.setColor(SMOKE_NIGHT);
             c.drawRect(lcd, paint);
         }
         paint.setShader(new LinearGradient(0, lcd.top, 0, lcd.bottom,
