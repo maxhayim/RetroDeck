@@ -198,8 +198,10 @@ final class Faceplate {
 
         RectF s = px(skin.slot);
         slot(s, true);
-        print("AUTO REVERSE", s.left - u * 0.02f, s.centerY() + u * 0.007f, u * 0.017f, skin.printColor, Paint.Align.RIGHT);
-        print("METAL", s.right + u * 0.02f, s.centerY() + u * 0.007f, u * 0.017f, skin.printColor, Paint.Align.LEFT);
+        // Under the slot, so the header logo beside it never runs into them.
+        float py = s.bottom + u * 0.032f;
+        print("AUTO REVERSE", s.left + s.height() * 0.5f, py, u * 0.016f, skin.printColor, Paint.Align.LEFT);
+        print("METAL", s.right - s.height() * 0.5f, py, u * 0.016f, skin.printColor, Paint.Align.RIGHT);
         print("QUARTZ PLL SYNTHESIZER", w * 0.035f, h * 0.90f, u * 0.017f, skin.printColor, false);
         print("FM/AM STEREO", w * 0.035f, h * 0.94f, u * 0.017f, 0xFF8A7C60, false);
     }

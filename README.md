@@ -29,6 +29,14 @@
 
 <table>
   <tr>
+    <td width="50%"><img src="docs/screenshots/stereo-z32.jpg" alt="Z32 Factory 1990: a tuner and tape deck over a three-disc changer with a backlit reflective LCD; the logo sits on the tape door"/><br/><sub>Z32 Factory 1990: a tuner and tape deck over a three-disc changer with a backlit reflective LCD; the logo sits on the tape door</sub></td>
+    <td width="50%"><img src="docs/screenshots/stereo-hifi.jpg" alt="Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/stereo-detachable.jpg" alt="Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
+    <td width="50%"></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="docs/screenshots/stereo-digital.jpg" alt="Digital 1996: grained plastic, rubber keys and a dot-matrix display"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
     <td width="50%"><img src="docs/screenshots/stereo-modern.jpg" alt="Modern Glass: one sheet of black glass over the display"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
@@ -219,7 +227,8 @@ my-vehicle.zip
   <li>Dragging logos in the header and corner zones, and the show/hide switch. The default placements filled the LCD and faceplate zones.</li>
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
-  <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen. Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 are newer and have only been drawn by the render tests so far.</li>
+  <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
+  <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
 </ul>
