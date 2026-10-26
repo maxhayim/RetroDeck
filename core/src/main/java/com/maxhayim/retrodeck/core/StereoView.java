@@ -64,6 +64,8 @@ public class StereoView extends View {
 
     /** Darkens the faceplate when the key lights are on, as it is at night. */
     private static final int NIGHT_DIM = 0x70000000;
+    /** Unlit segments behind smoked glass: there, but barely seen. */
+    private static final int UNLIT = 0x06;
     /** DSEG by keshikan (SIL Open Font License), in assets/fonts. Loaded once, shared by every view. */
     private static Typeface seg14, seg7;
 
@@ -622,7 +624,7 @@ public class StereoView extends View {
         int cells = Math.max(1, (int) (width / text.measureText("~")));
         StringBuilder all = new StringBuilder();
         for (int i = 0; i < cells; i++) all.append('~');
-        text.setColor(Illumination.withAlpha(ink, 0x14));
+        text.setColor(Illumination.withAlpha(ink, UNLIT));
         c.drawText(all.toString(), x, y, text);
         String lit = segments(s, true);
         if (lit.length() > cells) lit = lit.substring(0, cells);
@@ -638,7 +640,7 @@ public class StereoView extends View {
             char ch = s.charAt(i);
             g.append(ch == '.' || ch == ':' ? ch : all);
         }
-        text.setColor(Illumination.withAlpha(ink, 0x14));
+        text.setColor(Illumination.withAlpha(ink, UNLIT));
         c.drawText(g.toString(), x, y, text);
         segmentGlow(true, ink, h);
         c.drawText(s, x, y, text);
@@ -651,7 +653,7 @@ public class StereoView extends View {
             text.setColor(ink);
             text.setShadowLayer(h * 0.06f, 0, 0, Illumination.withAlpha(ink, 0xB0));
         } else {
-            text.setColor(Illumination.withAlpha(ink, 0x1C));
+            text.setColor(Illumination.withAlpha(ink, UNLIT));
         }
     }
 
@@ -724,7 +726,7 @@ public class StereoView extends View {
                             paint.setColor(Illumination.withAlpha(col, 0x30));
                             c.drawRect(l - halo, top - halo, l + bw + halo, v.bottom - s * sh + halo, paint);
                         }
-                        paint.setColor(s < lit ? col : Illumination.withAlpha(col, reflective ? 0x10 : 0x16));
+                        paint.setColor(s < lit ? col : Illumination.withAlpha(col, reflective ? 0x10 : skin.phosphor != 0 ? UNLIT : 0x16));
                         c.drawRect(l, top, l + bw, v.bottom - s * sh, paint);
                     }
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));

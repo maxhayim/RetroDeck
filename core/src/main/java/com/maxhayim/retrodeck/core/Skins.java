@@ -155,8 +155,8 @@ public final class Skins {
         s.knobDots = false;
         s.segmentFont = true;
         s.art = "skins/" + FACTORY;
-        // The factory unit's display is cyan, whatever colour the dash is lit.
-        s.phosphor = 0xFF3FD4F4;
+        // The factory unit's display is sky blue, whatever colour the dash is lit.
+        s.phosphor = 0xFF48BAF0;
         // White legends: printed by day, backlit white at night.
         s.keyLight = 0xFFF4F6F8;
         s.keyPrint = 0xFFC4C8CD;
