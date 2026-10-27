@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.SystemClock;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -34,7 +35,6 @@ final class Player {
     private final List<Uri> tracks = new ArrayList<>();
     /** Presets 1-6: a favourite song each, or null. */
     private final Uri[] presets = new Uri[6];
-    private int volumeBeforeMute;
     private int index;
     private MediaPlayer player;
     private final StereoState state;
@@ -136,7 +136,7 @@ final class Player {
         if (number < 1 || number > presets.length) return;
         Uri u = presets[number - 1];
         if (u == null) {
-            notice("P" + number + " EMPTY  ·  HOLD TO SAVE");
+            notice("P" + number + " EMPTY: HOLD");
             return;
         }
         int i = tracks.indexOf(u);
@@ -164,16 +164,29 @@ final class Player {
         notice("P" + number + " SAVED");
     }
 
+    /** Android's own mute, so the volume is kept and the head unit's keys can undo it too. */
+    @SuppressWarnings("deprecation")
     void toggleMute() {
-        if (state.muted) {
-            state.muted = false;
-            setVolume(Math.max(1, volumeBeforeMute));
+        boolean mute = !state.muted;
+        if (Build.VERSION.SDK_INT >= 23) {
+            audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, mute ? AudioManager.ADJUST_MUTE : AudioManager.ADJUST_UNMUTE, 0);
         } else {
-            volumeBeforeMute = state.volume;
-            setVolume(0);
-            state.muted = true;
-            listener.onChanged();
+            audio.setStreamMute(AudioManager.STREAM_MUSIC, mute);
         }
+        state.muted = mute;
+        listener.onChanged();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void unmute() {
+        if (Build.VERSION.SDK_INT >= 23) audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+        else audio.setStreamMute(AudioManager.STREAM_MUSIC, false);
+        state.muted = false;
+    }
+
+    /** Muted by RetroDeck, or by the head unit itself (as Android does when the volume reaches 0). */
+    private boolean systemMuted() {
+        return Build.VERSION.SDK_INT >= 23 && audio.isStreamMute(AudioManager.STREAM_MUSIC);
     }
 
     private void notice(String s) {
@@ -183,9 +196,10 @@ final class Player {
 
     void setVolume(int v) {
         int max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        // Turning it up undoes a mute; some head units stay muted otherwise.
+        if (v > 0 && (state.muted || systemMuted())) unmute();
         audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(v * max / (float) StereoState.MAX_VOLUME), 0);
         state.volume = v;
-        state.muted = false;
         listener.onChanged();
     }
 
@@ -202,9 +216,9 @@ final class Player {
         // Follow volume changed with the head unit's own keys, but keep finer steps set here.
         if (Math.abs(sys - state.volume) > StereoState.MAX_VOLUME / Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))) {
             state.volume = sys;
-            // Turned up with the head unit's own keys.
-            if (sys > 0) state.muted = false;
         }
+        // Muted or unmuted with the head unit's own keys.
+        if (Build.VERSION.SDK_INT >= 23) state.muted = systemMuted();
     }
 
     private int systemVolume() {
