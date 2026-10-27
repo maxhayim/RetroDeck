@@ -70,6 +70,11 @@ final class Player {
         return tracks.size();
     }
 
+    /** The playing song's audio session, for the visualizer to follow, or 0. */
+    int session() {
+        return player == null ? 0 : player.getAudioSessionId();
+    }
+
     void add(List<Uri> uris) {
         boolean wasEmpty = tracks.isEmpty();
         for (Uri u : uris) if (!tracks.contains(u)) tracks.add(u);

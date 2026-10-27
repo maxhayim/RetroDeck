@@ -1,9 +1,13 @@
 package com.maxhayim.retrodeck;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,7 +37,7 @@ import java.util.Locale;
 /** The stereo. The active vehicle profile decides its skin, colours, visualizer and startup. */
 public class MainActivity extends Activity implements StereoView.Listener {
 
-    private static final int PICK_MUSIC = 1;
+    private static final int PICK_MUSIC = 1, HEAR_MUSIC = 2;
     private static final String[] AUDIO = {"audio/*"};
     private static final String SONG = ".+\\.(mp3|m4a|aac|ogg|oga|opus|flac|wav|mid|midi|3gp|mkv|webm)";
 
@@ -43,6 +47,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     private StartupView startup;
     private BrandingRenderer renderer;
     private Player player;
+    private final LiveLevels levels = new LiveLevels();
     private ButtonMap buttons = ButtonMap.defaults();
     private long lastInput = android.os.SystemClock.uptimeMillis();
     private int swallowUp = -1;
@@ -77,7 +82,11 @@ public class MainActivity extends Activity implements StereoView.Listener {
         root.addView(startup, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
 
-        player = new Player(this, state, () -> stereo.invalidate());
+        stereo.setLevels(levels);
+        player = new Player(this, state, () -> {
+            stereo.invalidate();
+            followMusic();
+        });
         applyProfile();
         store.addListener(onProfileChanged);
         // The stereo is built and running underneath, so a tap on the animation reaches it at once.
@@ -124,6 +133,43 @@ public class MainActivity extends Activity implements StereoView.Listener {
         store.removeListener(onProfileChanged);
         unregisterReceiver(screenOff);
         player.stop();
+        levels.release();
+    }
+
+    /** Points the visualizer at the song that's playing; the first time, asks to read it. */
+    private void followMusic() {
+        if (player == null) return;
+        int s = player.session();
+        if (s == levels.session()) return;
+        if (s != 0 && Build.VERSION.SDK_INT >= 23
+                && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            levels.attach(0);
+            askToHearMusic();
+            return;
+        }
+        levels.attach(s);
+    }
+
+    /** Once: explains, then asks Android for the permission the Visualizer needs. */
+    private void askToHearMusic() {
+        SharedPreferences p = getSharedPreferences("levels", MODE_PRIVATE);
+        if (Build.VERSION.SDK_INT < 23 || p.getBoolean("asked", false)) return;
+        p.edit().putBoolean("asked", true).apply();
+        Ui.dialog(this).setTitle("Visualizer")
+                .setMessage("To make the visualizer move with your music, RetroDeck needs to read the sound it plays. "
+                        + "Android calls this \"record audio\". RetroDeck never uses the microphone, and nothing is "
+                        + "recorded, saved or sent anywhere.\n\nWithout it, the visualizer moves on its own.")
+                .setPositiveButton("Continue", (d, w) -> requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, HEAR_MUSIC))
+                .setNegativeButton("Not now", null)
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int request, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(request, permissions, results);
+        if (request == HEAR_MUSIC && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+            levels.attach(player.session());
+        }
     }
 
     @Override
