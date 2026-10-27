@@ -15,8 +15,8 @@ import com.maxhayim.retrodeck.branding.BrandingRenderer;
 import com.maxhayim.retrodeck.branding.ProfileStore;
 import com.maxhayim.retrodeck.branding.StartupView;
 import com.maxhayim.retrodeck.branding.VehicleProfile;
+import com.maxhayim.retrodeck.core.ButtonMap;
 import com.maxhayim.retrodeck.core.Pickers;
-import com.maxhayim.retrodeck.core.Skin;
 import com.maxhayim.retrodeck.core.Skins;
 import com.maxhayim.retrodeck.core.StereoState;
 import com.maxhayim.retrodeck.core.StereoView;
@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     private StartupView startup;
     private BrandingRenderer renderer;
     private Player player;
+    private ButtonMap buttons = ButtonMap.defaults();
     private final StereoState state = new StereoState();
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Runnable onProfileChanged = this::applyProfile;
@@ -95,6 +96,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     protected void onResume() {
         super.onResume();
         Ui.immersive(this);
+        buttons = ButtonsActivity.load(this);
         applyProfile();
         main.post(tick);
     }
@@ -120,39 +122,68 @@ public class MainActivity extends Activity implements StereoView.Listener {
 
     @Override
     public void onControl(String control, int index) {
-        switch (control) {
-            case Skin.POWER:
+        perform(ButtonMap.forControl(control, index));
+    }
+
+    @Override
+    public void onPresetHeld(int index) {
+        player.savePreset(index);
+    }
+
+    /** What every on-screen key and mapped head-unit key comes to. */
+    private void perform(String action) {
+        if (action == null) return;
+        if (!state.power && !ButtonMap.POWER.equals(action)) {
+            // Any key wakes a stereo in standby, as on a real one.
+            state.power = true;
+            stereo.invalidate();
+            return;
+        }
+        int preset = ButtonMap.preset(action);
+        if (preset > 0) {
+            player.jump(preset);
+            stereo.invalidate();
+            return;
+        }
+        switch (action) {
+            case ButtonMap.POWER:
                 state.power = !state.power;
                 if (!state.power) player.pause();
                 break;
-            case Skin.SOURCE:
+            case ButtonMap.SOURCE:
                 chooseMusic();
                 break;
-            case Skin.PLAY:
+            case ButtonMap.PLAY_PAUSE:
                 player.toggle();
                 break;
-            case Skin.NEXT:
+            case ButtonMap.PLAY:
+                player.play(true);
+                break;
+            case ButtonMap.PAUSE:
+                player.play(false);
+                break;
+            case ButtonMap.NEXT:
                 player.next();
                 break;
-            case Skin.PREV:
+            case ButtonMap.PREV:
                 player.prev();
                 break;
-            case Skin.PRESET:
-                player.jump(index);
-                break;
-            case Skin.VOL_UP:
+            case ButtonMap.VOL_UP:
                 player.setVolume(Math.min(StereoState.MAX_VOLUME, state.volume + 1));
                 break;
-            case Skin.VOL_DOWN:
+            case ButtonMap.VOL_DOWN:
                 player.setVolume(Math.max(0, state.volume - 1));
                 break;
-            case Skin.DISPLAY:
+            case ButtonMap.MUTE:
+                player.toggleMute();
+                break;
+            case ButtonMap.DISPLAY:
                 // DISP cycles visualizers and remembers the choice in the vehicle profile.
                 profile.visualizer = Visualizers.next(profile.visualizer);
                 stereo.setVisualizer(profile.visualizer);
                 store.save(profile);
                 break;
-            case Skin.MENU:
+            case ButtonMap.MENU:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             default:
@@ -166,26 +197,37 @@ public class MainActivity extends Activity implements StereoView.Listener {
         player.setVolume(volume);
     }
 
+    // Head-unit and steering-wheel keys, as set in Settings → Buttons.
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // Steering-wheel and head-unit media keys.
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-            case KeyEvent.KEYCODE_HEADSETHOOK:
-                player.toggle();
-                return true;
-            case KeyEvent.KEYCODE_MEDIA_NEXT:
-                player.next();
-                return true;
-            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                player.prev();
-                return true;
-            case KeyEvent.KEYCODE_MENU:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            default:
-                return super.onKeyDown(keyCode, event);
+        String action = buttons.action(keyCode);
+        if (action == null) return super.onKeyDown(keyCode, event);
+        if (ButtonMap.preset(action) > 0) {
+            // Decided on release: a short press plays, a long one saves.
+            event.startTracking();
+            return true;
         }
+        boolean volume = ButtonMap.VOL_UP.equals(action) || ButtonMap.VOL_DOWN.equals(action);
+        if (event.getRepeatCount() == 0 || volume) perform(action);
+        return true;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        int preset = ButtonMap.preset(buttons.action(keyCode));
+        if (preset == 0) return super.onKeyLongPress(keyCode, event);
+        if (state.power) player.savePreset(preset);
+        stereo.invalidate();
+        return true;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        String action = buttons.action(keyCode);
+        if (action == null) return super.onKeyUp(keyCode, event);
+        if (ButtonMap.preset(action) > 0 && event.isTracking() && !event.isCanceled()) perform(action);
+        return true;
     }
 
     @Override

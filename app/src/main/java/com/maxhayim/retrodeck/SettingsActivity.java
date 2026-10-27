@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class SettingsActivity extends Activity {
 
-    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", ABOUT = "About";
+    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", BUTTONS = "Buttons", ABOUT = "About";
 
     private LinearLayout sections, rows;
     private String current = PERSONALIZATION;
@@ -53,6 +53,7 @@ public class SettingsActivity extends Activity {
         Map<String, List<RetroDeckModule.SettingsEntry>> m = new LinkedHashMap<>();
         m.put(PERSONALIZATION, new ArrayList<>());
         m.put(AUDIO, new ArrayList<>());
+        m.put(BUTTONS, new ArrayList<>());
         for (RetroDeckModule mod : RetroDeckApp.modules()) {
             for (RetroDeckModule.SettingsEntry e : mod.settings(this)) {
                 List<RetroDeckModule.SettingsEntry> list = m.get(e.section);
@@ -90,6 +91,7 @@ public class SettingsActivity extends Activity {
             }
         }
         if (AUDIO.equals(current)) audioRows();
+        if (BUTTONS.equals(current)) buttonRows();
         if (ABOUT.equals(current)) aboutRows();
     }
 
@@ -104,7 +106,15 @@ public class SettingsActivity extends Activity {
                     show();
                 }).setNegativeButton("Cancel", null).show()));
         rows.addView(Ui.divider(this));
-        note("The volume knob sets the device's media volume. Steering-wheel media keys work when the head unit sends them to the app on screen.");
+        note("The volume knob sets the device's media volume. Steering-wheel keys are set under Buttons.");
+    }
+
+    private void buttonRows() {
+        int n = ButtonsActivity.load(this).codes().size();
+        rows.addView(Ui.row(this, "Head-unit and steering-wheel keys", n + (n == 1 ? " key set" : " keys set")
+                + "  ·  give any key any stereo action", v -> startActivity(new android.content.Intent(this, ButtonsActivity.class))));
+        rows.addView(Ui.divider(this));
+        note("Presets 1-6 play a favourite song. Hold a preset, on screen or on a key set to it, to save the song that's playing.");
     }
 
     private void aboutRows() {

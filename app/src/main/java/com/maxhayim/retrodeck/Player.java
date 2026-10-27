@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
@@ -25,12 +26,15 @@ final class Player {
         void onChanged();
     }
 
-    private static final String PREFS = "player", KEY_TRACKS = "tracks", KEY_INDEX = "index";
+    private static final String PREFS = "player", KEY_TRACKS = "tracks", KEY_INDEX = "index", KEY_PRESETS = "presets";
 
     private final Context context;
     private final SharedPreferences prefs;
     private final AudioManager audio;
     private final List<Uri> tracks = new ArrayList<>();
+    /** Presets 1-6: a favourite song each, or null. */
+    private final Uri[] presets = new Uri[6];
+    private int volumeBeforeMute;
     private int index;
     private MediaPlayer player;
     private final StereoState state;
@@ -47,6 +51,15 @@ final class Player {
             for (int i = 0; i < a.length(); i++) tracks.add(Uri.parse(a.getString(i)));
         } catch (JSONException ignored) {
             // Start with an empty list.
+        }
+        try {
+            JSONArray a = new JSONArray(prefs.getString(KEY_PRESETS, "[]"));
+            for (int i = 0; i < a.length() && i < presets.length; i++) {
+                String s = a.optString(i, "");
+                presets[i] = s.isEmpty() ? null : Uri.parse(s);
+            }
+        } catch (JSONException ignored) {
+            // No presets yet.
         }
         index = Math.max(0, Math.min(prefs.getInt(KEY_INDEX, 0), tracks.size() - 1));
         state.volume = systemVolume();
@@ -114,17 +127,65 @@ final class Player {
         play();
     }
 
-    /** Preset buttons jump straight to tracks 1-6. */
+    void play(boolean on) {
+        if (on != state.playing) toggle();
+    }
+
+    /** A preset plays its favourite song, putting it back in the list if it was cleared. */
     void jump(int number) {
-        if (number < 1 || number > tracks.size()) return;
-        index = number - 1;
+        if (number < 1 || number > presets.length) return;
+        Uri u = presets[number - 1];
+        if (u == null) {
+            notice("P" + number + " EMPTY  ·  HOLD TO SAVE");
+            return;
+        }
+        int i = tracks.indexOf(u);
+        if (i < 0) {
+            tracks.add(u);
+            i = tracks.size() - 1;
+            persist();
+        }
+        index = i;
         play();
+        notice("P" + number);
+    }
+
+    /** Holding a preset saves the song that's on, like a radio station. */
+    void savePreset(int number) {
+        if (number < 1 || number > presets.length) return;
+        if (tracks.isEmpty()) {
+            notice("NO SONG TO SAVE");
+            return;
+        }
+        presets[number - 1] = tracks.get(index);
+        JSONArray a = new JSONArray();
+        for (Uri u : presets) a.put(u == null ? "" : u.toString());
+        prefs.edit().putString(KEY_PRESETS, a.toString()).apply();
+        notice("P" + number + " SAVED");
+    }
+
+    void toggleMute() {
+        if (state.muted) {
+            state.muted = false;
+            setVolume(Math.max(1, volumeBeforeMute));
+        } else {
+            volumeBeforeMute = state.volume;
+            setVolume(0);
+            state.muted = true;
+            listener.onChanged();
+        }
+    }
+
+    private void notice(String s) {
+        state.notice(s, SystemClock.uptimeMillis());
+        listener.onChanged();
     }
 
     void setVolume(int v) {
         int max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(v * max / (float) StereoState.MAX_VOLUME), 0);
         state.volume = v;
+        state.muted = false;
         listener.onChanged();
     }
 
@@ -141,6 +202,8 @@ final class Player {
         // Follow volume changed with the head unit's own keys, but keep finer steps set here.
         if (Math.abs(sys - state.volume) > StereoState.MAX_VOLUME / Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))) {
             state.volume = sys;
+            // Turned up with the head unit's own keys.
+            if (sys > 0) state.muted = false;
         }
     }
 

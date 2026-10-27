@@ -59,6 +59,11 @@ public class BrandingPreviewActivity extends Activity {
                 s.volume = volume;
                 stereo.invalidate();
             }
+
+            @Override
+            public void onPresetHeld(int index) {
+                // Nothing to save in a preview.
+            }
         });
         root.addView(stereo, new FrameLayout.LayoutParams(-1, -1));
         startup = new StartupView(this, store);

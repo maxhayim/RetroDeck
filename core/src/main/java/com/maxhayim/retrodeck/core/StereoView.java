@@ -42,6 +42,9 @@ public class StereoView extends View {
         void onControl(String control, int index);
 
         void onVolume(int volume);
+
+        /** A preset was held down: save to it, like a radio. */
+        void onPresetHeld(int index);
     }
 
     private Skin skin = Skins.get(Skins.CLASSIC);
@@ -619,7 +622,9 @@ public class StereoView extends View {
         text.setTextSize(h * 0.17f);
         spacing(text, modern ? 0.02f : 0.08f);
         text.setColor(modern ? 0xFFAEB6C4 : reflective ? Illumination.withAlpha(ink, 0xD0) : Illumination.dim(illumination, 0.75f));
-        String artist = modern ? state.artist : state.artist.toUpperCase(Locale.US);
+        String line = state.artistLine(now);
+        if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
+        String artist = modern ? line : line.toUpperCase(Locale.US);
         if (segments) ghostText(c, fit(artist, t.width()), t.left, t.top + h * 0.90f, t.width());
         c.drawText(fit(artist, t.width()), t.left, t.top + h * 0.90f, text);
 
@@ -695,7 +700,7 @@ public class StereoView extends View {
         segmentCells(c, state.title, t.left, t.top + h * 0.64f, t.width(), ink, h);
         text.setTextSize(h * 0.17f);
         spacing(text, 0.08f);
-        segmentCells(c, state.artist, t.left, t.top + h * 0.93f, t.width(), ink, h);
+        segmentCells(c, state.artistLine(SystemClock.uptimeMillis()), t.left, t.top + h * 0.93f, t.width(), ink, h);
     }
 
     /** A full row of character cells, unlit ones included, with the text lit from the left. */
@@ -1122,6 +1127,7 @@ public class StereoView extends View {
                         pressedPreset = i + 1;
                     }
                 }
+                if (pressedPreset > 0) postDelayed(hold, android.view.ViewConfiguration.getLongPressTimeout() * 2L);
                 invalidate();
                 return true;
             case MotionEvent.ACTION_MOVE:
@@ -1132,6 +1138,7 @@ public class StereoView extends View {
                 }
                 return true;
             case MotionEvent.ACTION_UP:
+                removeCallbacks(hold);
                 if (knobDragging) {
                     if (Math.abs(e.getY() - knobStartY) < getHeight() * 0.015f) {
                         // A tap: upper half turns it up, lower half down.
@@ -1148,6 +1155,7 @@ public class StereoView extends View {
                 invalidate();
                 return true;
             case MotionEvent.ACTION_CANCEL:
+                removeCallbacks(hold);
                 pressed = null;
                 pressedPreset = 0;
                 knobDragging = false;
@@ -1156,6 +1164,16 @@ public class StereoView extends View {
         }
         return super.onTouchEvent(e);
     }
+
+    /** A preset held down: it saves instead of playing, and the release does nothing more. */
+    private final Runnable hold = () -> {
+        if (pressedPreset == 0 || listener == null) return;
+        int idx = pressedPreset;
+        pressed = null;
+        pressedPreset = 0;
+        listener.onPresetHeld(idx);
+        invalidate();
+    };
 
     private static int clampVolume(int v) {
         return Math.max(0, Math.min(StereoState.MAX_VOLUME, v));

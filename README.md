@@ -85,7 +85,9 @@
   <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the visualizer is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text. GIFs travel in branding packs</li>
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
   <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
-  <li><strong>Music</strong>: plays audio files from the device; SRC adds files, presets 1–6 jump to tracks, the knob sets the media volume, steering-wheel media keys work</li>
+  <li><strong>Music</strong>: plays audio files from the device; SRC adds files (or songs from the music folder), the knob sets the media volume</li>
+  <li><strong>Presets 1–6</strong>: a favourite song on each. Tap to play it; hold for a moment to save the song that's playing, like saving a radio station</li>
+  <li><strong>Buttons</strong>: every key on the stereo works by touch, and any head-unit, steering-wheel or remote key can be given any action (play/pause, next, previous, volume, mute, a preset, SRC, DISP, power, Settings) under Settings → Buttons. Media keys, Menu and the number keys 1–6 work out of the box; any key wakes the stereo from standby</li>
   <li><strong>Old head units</strong>: Android 4.4 and newer, large images downsampled on import, 512 px logos on low-memory devices, the static faceplate drawn once and cached</li>
 </ul>
 
