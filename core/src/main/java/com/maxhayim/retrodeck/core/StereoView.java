@@ -523,12 +523,13 @@ public class StereoView extends View {
      * polariser, with a shadow where the bezel overhangs it.
      */
     private void drawPanel(Canvas c, RectF lcd, float u) {
-        int light = skin.backlight(illumination);
+        int light = !keysLit && skin.panelDay != 0 ? skin.panelDay : skin.backlight(illumination);
         if (panel == null || panelColor != light || !lcd.equals(panelFor)) {
             panelColor = light;
             panelFor = new RectF(lcd);
-            // A backlight of the display's own is a strong one: it shows through more of the polariser.
-            int top = Illumination.mix(0xFFA9BBB0, light, skin.backlight != 0 ? 0.62f : 0.38f);
+            // A display with colours of its own shows them as they are; otherwise the dash lighting
+            // comes through a grey-green polariser.
+            int top = skin.backlight != 0 ? light : Illumination.mix(0xFFA9BBB0, light, 0.38f);
             panel = new LinearGradient(0, lcd.top, 0, lcd.bottom, top, Illumination.dim(top, 0.8f), Shader.TileMode.CLAMP);
             panelShade = new LinearGradient(0, lcd.top, 0, lcd.top + u * 0.03f, 0x70000000, 0x00000000, Shader.TileMode.CLAMP);
         }

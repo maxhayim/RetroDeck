@@ -82,6 +82,8 @@ public final class Skin {
     public int lcdGlass;
     /** A reflective LCD's own backlight colour, whatever the dash lighting, or 0 to light it in the illumination colour. */
     public int backlight;
+    /** A reflective LCD's panel by day, when daylight drowns its backlight, or 0 to show the backlight then too. */
+    public int panelDay;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
