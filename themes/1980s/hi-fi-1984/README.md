@@ -1,6 +1,6 @@
 # Hi-Fi 1984
 
-**Era:** 1980s  ·  **Display:** Vacuum fluorescent (lit segments behind a fine mesh)  ·  **Skin id:** `hifi84`
+**Era:** 1980s  ·  **Size:** Single DIN  ·  **Display:** Vacuum fluorescent (lit segments behind a fine mesh)  ·  **Skin id:** `hifi84`
 
 A Japanese hi-fi car deck from the mid-1980s: a black anodised aluminium plate with diamond-cut bright edges, champagne pinstripes and print, slim keys, a small spun-aluminium volume knob, an amber fluorescent display and a chrome-lipped tape slot.
 
@@ -21,9 +21,9 @@ Taken from the running app (v0.5.0) on an Android TV box at 1920×1080 (240 dpi)
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).
 
-| Night | Day |
+| Day | Night |
 |---|---|
-| ![Night, keys backlit](render-night.jpg) | ![Day, legends printed](render-day.jpg) |
+| ![Day, legends printed](render-day.jpg) | ![Night, keys backlit](render-night.jpg) |
 
 ## Keys
 

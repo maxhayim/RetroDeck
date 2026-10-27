@@ -263,6 +263,7 @@ public class StereoView extends View {
         if (keysLit && !art) c.drawColor(NIGHT_DIM);
 
         drawLcd(c, u, now);
+        if (skin.screen != null) drawScreen(c, px(skin.screen), now, false);
         if (art) drawPressedArt(c, w, h);
         else drawButtons(c, u);
         drawKnob(c);
@@ -1093,35 +1094,55 @@ public class StereoView extends View {
 
     private void drawFullscreen(Canvas c, int w, int h, long now) {
         c.drawColor(0xFF000000);
-        float u = Math.min(w, h);
         levels.read(bands, now, state.playing);
-        RectF area = new RectF(w * 0.05f, h * 0.07f, w * 0.95f, h * 0.80f);
+        drawScreen(c, new RectF(0, 0, w, h), now, true);
+        if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
+    }
+
+    /**
+     * A screen of visualizer with the song and clock along its foot: the whole view in full screen,
+     * or a single-DIN radio's own screen in the dash above it. Full screen shows bars even with the
+     * visualizer Off, as it was asked for; the dash screen then shows just the song and clock.
+     */
+    private void drawScreen(Canvas c, RectF s, long now, boolean full) {
+        int save = c.save();
+        c.clipRect(s);
+        if (!full) {
+            paint.setColor(0xFF030405);
+            c.drawRect(s, paint);
+        }
+        float u = Math.min(s.width(), s.height());
+        RectF area = new RectF(s.left + s.width() * 0.05f, s.top + s.height() * 0.07f, s.right - s.width() * 0.05f,
+                s.top + s.height() * (full ? 0.80f : 0.74f));
         String was = visualizer;
-        // Off still shows something here: it was asked for.
-        if (Visualizers.OFF.equals(visualizer)) visualizer = Visualizers.BARS;
-        if (Visualizers.ANIMATION.equals(visualizer) && animation != null) drawAnimation(c, new RectF(0, 0, w, h * 0.84f), false);
-        else drawVisualizer(c, area, u);
+        if (full && Visualizers.OFF.equals(visualizer)) visualizer = Visualizers.BARS;
+        if (Visualizers.ANIMATION.equals(visualizer) && animation != null) {
+            drawAnimation(c, full ? new RectF(s.left, s.top, s.right, s.top + s.height() * 0.84f) : area, false);
+        } else {
+            drawVisualizer(c, area, u);
+        }
         visualizer = was;
 
         // Track and clock in the display's lettering.
         lcdText(skin.lcdStyle);
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
         int ink = skin.lcdStyle == Skin.LCD_REFLECTIVE ? skin.backlight(illumination) : skin.lcdInk(illumination);
-        float y = h * 0.93f;
-        text.setTextSize(u * 0.055f);
+        float y = s.top + s.height() * (full ? 0.93f : 0.92f);
+        float x0 = s.left + s.width() * 0.05f, x1 = s.right - s.width() * 0.05f;
+        text.setTextSize(s.height() * (full ? 0.055f : 0.11f));
         spacing(text, modern ? 0.02f : 0.08f);
         text.setColor(ink);
         String clk = clock.format(new Date());
         text.setTextAlign(Paint.Align.RIGHT);
-        c.drawText(clk, w * 0.95f, y, text);
+        c.drawText(clk, x1, y, text);
         float clockW = text.measureText(clk);
         text.setTextAlign(Paint.Align.LEFT);
         String line = state.title;
         String second = state.artistLine(now);
         if (second != null && !second.isEmpty()) line += "  ·  " + second;
         if (!modern) line = line.toUpperCase(Locale.US);
-        c.drawText(fit(line, w * 0.90f - clockW - u * 0.05f), w * 0.05f, y, text);
-        if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
+        c.drawText(fit(line, x1 - x0 - clockW - u * 0.05f), x0, y, text);
+        c.restoreToCount(save);
     }
 
     private void drawStandby(Canvas c, int w, int h) {

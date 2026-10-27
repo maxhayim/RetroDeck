@@ -438,7 +438,8 @@ public class VehicleBrandingActivity extends Activity {
         String[] names = new String[skins.size()];
         int checked = 0;
         for (int i = 0; i < skins.size(); i++) {
-            names[i] = skins.get(i).name + "  (" + skins.get(i).era + ")";
+            Skin k = skins.get(i);
+            names[i] = k.name + "  ·  " + (k.din == 1 ? "Single DIN" : "Double DIN") + ", " + k.era;
             if (skins.get(i).id.equals(profile.skin)) checked = i;
         }
         Ui.dialog(this).setTitle("Radio skin").setSingleChoiceItems(names, checked, (d, w) -> {

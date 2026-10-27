@@ -67,6 +67,9 @@ public class SkinRenderTest {
     private static String layout(Skin s) {
         StringBuilder b = new StringBuilder("{\"id\":\"").append(s.id).append('"');
         b.append(",\"corner\":").append(s.corner).append(",\"lcdStyle\":").append(s.lcdStyle);
+        b.append(",\"din\":").append(s.din);
+        box(b, "body", s.body);
+        box(b, "screen", s.screen);
         box(b, "knob", s.knob);
         box(b, "lcd", s.lcd);
         box(b, "lcdText", s.lcdText);

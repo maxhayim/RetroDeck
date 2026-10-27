@@ -65,14 +65,18 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them:
+  <li><strong>Seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+    <br/>Single DIN, drawn at their real slim shape across the lower half of the screen, with a screen in the dash above them for the visualizer, the song and the clock:
     <ul>
-      <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
-      <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a fluorescent display behind black glass; the tape keys double as presets</li>
-      <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with a strip display numbering the presets and a reflective LCD, olive grey by day; at night the displays and legends glow lime green</li>
+      <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
+    </ul>
+    Double DIN, filling the screen:
+    <ul>
+      <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a fluorescent display behind black glass; the tape keys double as presets</li>
+      <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with a strip display numbering the presets and a reflective LCD, olive grey by day; at night the displays and legends glow lime green</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>

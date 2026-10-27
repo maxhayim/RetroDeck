@@ -1,6 +1,6 @@
 # Detachable 1998
 
-**Era:** 1990s  ·  **Display:** Dot matrix, with colour bars  ·  **Skin id:** `detach98`
+**Era:** 1990s  ·  **Size:** Single DIN  ·  **Display:** Dot matrix, with colour bars  ·  **Skin id:** `detach98`
 
 A late-1990s detachable faceplate: curved graphite with chrome trim along the top and under the display, a big encoder in a chrome ring, round keys down the side and a deep blue-black display whose bars shade from the illumination colour into the accent.
 
@@ -21,9 +21,9 @@ Taken from the running app (v0.5.0) on an Android TV box at 1920×1080 (240 dpi)
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).
 
-| Night | Day |
+| Day | Night |
 |---|---|
-| ![Night, keys backlit](render-night.jpg) | ![Day, legends printed](render-day.jpg) |
+| ![Day, legends printed](render-day.jpg) | ![Night, keys backlit](render-night.jpg) |
 
 ## Keys
 

@@ -74,6 +74,37 @@ public class SkinTest {
         }
     }
 
+    /** A single-DIN radio keeps its real shape, its controls on it, and its screen clear of it. */
+    @Test
+    public void singleDinRadiosAreSlimWithAScreenAbove() {
+        int singles = 0;
+        for (Skin s : Skins.all()) {
+            if (s.din == 2) {
+                assertTrue(s.name, s.screen == null);
+                continue;
+            }
+            singles++;
+            float aspect = s.body.width() * 16 / (s.body.height() * 9);
+            assertTrue(s.name + " is " + aspect + " to 1", aspect > 3.2f && aspect < 3.8f);
+            assertNotNull(s.name, s.screen);
+            assertTrue(s.name, s.screen.bottom < s.body.top);
+            for (Box b : s.keepClear()) assertTrue(s.name + " " + b, s.body.contains(b));
+            for (String z : s.faceplateZones()) assertTrue(s.name + " " + z, s.body.contains(s.zone(z)));
+            assertTrue(s.name, s.body.contains(s.lcd));
+        }
+        assertEquals(4, singles);
+    }
+
+    @Test
+    public void singleDinComesFirstInTheList() {
+        boolean doubles = false;
+        for (Skin s : Skins.all()) {
+            if (s.din == 2) doubles = true;
+            else assertFalse(s.name + " comes after a double-DIN skin", doubles);
+        }
+        assertEquals(Skins.CLASSIC, Skins.get("no such skin").id);
+    }
+
     @Test
     public void presetsSplitIntoSixButtons() {
         Skin s = Skins.get(Skins.CLASSIC);

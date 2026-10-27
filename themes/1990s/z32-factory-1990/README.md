@@ -1,6 +1,6 @@
 # Z32 Factory 1990
 
-**Era:** 1990s  ·  **Display:** Vacuum fluorescent: pale blue segments behind plum-red filter glass and smoked black, muted by day and bright at night, whatever the dash lighting  ·  **Skin id:** `z32factory90`
+**Era:** 1990s  ·  **Size:** Double DIN  ·  **Display:** Vacuum fluorescent: pale blue segments behind plum-red filter glass and smoked black, muted by day and bright at night, whatever the dash lighting  ·  **Skin id:** `z32factory90`
 
 A car maker's factory stack from around 1990: a tuner and tape deck over a three-disc changer, in near-black satin plastic set into the dash. Modelled in 3D and rendered with Blender (see tools/blender). Modelled on the factory tape deck and changer fitted to the Z32. The legends are white: printed paint by day, backlit at night.
 
@@ -8,11 +8,11 @@ A car maker's factory stack from around 1990: a tuner and tape deck over a three
 
 Taken from the running app (v0.4.0) on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/). The faceplate is the 3D render; the display, logos and knob pointer are drawn live on top.
 
-![At night](z32-night.jpg)
-<sub>At night (Key Lighting on Auto, 19:24): the cabin dark, the legends backlit, the display bright behind smoked plum glass</sub>
-
 ![By day](z32-day.jpg)
 <sub>By day (Key Lighting Off): satin black plastic, gloss doors, printed legends, the display muted under the smoked glass</sub>
+
+![At night](z32-night.jpg)
+<sub>At night (Key Lighting on Auto, 19:24): the cabin dark, the legends backlit, the display bright behind smoked plum glass</sub>
 
 ![The Key Lighting setting](key-lighting.jpg)
 <sub>The Key Lighting setting (v0.3.0)</sub>
@@ -24,9 +24,9 @@ Taken from the running app (v0.4.0) on an Android TV box at 1920×1080 (240 dpi)
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).
 
-| Night | Day |
+| Day | Night |
 |---|---|
-| ![Night, keys backlit](render-night.jpg) | ![Day, legends printed](render-day.jpg) |
+| ![Day, legends printed](render-day.jpg) | ![Night, keys backlit](render-night.jpg) |
 
 ## Keys
 

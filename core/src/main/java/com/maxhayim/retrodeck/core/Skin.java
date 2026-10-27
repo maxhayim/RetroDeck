@@ -43,6 +43,15 @@ public final class Skin {
             DISPLAY = "display", MENU = "menu", VOL_DOWN = "vol_down", VOL_UP = "vol_up", PRESET = "preset";
 
     public final String id, name, era;
+    /**
+     * 1 for a single-DIN radio, drawn at its real slim shape across the lower half of the screen,
+     * under a screen of its own for the visualizer; 2 for a double-DIN one, which fills the screen.
+     */
+    public final int din;
+    /** The radio's outline on the screen: all of it for double DIN. */
+    public Box body = new Box(0, 0, 1, 1);
+    /** A single-DIN radio's visualizer screen, set into the dash above it, or null. */
+    public Box screen;
     public final int faceTop, faceBottom, bezel, lcdBack, lcdFrame, buttonFace, buttonEdge, printColor;
     public final int lcdStyle;
     public final float corner;
@@ -95,11 +104,12 @@ public final class Skin {
     public final List<Control> controls = new ArrayList<>();
     private final Map<String, Box> zones = new LinkedHashMap<>();
 
-    Skin(String id, String name, String era, int faceTop, int faceBottom, int bezel, int lcdBack, int lcdFrame,
+    Skin(String id, String name, String era, int din, int faceTop, int faceBottom, int bezel, int lcdBack, int lcdFrame,
          int buttonFace, int buttonEdge, int printColor, int lcdStyle, float corner) {
         this.id = id;
         this.name = name;
         this.era = era;
+        this.din = din;
         this.faceTop = faceTop;
         this.faceBottom = faceBottom;
         this.bezel = bezel;
@@ -116,6 +126,10 @@ public final class Skin {
         return control(id, label, new Box(l, t, r, b), false);
     }
 
+    Skin control(String id, String label, Box box) {
+        return control(id, label, box, false);
+    }
+
     Skin control(String id, String label, Box box, boolean round) {
         if (id == null) decor.add(new Control(null, label, box, round));
         else controls.add(new Control(id, label, box, round));
@@ -124,6 +138,15 @@ public final class Skin {
 
     Skin decor(String label, float l, float t, float r, float b) {
         return control(null, label, new Box(l, t, r, b), false);
+    }
+
+    Skin decor(String label, Box box) {
+        return control(null, label, box, false);
+    }
+
+    Skin trim(String label, Box box) {
+        trims.add(new Control(null, label, box, true));
+        return this;
     }
 
     Skin trim(String label, float l, float t, float r, float b) {
@@ -139,6 +162,11 @@ public final class Skin {
     /** The colour behind a reflective LCD: its own backlight, or the illumination. */
     public int backlight(int illumination) {
         return backlight != 0 ? backlight : illumination;
+    }
+
+    Skin zone(String zone, Box box) {
+        zones.put(zone, box);
+        return this;
     }
 
     Skin zone(String zone, float l, float t, float r, float b) {

@@ -26,16 +26,40 @@ SAMPLES = int(args[2]) if len(args) > 2 else 128
 
 scene_setup(SAMPLES)
 
-U = 9.0          # the screen's short side: sizes in the app are fractions of it
+BODY = L.get("body", [0.0, 0.0, 1.0, 1.0])
+SINGLE = L.get("din", 2) == 1
+# The screen's short side: sizes in the app are fractions of it. A single-DIN face is half as tall,
+# so its print, radii and screws are made smaller too, though not by half, so they stay legible.
+U = 9.0 * (0.72 if SINGLE else 1.0)
 FACE = 0.30      # the front of the faceplate
 hole = hole_material()
 CONTROLS = [k for k in L["keys"] if k["id"] is not None]
 DECOR = [k for k in L["keys"] if k["id"] is None]
 
 
+def bx(f):
+    """A fraction across the faceplate, as a fraction of the screen."""
+    return BODY[0] + f * (BODY[2] - BODY[0])
+
+
+def by(f):
+    """A fraction down the faceplate, as a fraction of the screen."""
+    return BODY[1] + f * (BODY[3] - BODY[1])
+
+
 def dash():
     box("dash", -1, -1, W + 1, H + 1, -0.6, -0.1, material("dash", (0.012, 0.012, 0.014), 0.62, 0.35, bump=0.35,
                                                            bump_scale=220))
+    if SINGLE:
+        # The radio's slot in the dash, and the dash's own screen above it for the visualizer.
+        x0, y0, x1, y1 = rect(BODY)
+        box("pocket", x0 - 0.06, y0 - 0.06, x1 + 0.06, y1 + 0.06, -0.12, -0.099, hole)
+        x0, y0, x1, y1 = rect(L["screen"])
+        m = 0.16
+        bezel = material("bezel", (0.010, 0.010, 0.012), 0.38, 0.5, bump=0.08, bump_scale=700)
+        rbox("bezel", x0 - m, y0 - m, x1 + m, y1 + m, -0.1, 0.10, bezel, 0.22, bevel=0.05)
+        rbox("screen", x0, y0, x1, y1, 0.10, 0.104, material("screen", (0.002, 0.0025, 0.003), 0.05, 0.5, coat=1.0),
+             0.03)
 
 
 def plate(outline, mat, edge=0.03, edge_mat=None):
@@ -80,7 +104,7 @@ def printed(s, x, y, size, mat, align="CENTER", spacing=1.2):
 def screws(fx, fy, chrome, slot):
     r = 0.011 * U
     for i, (x, y) in enumerate(((fx, fy), (1 - fx, fy), (fx, 1 - fy), (1 - fx, 1 - fy))):
-        cx, cy = X(x), Y(y)
+        cx, cy = X(bx(x)), Y(by(y))
         cut_circle(cx, cy, r * 1.12, FACE, 0.04, hole)
         cylinder("screw", cx, cy, r, FACE - 0.04, FACE + 0.02, chrome, bevel=r * 0.35, top_r=r * 0.9)
         t = math.radians(17 + i * 23)
@@ -136,9 +160,11 @@ def classic():
     ink = material("ink", srgb(0x25272B), 0.6)
     flap = material("flap", (0.30, 0.31, 0.33), 0.35, metal=1.0, aniso=0.6, brushed=True, bump=0.1)
     dash()
-    plate_box(0.006, 0.012, 0.994, 0.988, 0.018 * U, alu, edge=0.035)
-    # Engraved line under the display and keys.
-    cut_box(X(0.215), Y(0.645) - 0.012, X(0.785), Y(0.645) + 0.012, FACE, 0.025, hole)
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.018 * U, alu, edge=0.035)
+    # Engraved line between the display and the presets.
+    x0, x1 = L["lcd"][0] - 0.01, L["lcd"][2] + 0.01
+    gy = (L["lcd"][3] + L["keys"][-6]["box"][1]) / 2
+    cut_box(X(x0), Y(gy) - 0.012, X(x1), Y(gy) + 0.012, FACE, 0.025, hole)
     screws(0.018, 0.045, chrome, material("slot", (0.05, 0.05, 0.055), 0.5))
     window(L["lcd"], 0.016 * U, L["corner"] * U, material("vfd", (0.003, 0.004, 0.0035), 0.45, 0.12),
            material("surround", (0.012, 0.012, 0.013), 0.6, 0.3))
@@ -160,7 +186,7 @@ def digital():
     silver = material("chrome-ring", (0.85, 0.86, 0.88), 0.15, metal=1.0, rings=True, bump=0.08)
     grey = material("ink", srgb(0x8E949C), 0.6)
     dash()
-    plate_box(0.006, 0.012, 0.994, 0.988, 0.04 * U, plastic, edge=0.06)
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.04 * U, plastic, edge=0.06)
     window(L["lcd"], 0.014 * U, L["corner"] * U * 0.6, material("lcd", (0.004, 0.006, 0.005), 0.12, 0.5, coat=0.6),
            material("surround", (0.008, 0.008, 0.009), 0.5, 0.3))
     keys(FACE, rubber, legend_material("legend", srgb(0xB4B9C0)), r=L["corner"] * U, bevel=0.07, round_bevel=0.09,
@@ -213,8 +239,12 @@ def hifi():
     champagne = material("champagne", srgb(0xC2AC82), 0.45, 0.5, metal=0.3)
     dull = material("champagne-dull", srgb(0x8A7C60), 0.5, 0.4)
     dash()
-    face = plate_box(0.006, 0.012, 0.994, 0.988, 0.008 * U, anod, edge=0.03, edge_mat=cut_edge)
-    for x0, y, x1 in ((0.03, 0.145, 0.97), (0.22, 0.655, 0.78), (0.22, 0.81, 0.78)):
+    face = plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.008 * U, anod, edge=0.03, edge_mat=cut_edge)
+    lcd, presets, switch = L["lcd"], L["keys"][-6]["box"], next(k for k in DECOR if k["label"] == "NR B")["box"]
+    # Pinstripes: across under the top row, and either side of the presets.
+    for x0, y, x1 in ((bx(0.03), (L["slot"][3] + lcd[1]) / 2, bx(0.97)),
+                      (lcd[0] - 0.01, (lcd[3] + presets[1]) / 2, lcd[2] + 0.01),
+                      (lcd[0] - 0.01, (presets[3] + switch[1]) / 2, lcd[2] + 0.01)):
         box("stripe", X(x0), Y(y) - 0.01, X(x1), Y(y) + 0.01, FACE - 0.01, FACE + 0.0008, champagne)
     window(L["lcd"], 0.012 * U, L["corner"] * U, material("vfd", (0.006, 0.007, 0.006), 0.35, 0.3),
            material("surround", (0.012, 0.012, 0.013), 0.6, 0.3))
@@ -226,11 +256,19 @@ def hifi():
     slot(L["slot"], chrome)
     s0, t0, s1, t1 = L["slot"]
     sh = (t1 - t0) * H
-    py = t1 + 0.032 * U / H
-    printed("AUTO REVERSE", s0 + sh * 0.5 / W, py, 0.016 * U, champagne, "LEFT", 1.3)
-    printed("METAL", s1 - sh * 0.5 / W, py, 0.016 * U, champagne, "RIGHT", 1.3)
-    printed("QUARTZ PLL SYNTHESIZER", 0.035, 0.90, 0.017 * U, champagne, "LEFT", 1.3)
-    printed("FM/AM STEREO", 0.035, 0.94, 0.017 * U, dull, "LEFT", 1.3)
+    if SINGLE:
+        # Beside the slot: there's no room under it on a single-DIN face.
+        py = (t0 + t1) / 2 + 0.006 * U / H
+        printed("AUTO REVERSE", s0 - 0.012, py, 0.016 * U, champagne, "RIGHT", 1.3)
+        printed("METAL", s1 + 0.012, py, 0.016 * U, champagne, "LEFT", 1.3)
+        printed("QUARTZ PLL SYNTHESIZER", bx(0.655), by(0.08), 0.017 * U, champagne, "LEFT", 1.3)
+        printed("FM/AM STEREO", bx(0.655), by(0.14), 0.017 * U, dull, "LEFT", 1.3)
+    else:
+        py = t1 + 0.032 * U / H
+        printed("AUTO REVERSE", s0 + sh * 0.5 / W, py, 0.016 * U, champagne, "LEFT", 1.3)
+        printed("METAL", s1 - sh * 0.5 / W, py, 0.016 * U, champagne, "RIGHT", 1.3)
+        printed("QUARTZ PLL SYNTHESIZER", 0.035, 0.90, 0.017 * U, champagne, "LEFT", 1.3)
+        printed("FM/AM STEREO", 0.035, 0.94, 0.017 * U, dull, "LEFT", 1.3)
     # The diamond cut runs round every opening too.
     rd.apply_cuts()
     rd.TARGETS.clear()
@@ -252,14 +290,16 @@ def detachable():
     rubber = material("rubber", (0.022, 0.022, 0.025), 0.7, 0.3, bump=0.3, bump_scale=600)
     ink = material("ink", srgb(0x9DA4AE), 0.55)
     dash()
-    top = quad((X(0.008), Y(0.08)), (X(0.5), Y(-0.02)), (X(0.992), Y(0.08)))
-    bottom = quad((X(0.992), Y(0.92)), (X(0.5), Y(1.02)), (X(0.008), Y(0.92)))
+    top = quad((X(bx(0.008)), Y(by(0.08))), (X(bx(0.5)), Y(by(-0.02))), (X(bx(0.992)), Y(by(0.08))))
+    bottom = quad((X(bx(0.992)), Y(by(0.92))), (X(bx(0.5)), Y(by(1.02))), (X(bx(0.008)), Y(by(0.92))))
     # Anticlockwise from the front: along the bottom left to right, then the top right to left.
     outline = list(reversed(bottom)) + list(reversed(top))
     plate(outline, plastic, edge=0.05)
-    trim = quad((X(0.02), Y(0.09)), (X(0.5), Y(-0.005)), (X(0.98), Y(0.09)))
+    trim = quad((X(bx(0.02)), Y(by(0.09))), (X(bx(0.5)), Y(by(-0.005))), (X(bx(0.98)), Y(by(0.09))))
     tube("trim", [(x, y, FACE + 0.01) for x, y in trim], 0.03, chrome)
-    swoosh = quad((X(0.095), Y(0.635)), (X(0.42), Y(0.665)), (X(0.725), Y(0.60)))
+    # Along the gap between the display and the presets.
+    gy = (L["lcd"][3] + L["keys"][-6]["box"][1]) / 2
+    swoosh = quad((X(L["lcd"][0] - 0.005), Y(gy)), (X(bx(0.42)), Y(gy + 0.012)), (X(L["knob"][0] - 0.005), Y(gy - 0.014)))
     tube("swoosh", [(x, y, FACE + 0.01) for x, y in swoosh], 0.024, chrome)
     window(L["lcd"], 0.014 * U, 0.035 * U, material("lcd", (0.002, 0.005, 0.010), 0.12, 0.5, coat=0.6),
            material("surround", (0.008, 0.008, 0.009), 0.5, 0.3))
@@ -270,7 +310,8 @@ def detachable():
     cylinder("bezel", cx, cy, kr * 1.2, FACE - 0.05, FACE + 0.08, spun, bevel=0.04)
     _, _, r = knob(L["knob"], FACE + 0.08, hole, rubber, rubber, ridges=40, cap_frac=0.78, height=0.42)
     gloss_cap(cx, cy, r * 0.78, FACE + 0.08 + 0.44, chrome)
-    printed("MOSFET 50W × 4", (L["knob"][0] + L["knob"][2]) / 2, 0.655, 0.018 * U, ink, spacing=1.25)
+    printed("MOSFET 50W × 4", (L["knob"][0] + L["knob"][2]) / 2, (L["knob"][3] + L["zones"]["faceplate"][1]) / 2 + 0.004,
+            0.018 * U, ink, spacing=1.25)
     return lights
 
 
