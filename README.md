@@ -222,7 +222,7 @@ my-vehicle.zip
 <ul>
   <li><strong>Your own logos, for your own car</strong>: import whatever logo you like into your own head unit. That's what the Vehicle Branding module is for.</li>
   <li><strong>RetroDeck ships no real logos</strong>, and its skins carry no brand names. The places where a maker's badge sat on the real units are branding zones that you fill yourself.</li>
-  <li><strong>Screenshots and demos use made-up brands</strong>, like Halcyon and the Mesa GT in <a href="docs/demo/">docs/demo</a>. They are original designs, not copies or look-alikes of real badges: a logo that's confusingly similar to a real one can infringe too.</li>
+  <li><strong>Screenshots and demos use made-up brands</strong>, like Halcyon and the Mesa GT, Takane Motors, and the stereo makers MIZAR, Kazetone and ryusei, all in <a href="docs/demo/">docs/demo</a>. They are original designs, not copies or look-alikes of real badges: a logo that's confusingly similar to a real one can infringe too.</li>
   <li><strong>Branding packs</strong> include the logos you imported. Only share a pack publicly if you have the right to share its logos, for example ones you made yourself. RetroDeck reminds you of this when you export.</li>
   <li><strong>Skins modelled on real units</strong> copy the period look (materials, layout, key shapes), never brand names or logos. A skin may name a car in plain words to say what it's modelled on.</li>
 </ul>
