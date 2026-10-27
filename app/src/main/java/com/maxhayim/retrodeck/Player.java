@@ -231,7 +231,7 @@ final class Player {
             // Lost access to the file.
         }
         String s = u.getLastPathSegment();
-        return s == null ? "Track " + (index + 1) : s;
+        return s == null ? "Track " + (index + 1) : s.replaceFirst("\\.[A-Za-z0-9]{2,4}$", "");
     }
 
     private void persist() {

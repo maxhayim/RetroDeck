@@ -153,13 +153,14 @@ adb install RetroDeck-0.1.0.apk
 
 <h3>Head units without a file picker</h3>
 
-<p>Some head units and Android TV builds have no working file picker, or one that only shows photos (so SVG logos and ZIP packs can't be picked). RetroDeck then also lists the images and packs in its own import folder, which needs no storage permission:</p>
+<p>Some head units and Android TV builds have no working file picker, or one that only shows photos (so SVG logos and ZIP packs can't be picked). RetroDeck then also lists the images, GIFs and packs in its own import folder, and songs in its music folder (press SRC). Neither needs a storage permission:</p>
 
 <pre>
 Android/data/com.maxhayim.retrodeck/files/import/
+Android/data/com.maxhayim.retrodeck/files/music/
 </pre>
 
-<p>The folder appears the first time you open an import list. Copy files into it with a file manager or a USB cable. On Android 11 and newer, file managers may not show <code>Android/data</code>, and <code>adb push</code> straight into it can fail, so push to Download first and copy from there:</p>
+<p>The import folder appears the first time you open an import list, and the music folder the first time you press SRC. Copy files into it with a file manager or a USB cable. On Android 11 and newer, file managers may not show <code>Android/data</code>, and <code>adb push</code> straight into it can fail, so push to Download first and copy from there:</p>
 
 <pre>
 adb push halcyon-logo.svg /sdcard/Download/

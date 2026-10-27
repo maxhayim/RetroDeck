@@ -23,14 +23,18 @@ import com.maxhayim.retrodeck.core.StereoView;
 import com.maxhayim.retrodeck.core.Ui;
 import com.maxhayim.retrodeck.core.Visualizers;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /** The stereo. The active vehicle profile decides its skin, colours, visualizer and startup. */
 public class MainActivity extends Activity implements StereoView.Listener {
 
     private static final int PICK_MUSIC = 1;
     private static final String[] AUDIO = {"audio/*"};
+    private static final String SONG = ".+\\.(mp3|m4a|aac|ogg|oga|opus|flac|wav|mid|midi|3gp|mkv|webm)";
 
     private ProfileStore store;
     private VehicleProfile profile;
@@ -122,7 +126,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
                 if (!state.power) player.pause();
                 break;
             case Skin.SOURCE:
-                Pickers.open(this, AUDIO, PICK_MUSIC);
+                chooseMusic();
                 break;
             case Skin.PLAY:
                 player.toggle();
@@ -188,6 +192,60 @@ public class MainActivity extends Activity implements StereoView.Listener {
     public void onBackPressed() {
         if (startup.isPlaying()) startup.skip();
         else super.onBackPressed();
+    }
+
+    /**
+     * Songs from the music folder, or the file picker. Some head units and Android TV builds have no
+     * working picker, so the folder is always offered, as for logos.
+     */
+    private void chooseMusic() {
+        final File folder = musicFolder();
+        File[] found = folder.listFiles((dir, n) -> n.toLowerCase(Locale.US).matches(SONG));
+        final List<Uri> songs = new ArrayList<>();
+        if (found != null) {
+            Arrays.sort(found);
+            for (File f : found) songs.add(Uri.fromFile(f));
+        }
+        if (songs.isEmpty()) {
+            Ui.dialog(this).setTitle("Add music")
+                    .setMessage("Open the file picker, or copy songs into RetroDeck's music folder with a file manager, "
+                            + "a USB cable or adb, then press SRC again:\n\n" + folder.getPath())
+                    .setPositiveButton("File picker", (d, w) -> pick())
+                    .setNegativeButton("OK", null)
+                    .show();
+            return;
+        }
+        String n = songs.size() == 1 ? "1 song" : songs.size() + " songs";
+        Ui.dialog(this).setTitle("Add music")
+                .setItems(new String[]{"Add " + n + " from the music folder", "Choose with the file picker…"}, (d, w) -> {
+                    if (w == 0) player.add(songs);
+                    else pick();
+                }).show();
+    }
+
+    private void pick() {
+        if (!Pickers.open(this, AUDIO, PICK_MUSIC)) {
+            Ui.dialog(this).setTitle("No file picker")
+                    .setMessage("This device has no file picker for music. Copy songs into this folder with a file manager, "
+                            + "a USB cable or adb, then press SRC again:\n\n" + musicFolder().getPath())
+                    .setPositiveButton("OK", null)
+                    .show();
+        }
+    }
+
+    /** Needs no storage permission; opened up so files can be copied in. */
+    private File musicFolder() {
+        File f = getExternalFilesDir("music");
+        if (f == null) f = new File(getFilesDir(), "music");
+        //noinspection ResultOfMethodCallIgnored
+        f.mkdirs();
+        //noinspection ResultOfMethodCallIgnored
+        f.setReadable(true, false);
+        //noinspection ResultOfMethodCallIgnored
+        f.setWritable(true, false);
+        //noinspection ResultOfMethodCallIgnored
+        f.setExecutable(true, false);
+        return f;
     }
 
     @Override
