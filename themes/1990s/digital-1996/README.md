@@ -6,10 +6,13 @@ A mid-1990s deck in grained black plastic with soft rubber keys, a ribbed volume
 
 ## Screenshots
 
-Taken from the running app on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/). Taken with v0.1.0. That was before key lighting, so the keys are lit with the faceplate in daylight; current versions look like the day and night renders below.
+Taken from the running app (v0.5.0) on an Android TV box at 1920×1080 (240 dpi), branded with the made-up Halcyon Mesa GT from [docs/demo](../../../docs/demo/), with the dash lit blue. The faceplate is a 3D render; the display, logos and knob pointer are drawn live on top.
 
-![Branded with the demo car, playing](stereo-digital.jpg)
-<sub>Branded with the demo car, playing</sub>
+![By day](stereo-digital.jpg)
+<sub>By day (Key Lighting Off): legends printed on the keys</sub>
+
+![At night](stereo-digital-night.jpg)
+<sub>At night (Key Lighting on Auto, 20:10): the faceplate dark, the legends backlit in the dash colour</sub>
 
 ## Day and night
 

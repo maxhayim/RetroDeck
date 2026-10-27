@@ -194,7 +194,7 @@ def modern():
 
     def lit(pressed, night):
         # A touch key doesn't move: it lights up under the finger.
-        pad_bsdf.inputs["Emission Strength"].default_value = (0.05 if night else 0.12) if pressed else 0.0
+        pad_bsdf.inputs["Emission Strength"].default_value = (0.015 if night else 0.12) if pressed else 0.0
     return lights, lit
 
 

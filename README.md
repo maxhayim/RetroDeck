@@ -65,7 +65,7 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Six skins</strong>, modelled on real designs, with no brand names on them:
+  <li><strong>Six skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them:
     <ul>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
@@ -245,7 +245,8 @@ my-vehicle.zip
   <li>The Amber and Green illumination presets, and "From logos".</li>
   <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
   <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
-  <li>Z32 Factory 1990, modelled in 3D (v0.4.0): Auto at 19:24 (night look), Off (day look), and a pressed key by day and night. Always on, and the other skins' day look, have only been drawn by the render tests.</li>
+  <li>Z32 Factory 1990, modelled in 3D (v0.4.0): Auto at 19:24 (night look), Off (day look), and a pressed key by day and night.</li>
+  <li>The other five skins, modelled in 3D (v0.5.0): Auto at 20:10 with the dash lit blue (night look, legends tinted blue), Off (day look), and a pressed key at night. Always on has only been drawn by the render tests.</li>
   <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
   <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
   <li>A pack holding a <code>../</code> path, which was refused.</li>
