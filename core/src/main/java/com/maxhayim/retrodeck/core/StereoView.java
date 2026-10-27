@@ -87,7 +87,7 @@ public class StereoView extends View {
     /** For a rendered skin: the faceplate with every key pressed in, and whether both are the night ones. */
     private Bitmap pressedArt;
     private boolean artNight;
-    private Shader dotGrid, mesh, glare, panel, panelShade;
+    private Shader dotGrid, mesh, glare, panel, panelShade, panelLeft, panelRight, panelFoot;
     private RectF glareFor, panelFor;
     private int panelColor;
     private int lastVolume = -1;
@@ -520,7 +520,8 @@ public class StereoView extends View {
 
     /**
      * A reflective LCD's panel, lit from behind in the illumination colour through a grey-green
-     * polariser, with a shadow where the bezel overhangs it.
+     * polariser, set into its bezel: a deep shadow under the top edge, where the light comes from,
+     * and a softer one round the other three.
      */
     private void drawPanel(Canvas c, RectF lcd, float u) {
         int light = !keysLit && skin.panelDay != 0 ? skin.panelDay : skin.backlight(illumination);
@@ -531,12 +532,19 @@ public class StereoView extends View {
             // comes through a grey-green polariser.
             int top = skin.backlight != 0 ? light : Illumination.mix(0xFFA9BBB0, light, 0.38f);
             panel = new LinearGradient(0, lcd.top, 0, lcd.bottom, top, Illumination.dim(top, 0.8f), Shader.TileMode.CLAMP);
-            panelShade = new LinearGradient(0, lcd.top, 0, lcd.top + u * 0.03f, 0x70000000, 0x00000000, Shader.TileMode.CLAMP);
+            panelShade = new LinearGradient(0, lcd.top, 0, lcd.top + u * 0.06f, new int[]{0xB0000000, 0x48000000, 0x00000000},
+                    new float[]{0f, 0.35f, 1f}, Shader.TileMode.CLAMP);
+            float side = u * 0.025f;
+            panelLeft = new LinearGradient(lcd.left, 0, lcd.left + side, 0, 0x78000000, 0x00000000, Shader.TileMode.CLAMP);
+            panelRight = new LinearGradient(lcd.right, 0, lcd.right - side, 0, 0x78000000, 0x00000000, Shader.TileMode.CLAMP);
+            panelFoot = new LinearGradient(0, lcd.bottom, 0, lcd.bottom - side, 0x60000000, 0x00000000, Shader.TileMode.CLAMP);
         }
         paint.setShader(panel);
         c.drawRect(lcd, paint);
-        paint.setShader(panelShade);
-        c.drawRect(lcd, paint);
+        for (Shader shade : new Shader[]{panelShade, panelLeft, panelRight, panelFoot}) {
+            paint.setShader(shade);
+            c.drawRect(lcd, paint);
+        }
         paint.setShader(null);
     }
 

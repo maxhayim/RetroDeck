@@ -52,8 +52,53 @@ strip_bsdf = strip.node_tree.nodes["Principled BSDF"]
 strip_bsdf.inputs["Emission Color"].default_value = (*srgb(0xA6D83A), 1)
 
 
+
+
+def inner_shadow(m, w, h, top=0.3, edge=0.14, floor=0.12):
+    """Darken a w x h panel towards its edges, most under the top, where the bezel overhangs it."""
+    n = m.node_tree.nodes
+    links = m.node_tree.links
+    coord = n.new("ShaderNodeTexCoord")
+    xyz = n.new("ShaderNodeSeparateXYZ")
+    links.new(coord.outputs["Generated"], xyz.inputs["Vector"])
+
+    def math(op, a, b):
+        node = n.new("ShaderNodeMath")
+        node.operation = op
+        node.use_clamp = op in ("MULTIPLY",)
+        for i, v in enumerate((a, b)):
+            if isinstance(v, float):
+                node.inputs[i].default_value = v
+            else:
+                links.new(v, node.inputs[i])
+        return node.outputs[0]
+
+    x, y = xyz.outputs["X"], xyz.outputs["Y"]
+    left = math("MULTIPLY", x, w / edge)
+    right = math("MULTIPLY", math("SUBTRACT", 1.0, x), w / edge)
+    foot = math("MULTIPLY", y, h / edge)
+    head = math("MULTIPLY", math("SUBTRACT", 1.0, y), h / top)
+    f = math("MULTIPLY", math("MULTIPLY", left, right), math("MULTIPLY", foot, head))
+    shade = math("ADD", floor, math("MULTIPLY", f, 1.0 - floor))
+    p = n["Principled BSDF"]
+    for socket in ("Base Color", "Emission Color"):
+        mix = n.new("ShaderNodeMixRGB")
+        mix.blend_type = "MULTIPLY"
+        mix.inputs["Fac"].default_value = 1.0
+        mix.inputs["Color1"].default_value = p.inputs[socket].default_value
+        val = n.new("ShaderNodeCombineXYZ")
+        for c in "XYZ":
+            links.new(shade, val.inputs[c])
+        links.new(val.outputs[0], mix.inputs["Color2"])
+        links.new(mix.outputs[0], p.inputs[socket])
+        STRIP_COLOURS[socket] = mix.inputs["Color1"]
+
+
+STRIP_COLOURS = {}
+
+
 def strip_light(pressed, night):
-    strip_bsdf.inputs["Base Color"].default_value = (*(srgb(0x7A7762) if not night else (0, 0, 0)), 1)
+    STRIP_COLOURS["Base Color"].default_value = (*(srgb(0x7A7762) if not night else (0, 0, 0)), 1)
     strip_bsdf.inputs["Emission Strength"].default_value = 0.9 if night else 0.0
 
 
@@ -139,6 +184,7 @@ for k in key_named(EJECT):
 sx0, sy0, sx1, sy1 = X(0.051), Y(0.317), X(0.648), Y(0.232)
 cut_box(sx0 - 0.05, sy0 - 0.05, sx1 + 0.05, sy1 + 0.05, FACE, 0.08, hole, 0.03, floor=inset)
 box("strip", sx0, sy0, sx1, sy1, FACE - 0.08, FACE - 0.07, strip)
+inner_shadow(strip, sx1 - sx0, sy1 - sy0)
 dseg = bpy.data.fonts.load(os.path.join(HERE, "..", "..", "core", "src", "main", "assets", "fonts",
                                         "DSEG7Classic-BoldItalic.ttf"))
 for i in range(6):
