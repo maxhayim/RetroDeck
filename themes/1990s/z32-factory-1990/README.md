@@ -17,6 +17,9 @@ Taken from the running app (v0.4.0) on an Android TV box at 1920×1080 (240 dpi)
 ![The Key Lighting setting](key-lighting.jpg)
 <sub>The Key Lighting setting (v0.3.0)</sub>
 
+![With the demo pack: the made-up stereo maker MIZAR on the tape door and the made-up Takane Motors badge in the corner, the way factory decks carried the audio brand and the car maker's badge](z32-mizar.jpg)
+<sub>With the demo pack: the made-up stereo maker MIZAR on the tape door and the made-up Takane Motors badge in the corner, the way factory decks carried the audio brand and the car maker's badge (v0.9.0)</sub>
+
 ## Day and night
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).

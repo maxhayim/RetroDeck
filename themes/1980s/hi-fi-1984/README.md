@@ -14,6 +14,9 @@ Taken from the running app (v0.5.0) on an Android TV box at 1920×1080 (240 dpi)
 ![At night](stereo-hifi-night.jpg)
 <sub>At night (Key Lighting on Auto, 20:10): the faceplate dark, the legends backlit in the dash colour</sub>
 
+![With the demo pack: the made-up hi-fi maker Kazetone, the dash lit blue](stereo-hifi-kazetone.jpg)
+<sub>With the demo pack: the made-up hi-fi maker Kazetone, the dash lit blue (v0.9.0)</sub>
+
 ## Day and night
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display, knob pointer and dial are drawn by the app on top in the render tests (no logos). At night the key legends are backlit and the faceplate goes dark; by day the legends are printed paint. See Key Lighting in the [main README](../../../README.md).

@@ -60,7 +60,7 @@
   </tr>
 </table>
 
-<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>.</sub></p>
+<p align="center"><sub>Screen grabs from the running app on an Android TV box set to 1920×1080 at 240 dpi, like a 1280×720 HD head unit. Nothing is mocked up or retouched. "Halcyon Motor Co." and the "Mesa GT" are made up for these screenshots; their artwork is in <a href="docs/demo/">docs/demo</a>, with more made-up brands (Takane Motors, MIZAR, Kazetone, ryusei) and <a href="docs/demo/demo-brands.zip">a branding pack</a> that puts them on the Z32, Hi-Fi and Detachable skins.</sub></p>
 
 <h2>Features</h2>
 
