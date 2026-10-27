@@ -80,6 +80,8 @@ public final class Skin {
     public int phosphor;
     /** The tint of a display's filter glass, seen where nothing is lit, or 0 for clear. */
     public int lcdGlass;
+    /** A reflective LCD's own backlight colour, whatever the dash lighting, or 0 to light it in the illumination colour. */
+    public int backlight;
     /** Keys that are only part of the design, like a changer's DISC SELECT; they light up but do nothing. */
     public final List<Control> decor = new ArrayList<>();
     /** Small knobs that are only part of the design, like BASS and TREB; label is "TOP|BOTTOM" print. */
@@ -130,6 +132,11 @@ public final class Skin {
     /** The colour the display draws text and bars in: its own phosphor, the illumination, or dark ink on a reflective LCD. */
     public int lcdInk(int illumination) {
         return lcdStyle == LCD_REFLECTIVE ? REFLECTIVE_INK : phosphor != 0 ? phosphor : illumination;
+    }
+
+    /** The colour behind a reflective LCD: its own backlight, or the illumination. */
+    public int backlight(int illumination) {
+        return backlight != 0 ? backlight : illumination;
     }
 
     Skin zone(String zone, float l, float t, float r, float b) {

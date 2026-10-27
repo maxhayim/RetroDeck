@@ -19,7 +19,7 @@
 
 <h1>RetroDeck</h1>
 
-<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (six of them, from a 1984 hi-fi deck and a 1990 factory stack to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (seven of them, from a 1984 hi-fi deck and 1990 and 1994 factory units to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
 
 <p>Everything works offline. There is no account and no cloud service; the only time RetroDeck goes online is while you search GIPHY for a visualizer animation. It needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
 
@@ -65,11 +65,12 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Six skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them:
+  <li><strong>Seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them:
     <ul>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
       <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a fluorescent display behind black glass; the tape keys double as presets</li>
+      <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with orange and green print round the presets and a reflective LCD; at night the display and legends glow green</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
       <li>Modern Glass: one sheet of black glass over the display</li>

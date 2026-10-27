@@ -10,6 +10,7 @@ public final class Skins {
     public static final String DIGITAL = "digital96";
     public static final String MODERN = "modern";
     public static final String FACTORY = "z32factory90";
+    public static final String FACTORY_94 = "a80factory94";
     public static final String HIFI = "hifi84";
     public static final String DETACHABLE = "detach98";
 
@@ -25,6 +26,7 @@ public final class Skins {
             all.add(modern());
             all.add(hifi());
             all.add(factory());
+            all.add(factory94());
             all.add(detachable());
         }
         return all;
@@ -200,6 +202,51 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, 0.044f, 0.542f, 0.187f, 0.623f)
                 .zone(Zones.CORNER, 0.804f, 0.07f, 0.956f, 0.211f)
                 .zone(Zones.VISUALIZER, 0.055f, 0.866f, 0.49f, 0.93f);
+        return s;
+    }
+
+    /**
+     * A mid-1990s factory CD and tape unit, as fitted by the car maker: charcoal plastic, a CD slot
+     * across the top, a TUNE SEEK rocker beside six preset keys with their CD functions printed above
+     * and below in orange and green, a cassette door, CD, AM·FM and TAPE keys down the side, and a
+     * reflective LCD lit green from behind. At night the legends light green too, whatever the dash.
+     */
+    private static Skin factory94() {
+        Skin s = new Skin(FACTORY_94, "A80 Factory 1994", "1990s", 0xFF2B2C2F, 0xFF1A1B1D, 0xFF0A0A0B, 0xFF9EB89A,
+                0xFF0A0B0C, 0xFF26272A, 0xFF0E0F11, 0xFFC9CDD2, Skin.LCD_REFLECTIVE, 0.008f);
+        s.knobDots = false;
+        s.art = "skins/" + FACTORY_94;
+        s.backlight = 0xFF63E05A;
+        s.keyLight = 0xFF7CF27A;
+        s.keyPrint = 0xFFC9CDD2;
+        // The top row: CD eject and slot, the power-volume knob, the rocker and the presets.
+        s.slot = new Box(0.15f, 0.075f, 0.835f, 0.17f);
+        s.knob = new Box(0.025f, 0.31f, 0.175f, 0.58f);
+        s.presets = new Box(0.384f, 0.262f, 0.955f, 0.40f);
+        s.decor("EJECT", 0.031f, 0.08f, 0.121f, 0.19f)
+                .control(Skin.POWER, "PUSH PWR\u00B7VOL", 0.027f, 0.245f, 0.177f, 0.295f)
+                .control(Skin.PREV, "\u2228", 0.20f, 0.262f, 0.281f, 0.40f)
+                .control(Skin.NEXT, "\u2227", 0.283f, 0.262f, 0.366f, 0.40f);
+        // The tape deck.
+        s.changer = new Box(0.315f, 0.47f, 0.705f, 0.645f);
+        s.decor("EJECT", 0.205f, 0.505f, 0.295f, 0.625f)
+                .control(Skin.DISPLAY, "SCAN", 0.815f, 0.475f, 0.925f, 0.63f)
+                .control(Skin.SOURCE, "CD", 0.04f, 0.60f, 0.17f, 0.685f)
+                .decor("AM\u00B7FM", 0.04f, 0.715f, 0.17f, 0.80f)
+                .control(Skin.PLAY, "TAPE", 0.04f, 0.835f, 0.17f, 0.92f);
+        // The sound panel and the display.
+        s.control(Skin.MENU, "EQ", 0.245f, 0.69f, 0.335f, 0.755f)
+                .decor("LOUD", 0.355f, 0.697f, 0.378f, 0.738f);
+        s.trim("BASS|", 0.22f, 0.84f, 0.27f, 0.93f)
+                .trim("MID|", 0.295f, 0.84f, 0.345f, 0.93f)
+                .trim("TREB|", 0.371f, 0.84f, 0.421f, 0.93f);
+        s.lcd = new Box(0.50f, 0.73f, 0.93f, 0.94f);
+        s.lcdText = new Box(0.585f, 0.745f, 0.92f, 0.855f);
+        s.zone(Zones.HEADER, 0.37f, 0.50f, 0.65f, 0.60f)
+                .zone(Zones.LCD, 0.51f, 0.75f, 0.575f, 0.85f)
+                .zone(Zones.FACEPLATE, 0.50f, 0.672f, 0.62f, 0.718f)
+                .zone(Zones.CORNER, 0.855f, 0.06f, 0.97f, 0.20f)
+                .zone(Zones.VISUALIZER, 0.51f, 0.865f, 0.92f, 0.925f);
         return s;
     }
 

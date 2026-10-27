@@ -523,10 +523,12 @@ public class StereoView extends View {
      * polariser, with a shadow where the bezel overhangs it.
      */
     private void drawPanel(Canvas c, RectF lcd, float u) {
-        if (panel == null || panelColor != illumination || !lcd.equals(panelFor)) {
-            panelColor = illumination;
+        int light = skin.backlight(illumination);
+        if (panel == null || panelColor != light || !lcd.equals(panelFor)) {
+            panelColor = light;
             panelFor = new RectF(lcd);
-            int top = Illumination.mix(0xFFA9BBB0, illumination, 0.38f);
+            // A backlight of the display's own is a strong one: it shows through more of the polariser.
+            int top = Illumination.mix(0xFFA9BBB0, light, skin.backlight != 0 ? 0.62f : 0.38f);
             panel = new LinearGradient(0, lcd.top, 0, lcd.bottom, top, Illumination.dim(top, 0.8f), Shader.TileMode.CLAMP);
             panelShade = new LinearGradient(0, lcd.top, 0, lcd.top + u * 0.03f, 0x70000000, 0x00000000, Shader.TileMode.CLAMP);
         }
@@ -791,6 +793,16 @@ public class StereoView extends View {
         return s.substring(0, Math.max(0, n)) + "…";
     }
 
+    /** Dark segments on a reflective LCD; in full screen there's no panel behind them, so they're drawn lit. */
+    private boolean reflective() {
+        return skin.lcdStyle == Skin.LCD_REFLECTIVE && !fullscreen;
+    }
+
+    /** The colour the visualizer draws in: the display's ink, or a reflective one's backlight in full screen. */
+    private int displayInk() {
+        return skin.lcdStyle == Skin.LCD_REFLECTIVE && fullscreen ? skin.backlight(illumination) : skin.lcdInk(illumination);
+    }
+
     private void drawVisualizer(Canvas c, RectF v, float u) {
         if (Visualizers.OFF.equals(visualizer)) return;
         if (Visualizers.ANIMATION.equals(visualizer)) {
@@ -799,8 +811,8 @@ public class StereoView extends View {
             return;
         }
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
-        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
-        int ink = skin.lcdInk(illumination);
+        boolean reflective = reflective();
+        int ink = displayInk();
         int n = bands.length;
         if (Visualizers.BARS.equals(visualizer)) {
             float gap = v.width() * 0.012f;
@@ -879,7 +891,7 @@ public class StereoView extends View {
         long dt = animationAt == 0 ? 0 : Math.min(200, now - animationAt);
         animationAt = now;
         if (state.playing) animation.advance(dt, 0.5f + 1.5f * avg(0, bands.length));
-        int tint = animationTint ? (neon() ? bright(skin.lcdInk(illumination)) : skin.lcdInk(illumination)) : 0;
+        int tint = animationTint ? (neon() ? bright(displayInk()) : displayInk()) : 0;
         android.graphics.Bitmap bm = animation.bitmap(tint);
         if (bm == null) return;
         float s = cover ? Math.max(area.width() / bm.getWidth(), area.height() / bm.getHeight())
@@ -916,8 +928,8 @@ public class StereoView extends View {
 
     private void drawLadder(Canvas c, float x, float y, float w, float h, float level, String label) {
         lcdText(skin.lcdStyle);
-        int ink = skin.lcdInk(illumination);
-        boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
+        int ink = displayInk();
+        boolean reflective = reflective();
         text.setTextSize(h * 0.8f);
         text.setColor(ink);
         float lw = h * 1.1f;
@@ -1085,7 +1097,7 @@ public class StereoView extends View {
         // Track and clock in the display's lettering.
         lcdText(skin.lcdStyle);
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
-        int ink = skin.lcdStyle == Skin.LCD_REFLECTIVE ? illumination : skin.lcdInk(illumination);
+        int ink = skin.lcdStyle == Skin.LCD_REFLECTIVE ? skin.backlight(illumination) : skin.lcdInk(illumination);
         float y = h * 0.93f;
         text.setTextSize(u * 0.055f);
         spacing(text, modern ? 0.02f : 0.08f);

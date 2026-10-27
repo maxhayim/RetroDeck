@@ -24,7 +24,7 @@ GIPHY search needs an API key, and it is never committed. To build with one, add
 
 ## Rendered Skins
 
-Every skin is modelled in 3D and rendered with [Blender](https://www.blender.org/) (free), instead of being drawn in code: its faceplate is a set of pictures in `core/src/main/assets/skins/<id>/` (day, night, and both with every key pressed in). The model reads the skin's layout from the app, so keys always sit on their touch areas. Z32 Factory 1990 has its own model, `tools/blender/z32.py`; the others are in `tools/blender/skins.py`, built from the parts in `tools/blender/rd.py`:
+Every skin is modelled in 3D and rendered with [Blender](https://www.blender.org/) (free), instead of being drawn in code: its faceplate is a set of pictures in `core/src/main/assets/skins/<id>/` (day, night, and both with every key pressed in). The model reads the skin's layout from the app, so keys always sit on their touch areas. Z32 Factory 1990 and A80 Factory 1994 have their own models, `tools/blender/z32.py` and `tools/blender/a80.py`; the others are in `tools/blender/skins.py`, built from the parts in `tools/blender/rd.py`:
 
 ```bash
 ./gradlew :core:testDebugUnitTest -Prender -Prender.size=1920x1080   # writes core/build/skin-renders/<id>.json
@@ -34,7 +34,7 @@ python3 tools/blender/finish.py /tmp/hifi84 hifi84
 
 Add `ONLY=day PCT=50` in front of `blender` for a quick half-size look while you work. The display, logos and the knob's pointer are still drawn by the app on top.
 
-Skins whose keys light up in the dash colour at night also get `glow.webp`: the backlit legends alone, in white. At night the app tints it with the chosen colour and adds it to the night picture, so the Illumination setting still works. Z32 Factory 1990 has white legends of its own, rendered into its night pictures.
+Skins whose keys light up in the dash colour at night also get `glow.webp`: the backlit legends alone, in white. At night the app tints it with the chosen colour and adds it to the night picture, so the Illumination setting still works. Z32 Factory 1990 has white legends of its own, rendered into its night pictures. A80 Factory 1994 has a glow layer too, but always tints it green, its own colour.
 
 No skin copies a real unit: each is what car stereos of its era were generally made of. If you have photos of a unit you'd like a skin to look more like, open an issue with them.
 

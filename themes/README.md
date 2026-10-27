@@ -19,8 +19,8 @@ Every RetroDeck skin, by era. Each page has screenshots from a real device, day 
     <td width="50%" valign="top"><a href="1990s/digital-1996/"><img src="1990s/digital-1996/stereo-digital.jpg" alt="Digital 1996"/></a><br/><b><a href="1990s/digital-1996/">Digital 1996</a></b><br/><sub>Dot matrix</sub></td>
   </tr>
   <tr>
+    <td width="50%" valign="top"><a href="1990s/a80-factory-1994/"><img src="1990s/a80-factory-1994/a80-night.jpg" alt="A80 Factory 1994"/></a><br/><b><a href="1990s/a80-factory-1994/">A80 Factory 1994</a></b><br/><sub>Reflective LCD lit green from behind, with green-lit legends at night, like the real unit</sub></td>
     <td width="50%" valign="top"><a href="1990s/detachable-1998/"><img src="1990s/detachable-1998/stereo-detachable.jpg" alt="Detachable 1998"/></a><br/><b><a href="1990s/detachable-1998/">Detachable 1998</a></b><br/><sub>Dot matrix, with colour bars</sub></td>
-    <td width="50%"></td>
   </tr>
 </table>
 
