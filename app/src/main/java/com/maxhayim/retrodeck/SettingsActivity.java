@@ -108,7 +108,33 @@ public class SettingsActivity extends Activity {
                     show();
                 }).setNegativeButton("Cancel", null).show()));
         rows.addView(Ui.divider(this));
+        melodyRow(true);
+        melodyRow(false);
+        note("The melody box plays a station chime, like a Japanese train platform's, when the stereo comes on: at start-up, "
+                + "and when PWR or a key wakes it. The shut-down chime plays on PWR, and when the head unit turns its screen "
+                + "off, which some do too late to hear. For your own, copy sound files into:\n" + MelodyBox.folder(this).getPath());
         note("The volume knob sets the device's media volume. Steering-wheel keys are set under Buttons.");
+    }
+
+    /** Choosing one plays it, so you can hear them in turn. */
+    private void melodyRow(final boolean start) {
+        String now = start ? MelodyBox.start(this) : MelodyBox.stop(this);
+        rows.addView(Ui.row(this, start ? "Start-up melody" : "Shut-down melody", MelodyBox.label(now), v -> {
+            final java.util.List<String> c = MelodyBox.choices(this);
+            String[] labels = new String[c.size()];
+            for (int i = 0; i < c.size(); i++) labels[i] = MelodyBox.label(c.get(i));
+            String cur = start ? MelodyBox.start(this) : MelodyBox.stop(this);
+            Ui.dialog(this).setTitle(start ? "Start-up melody" : "Shut-down melody")
+                    .setSingleChoiceItems(labels, Math.max(0, c.indexOf(cur)), (d, w) -> {
+                        if (start) MelodyBox.setStart(this, c.get(w));
+                        else MelodyBox.setStop(this, c.get(w));
+                        MelodyBox.play(this, c.get(w));
+                    })
+                    .setPositiveButton("Done", (d, w) -> show())
+                    .setOnCancelListener(d -> show())
+                    .show();
+        }));
+        rows.addView(Ui.divider(this));
     }
 
     private void displayRows() {

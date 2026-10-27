@@ -81,7 +81,12 @@ public class MainActivity extends Activity implements StereoView.Listener {
         applyProfile();
         store.addListener(onProfileChanged);
         // The stereo is built and running underneath, so a tap on the animation reaches it at once.
-        if (saved == null) startup.play(profile, null);
+        if (saved == null) {
+            startup.play(profile, null);
+            MelodyBox.play(this, MelodyBox.start(this));
+        }
+        // The head unit switching its screen off is usually the car being switched off.
+        registerReceiver(screenOff, new android.content.IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     private void applyProfile() {
@@ -117,6 +122,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     protected void onDestroy() {
         super.onDestroy();
         store.removeListener(onProfileChanged);
+        unregisterReceiver(screenOff);
         player.stop();
     }
 
@@ -143,6 +149,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         if (!state.power && !ButtonMap.POWER.equals(action)) {
             // Any key wakes a stereo in standby, as on a real one.
             state.power = true;
+            MelodyBox.play(this, MelodyBox.start(this));
             stereo.invalidate();
             return;
         }
@@ -159,6 +166,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
                     player.pause();
                     stereo.setFullscreen(false);
                 }
+                MelodyBox.play(this, state.power ? MelodyBox.start(this) : MelodyBox.stop(this));
                 break;
             case ButtonMap.FULLSCREEN:
                 stereo.setFullscreen(!stereo.isFullscreen());
@@ -276,6 +284,13 @@ public class MainActivity extends Activity implements StereoView.Listener {
         }
         return super.dispatchKeyEvent(event);
     }
+
+    private final android.content.BroadcastReceiver screenOff = new android.content.BroadcastReceiver() {
+        @Override
+        public void onReceive(android.content.Context c, Intent i) {
+            if (state.power) MelodyBox.play(MainActivity.this, MelodyBox.stop(MainActivity.this));
+        }
+    };
 
     private void checkIdle() {
         int after = DisplaySettings.fullscreenAfter(this);
