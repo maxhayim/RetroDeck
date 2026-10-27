@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class SettingsActivity extends Activity {
 
-    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", BUTTONS = "Buttons", ABOUT = "About";
+    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", DISPLAY = "Display", BUTTONS = "Buttons", ABOUT = "About";
 
     private LinearLayout sections, rows;
     private String current = PERSONALIZATION;
@@ -53,6 +53,7 @@ public class SettingsActivity extends Activity {
         Map<String, List<RetroDeckModule.SettingsEntry>> m = new LinkedHashMap<>();
         m.put(PERSONALIZATION, new ArrayList<>());
         m.put(AUDIO, new ArrayList<>());
+        m.put(DISPLAY, new ArrayList<>());
         m.put(BUTTONS, new ArrayList<>());
         for (RetroDeckModule mod : RetroDeckApp.modules()) {
             for (RetroDeckModule.SettingsEntry e : mod.settings(this)) {
@@ -91,6 +92,7 @@ public class SettingsActivity extends Activity {
             }
         }
         if (AUDIO.equals(current)) audioRows();
+        if (DISPLAY.equals(current)) displayRows();
         if (BUTTONS.equals(current)) buttonRows();
         if (ABOUT.equals(current)) aboutRows();
     }
@@ -107,6 +109,27 @@ public class SettingsActivity extends Activity {
                 }).setNegativeButton("Cancel", null).show()));
         rows.addView(Ui.divider(this));
         note("The volume knob sets the device's media volume. Steering-wheel keys are set under Buttons.");
+    }
+
+    private void displayRows() {
+        rows.addView(Ui.row(this, "Full-screen visualizer", DisplaySettings.label(DisplaySettings.fullscreenAfter(this))
+                + "  ·  comes on by itself while music plays", v -> {
+            final int[] c = DisplaySettings.CHOICES;
+            String[] labels = new String[c.length];
+            int now = 0;
+            for (int i = 0; i < c.length; i++) {
+                labels[i] = DisplaySettings.label(c[i]);
+                if (c[i] == DisplaySettings.fullscreenAfter(this)) now = i;
+            }
+            Ui.dialog(this).setTitle("Full-screen visualizer").setSingleChoiceItems(labels, now, (d, w) -> {
+                DisplaySettings.setFullscreenAfter(this, c[w]);
+                d.dismiss();
+                show();
+            }).show();
+        }));
+        rows.addView(Ui.divider(this));
+        note("Hold DISP, or press a key set to Full-screen visualizer under Buttons, to show it any time. Touch the screen "
+                + "or press a key to go back; media keys and presets keep working while it shows.");
     }
 
     private void buttonRows() {

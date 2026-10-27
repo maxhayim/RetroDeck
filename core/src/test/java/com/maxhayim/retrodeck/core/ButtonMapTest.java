@@ -57,6 +57,16 @@ public class ButtonMapTest {
     }
 
     @Test
+    public void mediaKeysWorkInFullScreen() {
+        assertTrue(ButtonMap.keepsFullscreen(ButtonMap.NEXT));
+        assertTrue(ButtonMap.keepsFullscreen(ButtonMap.MUTE));
+        assertTrue(ButtonMap.keepsFullscreen("preset_3"));
+        assertFalse(ButtonMap.keepsFullscreen(ButtonMap.MENU));
+        assertFalse(ButtonMap.keepsFullscreen(ButtonMap.SOURCE));
+        assertFalse("an unmapped key brings the stereo back", ButtonMap.keepsFullscreen(null));
+    }
+
+    @Test
     public void everyActionHasALabel() {
         for (String a : ButtonMap.ACTIONS) assertFalse(a, ButtonMap.label(a).equals("Nothing"));
     }

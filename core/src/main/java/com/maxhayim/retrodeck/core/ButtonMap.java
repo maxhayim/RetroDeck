@@ -15,7 +15,7 @@ public final class ButtonMap {
 
     public static final String PLAY_PAUSE = "play_pause", PLAY = "play", PAUSE = "pause", NEXT = "next", PREV = "prev",
             SOURCE = "source", DISPLAY = "display", POWER = "power", MENU = "menu", VOL_UP = "vol_up",
-            VOL_DOWN = "vol_down", MUTE = "mute", PRESET = "preset_";
+            VOL_DOWN = "vol_down", MUTE = "mute", FULLSCREEN = "fullscreen", PRESET = "preset_";
 
     /** Every action, in the order the chooser lists them. */
     public static final List<String> ACTIONS;
@@ -33,6 +33,7 @@ public final class ButtonMap {
         for (int i = 1; i <= 6; i++) LABELS.put(PRESET + i, "Preset " + i + " (hold to save)");
         LABELS.put(SOURCE, "SRC: add music");
         LABELS.put(DISPLAY, "DISP: next visualizer");
+        LABELS.put(FULLSCREEN, "Full-screen visualizer");
         LABELS.put(POWER, "Power");
         LABELS.put(MENU, "Settings");
         ACTIONS = Collections.unmodifiableList(new ArrayList<>(LABELS.keySet()));
@@ -109,6 +110,18 @@ public final class ButtonMap {
             return Integer.parseInt(action.substring(PRESET.length()));
         } catch (NumberFormatException e) {
             return 0;
+        }
+    }
+
+    /** Actions that work without leaving the full-screen visualizer; any other key brings the stereo back. */
+    public static boolean keepsFullscreen(String action) {
+        if (preset(action) > 0) return true;
+        if (action == null) return false;
+        switch (action) {
+            case PLAY_PAUSE: case PLAY: case PAUSE: case NEXT: case PREV: case VOL_UP: case VOL_DOWN: case MUTE:
+                return true;
+            default:
+                return false;
         }
     }
 

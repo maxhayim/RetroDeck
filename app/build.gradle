@@ -10,8 +10,8 @@ android {
         applicationId 'com.maxhayim.retrodeck'
         minSdk rootProject.ext.minSdk
         targetSdk rootProject.ext.targetSdk
-        versionCode 9
-        versionName '0.7.0'
+        versionCode 10
+        versionName '0.8.0'
     }
 
     // Release APKs must always carry the same key, or an update won't install over the old one.

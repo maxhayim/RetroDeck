@@ -61,8 +61,8 @@ public class BrandingPreviewActivity extends Activity {
             }
 
             @Override
-            public void onPresetHeld(int index) {
-                // Nothing to save in a preview.
+            public void onHeld(String control, int index) {
+                // Nothing to save, and no full screen, in a preview.
             }
         });
         root.addView(stereo, new FrameLayout.LayoutParams(-1, -1));

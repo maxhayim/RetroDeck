@@ -17,6 +17,7 @@ import com.maxhayim.retrodeck.branding.StartupView;
 import com.maxhayim.retrodeck.branding.VehicleProfile;
 import com.maxhayim.retrodeck.core.ButtonMap;
 import com.maxhayim.retrodeck.core.Pickers;
+import com.maxhayim.retrodeck.core.Skin;
 import com.maxhayim.retrodeck.core.Skins;
 import com.maxhayim.retrodeck.core.StereoState;
 import com.maxhayim.retrodeck.core.StereoView;
@@ -43,6 +44,8 @@ public class MainActivity extends Activity implements StereoView.Listener {
     private BrandingRenderer renderer;
     private Player player;
     private ButtonMap buttons = ButtonMap.defaults();
+    private long lastInput = android.os.SystemClock.uptimeMillis();
+    private int swallowUp = -1;
     private final StereoState state = new StereoState();
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Runnable onProfileChanged = this::applyProfile;
@@ -50,6 +53,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         @Override
         public void run() {
             player.tick();
+            checkIdle();
             main.postDelayed(this, 1000);
         }
     };
@@ -126,8 +130,9 @@ public class MainActivity extends Activity implements StereoView.Listener {
     }
 
     @Override
-    public void onPresetHeld(int index) {
-        player.savePreset(index);
+    public void onHeld(String control, int index) {
+        if (index > 0) player.savePreset(index);
+        else if (Skin.DISPLAY.equals(control)) stereo.setFullscreen(true);
     }
 
     /** What every on-screen key and mapped head-unit key comes to. */
@@ -148,7 +153,13 @@ public class MainActivity extends Activity implements StereoView.Listener {
         switch (action) {
             case ButtonMap.POWER:
                 state.power = !state.power;
-                if (!state.power) player.pause();
+                if (!state.power) {
+                    player.pause();
+                    stereo.setFullscreen(false);
+                }
+                break;
+            case ButtonMap.FULLSCREEN:
+                stereo.setFullscreen(!stereo.isFullscreen());
                 break;
             case ButtonMap.SOURCE:
                 chooseMusic();
@@ -202,6 +213,13 @@ public class MainActivity extends Activity implements StereoView.Listener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         String action = buttons.action(keyCode);
+        if (stereo.isFullscreen() && !ButtonMap.keepsFullscreen(action) && !ButtonMap.FULLSCREEN.equals(action)
+                && !isVolumeKey(keyCode)) {
+            // The first press only brings the stereo back, as a touch does.
+            stereo.setFullscreen(false);
+            swallowUp = keyCode;
+            return true;
+        }
         if (action == null) return super.onKeyDown(keyCode, event);
         if (ButtonMap.preset(action) > 0) {
             // Decided on release: a short press plays, a long one saves.
@@ -224,14 +242,46 @@ public class MainActivity extends Activity implements StereoView.Listener {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (swallowUp == keyCode) {
+            swallowUp = -1;
+            return true;
+        }
         String action = buttons.action(keyCode);
         if (action == null) return super.onKeyUp(keyCode, event);
         if (ButtonMap.preset(action) > 0 && event.isTracking() && !event.isCanceled()) perform(action);
         return true;
     }
 
+    private static boolean isVolumeKey(int code) {
+        return code == KeyEvent.KEYCODE_VOLUME_UP || code == KeyEvent.KEYCODE_VOLUME_DOWN || code == KeyEvent.KEYCODE_VOLUME_MUTE;
+    }
+
+    // The full-screen visualizer comes on by itself after a while with no touch or key, while music plays.
+
+    @Override
+    public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
+        lastInput = android.os.SystemClock.uptimeMillis();
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        lastInput = android.os.SystemClock.uptimeMillis();
+        return super.dispatchKeyEvent(event);
+    }
+
+    private void checkIdle() {
+        int after = DisplaySettings.fullscreenAfter(this);
+        if (after <= 0 || stereo.isFullscreen() || !state.power || !state.playing || startup.isPlaying()) return;
+        if (android.os.SystemClock.uptimeMillis() - lastInput >= after * 1000L) stereo.setFullscreen(true);
+    }
+
     @Override
     public void onBackPressed() {
+        if (stereo.isFullscreen()) {
+            stereo.setFullscreen(false);
+            return;
+        }
         if (startup.isPlaying()) startup.skip();
         else super.onBackPressed();
     }

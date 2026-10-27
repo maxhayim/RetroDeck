@@ -43,8 +43,8 @@ public class StereoView extends View {
 
         void onVolume(int volume);
 
-        /** A preset was held down: save to it, like a radio. */
-        void onPresetHeld(int index);
+        /** A key was held down: a preset saves to it, like a radio; DISP shows the full-screen visualizer. */
+        void onHeld(String control, int index);
     }
 
     private Skin skin = Skins.get(Skins.CLASSIC);
@@ -232,6 +232,12 @@ public class StereoView extends View {
         if (!state.power) {
             drawStandby(c, w, h);
             postInvalidateDelayed(1000);
+            return;
+        }
+        if (fullscreen) {
+            drawFullscreen(c, w, h, now);
+            if (state.playing || anyLevelAboveZero()) postInvalidateOnAnimation();
+            else postInvalidateDelayed(1000);
             return;
         }
 
@@ -1049,6 +1055,54 @@ public class StereoView extends View {
         paint.setStrokeCap(Paint.Cap.BUTT);
     }
 
+    // ---- full screen ----
+
+    private boolean fullscreen, swallowTouch;
+
+    /** The visualizer over the whole screen, with the track and clock along the bottom. */
+    public void setFullscreen(boolean on) {
+        if (fullscreen == on) return;
+        fullscreen = on;
+        invalidate();
+    }
+
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    private void drawFullscreen(Canvas c, int w, int h, long now) {
+        c.drawColor(0xFF000000);
+        float u = Math.min(w, h);
+        levels.read(bands, now, state.playing);
+        RectF area = new RectF(w * 0.05f, h * 0.07f, w * 0.95f, h * 0.80f);
+        String was = visualizer;
+        // Off still shows something here: it was asked for.
+        if (Visualizers.OFF.equals(visualizer)) visualizer = Visualizers.BARS;
+        if (Visualizers.ANIMATION.equals(visualizer) && animation != null) drawAnimation(c, new RectF(0, 0, w, h * 0.84f), false);
+        else drawVisualizer(c, area, u);
+        visualizer = was;
+
+        // Track and clock in the display's lettering.
+        lcdText(skin.lcdStyle);
+        boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
+        int ink = skin.lcdStyle == Skin.LCD_REFLECTIVE ? illumination : skin.lcdInk(illumination);
+        float y = h * 0.93f;
+        text.setTextSize(u * 0.055f);
+        spacing(text, modern ? 0.02f : 0.08f);
+        text.setColor(ink);
+        String clk = clock.format(new Date());
+        text.setTextAlign(Paint.Align.RIGHT);
+        c.drawText(clk, w * 0.95f, y, text);
+        float clockW = text.measureText(clk);
+        text.setTextAlign(Paint.Align.LEFT);
+        String line = state.title;
+        String second = state.artistLine(now);
+        if (second != null && !second.isEmpty()) line += "  ·  " + second;
+        if (!modern) line = line.toUpperCase(Locale.US);
+        c.drawText(fit(line, w * 0.90f - clockW - u * 0.05f), w * 0.05f, y, text);
+        if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
+    }
+
     private void drawStandby(Canvas c, int w, int h) {
         c.drawColor(0xFF000000);
         if (overlay != null) {
@@ -1101,6 +1155,16 @@ public class StereoView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         if (listener == null) return super.onTouchEvent(e);
+        // Full screen: a touch only brings the stereo back.
+        if (e.getActionMasked() == MotionEvent.ACTION_DOWN && fullscreen) {
+            setFullscreen(false);
+            swallowTouch = true;
+            return true;
+        }
+        if (swallowTouch) {
+            if (e.getActionMasked() == MotionEvent.ACTION_UP || e.getActionMasked() == MotionEvent.ACTION_CANCEL) swallowTouch = false;
+            return true;
+        }
         float nx = e.getX() / Math.max(1, getWidth()), ny = e.getY() / Math.max(1, getHeight());
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -1127,7 +1191,7 @@ public class StereoView extends View {
                         pressedPreset = i + 1;
                     }
                 }
-                if (pressedPreset > 0) postDelayed(hold, android.view.ViewConfiguration.getLongPressTimeout() * 2L);
+                if (pressedPreset > 0 || Skin.DISPLAY.equals(pressed)) postDelayed(hold, android.view.ViewConfiguration.getLongPressTimeout() * 2L);
                 invalidate();
                 return true;
             case MotionEvent.ACTION_MOVE:
@@ -1165,13 +1229,14 @@ public class StereoView extends View {
         return super.onTouchEvent(e);
     }
 
-    /** A preset held down: it saves instead of playing, and the release does nothing more. */
+    /** A key held down does its second job instead, and the release does nothing more. */
     private final Runnable hold = () -> {
-        if (pressedPreset == 0 || listener == null) return;
+        if (pressed == null || listener == null) return;
+        String id = pressed;
         int idx = pressedPreset;
         pressed = null;
         pressedPreset = 0;
-        listener.onPresetHeld(idx);
+        listener.onHeld(id, idx);
         invalidate();
     };
 
