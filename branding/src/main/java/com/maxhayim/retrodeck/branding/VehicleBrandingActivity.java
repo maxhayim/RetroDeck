@@ -48,7 +48,8 @@ public class VehicleBrandingActivity extends Activity {
 
     static final String[] IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp", "image/svg+xml"};
     private static final String[] PACK_TYPES = {"application/zip", "application/x-zip-compressed", "application/octet-stream"};
-    private static final int PICK_LOGO = 1, PICK_BADGE = 2, EXPORT_PACK = 3, IMPORT_PACK = 4;
+    private static final String[] GIF_TYPES = {"image/gif"};
+    private static final int PICK_LOGO = 1, PICK_BADGE = 2, EXPORT_PACK = 3, IMPORT_PACK = 4, PICK_GIF = 5;
 
     private ProfileStore store;
     private VehicleProfile profile;
@@ -59,7 +60,7 @@ public class VehicleBrandingActivity extends Activity {
     private List<VehicleProfile> pendingExport;
 
     private Ui.Row rowProfiles, rowManufacturer, rowModel, rowYear, rowTrim, rowLogo, rowBadge, rowEditLogo,
-            rowPlacement, rowSkin, rowVisualizer, rowIllumination, rowAccent, rowKeys, rowStartup;
+            rowPlacement, rowSkin, rowVisualizer, rowAnimation, rowIllumination, rowAccent, rowKeys, rowStartup;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -126,6 +127,7 @@ public class VehicleBrandingActivity extends Activity {
         l.addView(Ui.section(this, "Look"));
         rowSkin = add(l, "Radio Skin", v -> chooseSkin());
         rowVisualizer = add(l, "Visualizer", v -> chooseVisualizer());
+        rowAnimation = add(l, "Animation", v -> chooseAnimation());
         rowIllumination = add(l, "Dashboard Illumination", v -> chooseIllumination());
         rowAccent = add(l, "Accent Colour", v -> chooseAccent());
         rowKeys = add(l, "Key Lighting", v -> chooseKeyLighting());
@@ -168,6 +170,7 @@ public class VehicleBrandingActivity extends Activity {
         rowPlacement.value(placementSummary());
         rowSkin.value(Skins.get(profile.skin).name);
         rowVisualizer.value(Visualizers.label(profile.visualizer));
+        rowAnimation.value(animationValue());
         rowIllumination.value(Illumination.label(profile.illumination) + "  ·  " + Illumination.hex(profile.illuminationColor()));
         rowAccent.value(Illumination.hex(profile.accentColor));
         rowKeys.value(KeyLights.label(profile.keyLighting) + "  ·  " + KeyLights.describe(profile.keyLighting));
@@ -457,6 +460,98 @@ public class VehicleBrandingActivity extends Activity {
             save();
             d.dismiss();
         }).show();
+    }
+
+    // ---- animation ----
+
+    private String animationValue() {
+        File f = store.animation(profile);
+        if (f == null) return "None  ·  a GIF from GIPHY or a file, for the Animation visualizer";
+        return "GIF  ·  " + (profile.animationTint ? "display colour" : "own colours") + "  ·  "
+                + (profile.animationFull ? "whole display" : "visualizer strip");
+    }
+
+    private void chooseAnimation() {
+        boolean has = store.animation(profile) != null;
+        List<String> items = new ArrayList<>();
+        items.add("Search GIPHY");
+        items.add("Import a GIF file");
+        if (has) {
+            items.add(profile.animationTint ? "Colours: display colour (switch to the GIF's own)" : "Colours: the GIF's own (switch to display colour)");
+            items.add(profile.animationFull ? "Size: whole display (switch to visualizer strip)" : "Size: visualizer strip (switch to whole display)");
+            items.add("Remove");
+        }
+        Ui.dialog(this).setTitle("Animation").setItems(items.toArray(new String[0]), (d, w) -> {
+            switch (w) {
+                case 0:
+                    startActivity(new Intent(this, GiphyActivity.class));
+                    break;
+                case 1:
+                    chooseGif();
+                    break;
+                case 2:
+                    profile.animationTint = !profile.animationTint;
+                    save();
+                    break;
+                case 3:
+                    profile.animationFull = !profile.animationFull;
+                    save();
+                    break;
+                default:
+                    profile.animationFile = null;
+                    if (Visualizers.ANIMATION.equals(profile.visualizer)) profile.visualizer = Visualizers.BARS;
+                    save();
+                    break;
+            }
+        }).show();
+    }
+
+    /** GIFs in the import folder, or the file picker, as for logos. */
+    private void chooseGif() {
+        final File[] files = importFolder().listFiles((dir, n) -> n.toLowerCase(Locale.US).endsWith(".gif"));
+        if (files == null || files.length == 0) {
+            folderOrPicker("GIF", () -> {
+                if (!Pickers.open(this, GIF_TYPES, PICK_GIF)) explainFolder("GIF");
+            });
+            return;
+        }
+        java.util.Arrays.sort(files);
+        String[] names = new String[files.length + 1];
+        names[0] = "Choose with the file picker…";
+        for (int i = 0; i < files.length; i++) names[i + 1] = files[i].getName();
+        Ui.dialog(this).setTitle("Import a GIF").setItems(names, (d, w) -> {
+            if (w == 0) {
+                if (!Pickers.open(this, GIF_TYPES, PICK_GIF)) explainFolder("GIF");
+            } else {
+                importGif(Uri.fromFile(files[w - 1]));
+            }
+        }).show();
+    }
+
+    private void importGif(final Uri uri) {
+        final ProgressDialog progress = ProgressDialog.show(this, null, "Checking animation…", true, false);
+        final String profileId = profile.id;
+        new Thread(() -> {
+            File dest = store.newAnimationFile(profileId);
+            String err = null;
+            try {
+                Animations.fromUri(this, uri, dest);
+            } catch (Animations.ImportException e) {
+                store.discard(dest);
+                err = e.getMessage();
+            }
+            final String error = err;
+            main.post(() -> {
+                dismiss(progress);
+                if (error != null) {
+                    error("Couldn't use that GIF", error);
+                    return;
+                }
+                profile.animationFile = dest.getName();
+                profile.visualizer = Visualizers.ANIMATION;
+                save();
+            });
+        }, "gif-import").start();
     }
 
     /** Backlit legends at night, printed ones by day, like keys that light with the headlights. */
@@ -749,6 +844,9 @@ public class VehicleBrandingActivity extends Activity {
                 break;
             case IMPORT_PACK:
                 runImport(() -> getContentResolver().openInputStream(uri));
+                break;
+            case PICK_GIF:
+                importGif(uri);
                 break;
         }
     }

@@ -66,6 +66,7 @@ public final class ProfileStore {
                 if (p.id.isEmpty() || find(p.id) != null) continue;
                 // Forget logos whose files have gone missing.
                 for (int r = 0; r < 2; r++) if (p.logoFile[r] != null && !logo(p, r).exists()) p.logoFile[r] = null;
+                if (p.animationFile != null && !animation(p).exists()) p.animationFile = null;
                 profiles.add(p);
             }
             activeId = o.optString("active", null);
@@ -142,6 +143,19 @@ public final class ProfileStore {
         return new File(f, VehicleProfile.ROLES[role] + "-" + System.currentTimeMillis() + ".png");
     }
 
+    /** The profile's animation GIF, which may not exist; null when it has none. */
+    public File animation(VehicleProfile p) {
+        return p.animationFile == null ? null : new File(folder(p.id), p.animationFile);
+    }
+
+    /** A fresh file name for a newly chosen animation. */
+    public File newAnimationFile(String profileId) {
+        File f = folder(profileId);
+        //noinspection ResultOfMethodCallIgnored
+        f.mkdirs();
+        return new File(f, "animation-" + System.nanoTime() + ".gif");
+    }
+
     // ---- changing ----
 
     public VehicleProfile newProfile() {
@@ -194,6 +208,12 @@ public final class ProfileStore {
             if (copy(from, to)) p.logoFile[r] = to.getName();
             else p.logoFile[r] = null;
         }
+        File anim = animation(src);
+        p.animationFile = null;
+        if (anim != null && anim.exists()) {
+            File to = newAnimationFile(p.id);
+            if (copy(anim, to)) p.animationFile = to.getName();
+        }
         add(p, false);
         return p.copy();
     }
@@ -208,7 +228,7 @@ public final class ProfileStore {
         commit();
     }
 
-    /** Puts a profile's layout, colours, skin and start-up back to defaults. Names and logos stay. */
+    /** Puts a profile's layout, colours, skin and start-up back to defaults. Names, logos and its animation stay. */
     public synchronized VehicleProfile restoreDefaults(String id) {
         VehicleProfile p = find(id);
         if (p == null) return null;
@@ -221,6 +241,7 @@ public final class ProfileStore {
             fresh.logoFile[r] = p.logoFile[r];
             fresh.logoColor[r] = p.logoColor[r];
         }
+        fresh.animationFile = p.animationFile;
         save(fresh);
         return fresh.copy();
     }
@@ -240,6 +261,7 @@ public final class ProfileStore {
         if (files == null) return;
         Set<String> keep = new HashSet<>();
         for (String f : p.logoFile) if (f != null) keep.add(f);
+        if (p.animationFile != null) keep.add(p.animationFile);
         // Only one editor works on a profile at a time, and it saves the file it imported, so anything
         // unreferenced now is a logo that was replaced.
         for (File f : files) {

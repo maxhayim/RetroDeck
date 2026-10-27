@@ -32,6 +32,12 @@ public final class VehicleProfile {
 
     public String skin = Skins.CLASSIC;
     public String visualizer = Visualizers.BARS;
+    /** The GIF the Animation visualizer plays: a file name in the profile's folder, or null. */
+    public String animationFile;
+    /** Lit in the display's colour (true) or in the GIF's own colours. */
+    public boolean animationTint = true;
+    /** Across the whole display behind the track text, instead of the visualizer strip. */
+    public boolean animationFull;
     public String illumination = Illumination.AMBER;
     public int customColor = 0xFFFF7A00;
     /** Second vehicle colour, used for visualizer peaks and the start-up glow. */
@@ -110,6 +116,9 @@ public final class VehicleProfile {
         }
         p.skin = skin;
         p.visualizer = visualizer;
+        p.animationFile = animationFile;
+        p.animationTint = animationTint;
+        p.animationFull = animationFull;
         p.illumination = illumination;
         p.customColor = customColor;
         p.accentColor = accentColor;

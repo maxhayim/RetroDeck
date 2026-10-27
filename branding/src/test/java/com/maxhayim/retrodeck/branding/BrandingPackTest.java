@@ -94,6 +94,72 @@ public class BrandingPackTest {
         assertTrue(pack.compatibleSkins.contains(p.skin));
     }
 
+    static byte[] gif() throws Exception {
+        try (java.io.InputStream in = BrandingPackTest.class.getResourceAsStream("/gif/moving.gif")) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+            return out.toByteArray();
+        }
+    }
+
+    @Test
+    public void animationTravelsInAFormat2Pack() throws Exception {
+        VehicleProfile p = ProfileJsonTest.sample();
+        p.animationFile = "animation-123.gif";
+        p.animationTint = false;
+        p.animationFull = true;
+        byte[] gif = gif();
+        Map<VehicleProfile, byte[]> anims = new HashMap<>();
+        anims.put(p, gif);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BrandingPack.write(out, "Animated", Collections.singletonList(p), new HashMap<>(), anims, "test");
+
+        BrandingPack.Pack pack = read(out.toByteArray());
+        BrandingPack.Entry e = pack.entries.get(0);
+        assertArrayEquals(gif, e.animation);
+        // The device's file name stays behind; the settings travel.
+        assertNull(e.profile.animationFile);
+        assertEquals(false, e.profile.animationTint);
+        assertEquals(true, e.profile.animationFull);
+        assertEquals(2, manifestOf(out.toByteArray()).getInt("formatVersion"));
+    }
+
+    @Test
+    public void packsWithoutAnimationStayFormat1() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BrandingPack.write(out, "Plain", Collections.singletonList(ProfileJsonTest.sample()), new HashMap<>(), "test");
+        // So RetroDeck versions before animations still open them.
+        assertEquals(1, manifestOf(out.toByteArray()).getInt("formatVersion"));
+    }
+
+    @Test
+    public void rejectsAnimationsThatAreNotGifs() throws Exception {
+        JSONObject p = profile(null, null);
+        p.getJSONObject("assets").put("animation", "assets/a.gif");
+        rejects(zip("manifest.json", manifest(p), "assets/a.gif", TestImages.png(10, 10)), "isn't a GIF");
+        p.getJSONObject("assets").put("animation", "assets/a.png");
+        rejects(zip("manifest.json", manifest(p), "assets/a.png", gif()), "isn't a GIF");
+        p.getJSONObject("assets").put("animation", "assets/missing.gif");
+        rejects(zip("manifest.json", manifest(p)), "missing");
+    }
+
+    private static JSONObject manifestOf(byte[] pack) throws Exception {
+        try (java.util.zip.ZipInputStream z = new java.util.zip.ZipInputStream(new ByteArrayInputStream(pack))) {
+            ZipEntry e;
+            while ((e = z.getNextEntry()) != null) {
+                if (!e.getName().equals("manifest.json")) continue;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = z.read(buf)) > 0) out.write(buf, 0, n);
+                return new JSONObject(new String(out.toByteArray(), StandardCharsets.UTF_8));
+            }
+        }
+        throw new AssertionError("no manifest");
+    }
+
     @Test
     public void exportWithoutLogos() throws Exception {
         VehicleProfile a = ProfileJsonTest.sample(), b = new VehicleProfile("b");
@@ -201,7 +267,7 @@ public class BrandingPackTest {
         rejects(zip("manifest.json", "{not json".getBytes(StandardCharsets.UTF_8)), "valid json");
         rejects(zip("manifest.json", new JSONObject().put("format", "other").put("formatVersion", 1).toString().getBytes(StandardCharsets.UTF_8)),
                 "isn't a retrodeck");
-        rejects(zip("manifest.json", new JSONObject().put("format", BrandingPack.FORMAT).put("formatVersion", 2)
+        rejects(zip("manifest.json", new JSONObject().put("format", BrandingPack.FORMAT).put("formatVersion", BrandingPack.FORMAT_VERSION + 1)
                 .put("profiles", new JSONArray().put(new JSONObject())).toString().getBytes(StandardCharsets.UTF_8)), "newer retrodeck");
         rejects(zip("manifest.json", new JSONObject().put("format", BrandingPack.FORMAT).put("formatVersion", 1)
                 .put("profiles", new JSONArray()).toString().getBytes(StandardCharsets.UTF_8)), "no vehicle profiles");

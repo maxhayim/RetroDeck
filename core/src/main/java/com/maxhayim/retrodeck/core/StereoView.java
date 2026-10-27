@@ -48,6 +48,9 @@ public class StereoView extends View {
     private int illumination = Illumination.preset(Illumination.AMBER);
     private int accent = 0xFFFF3B30;
     private String visualizer = Visualizers.BARS;
+    private GifPlayer animation;
+    private boolean animationTint = true, animationFull;
+    private long animationAt;
     private String keyLighting = KeyLights.AUTO;
     /** This frame's legend colour, and whether it is backlit. */
     private int legend;
@@ -140,6 +143,19 @@ public class StereoView extends View {
         visualizer = Visualizers.exists(id) ? id : Visualizers.BARS;
         invalidate();
     }
+
+    /**
+     * The animation the Animation visualizer plays, or null. tint lights it in the display's colour;
+     * full spreads it across the whole display behind the track text instead of the visualizer strip.
+     */
+    public void setAnimation(GifPlayer player, boolean tint, boolean full) {
+        animation = player;
+        animationTint = tint;
+        animationFull = full;
+        invalidate();
+    }
+
+    public GifPlayer getGifPlayer() { return animation; }
 
     public void setState(StereoState state) {
         this.state = state;
@@ -443,12 +459,20 @@ public class StereoView extends View {
         if (skin.lcdStyle == Skin.LCD_REFLECTIVE) drawPanel(c, lcd, u);
         if (skin.lcdGlass != 0) drawGlass(c, lcd, u);
 
+        // A whole-display animation goes behind everything else on it.
+        boolean fullAnimation = Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null;
+        if (fullAnimation) {
+            levels.read(bands, now, state.playing);
+            drawAnimation(c, lcd, true);
+        }
         // Visualizer first, so its overlay logo sits behind the bars.
         Box vz = skin.zone(Zones.VISUALIZER);
         if (vz != null) {
             drawOverlay(c, Zones.VISUALIZER, false);
-            levels.read(bands, now, state.playing);
-            drawVisualizer(c, px(vz), u);
+            if (!fullAnimation) {
+                levels.read(bands, now, state.playing);
+                drawVisualizer(c, px(vz), u);
+            }
         }
         drawOverlay(c, Zones.LCD, false);
         if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
@@ -758,6 +782,11 @@ public class StereoView extends View {
 
     private void drawVisualizer(Canvas c, RectF v, float u) {
         if (Visualizers.OFF.equals(visualizer)) return;
+        if (Visualizers.ANIMATION.equals(visualizer)) {
+            if (animation != null) drawAnimation(c, v, false);
+            else drawNoAnimation(c, v);
+            return;
+        }
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
         boolean reflective = skin.lcdStyle == Skin.LCD_REFLECTIVE;
         int ink = skin.lcdInk(illumination);
@@ -828,6 +857,44 @@ public class StereoView extends View {
             c.drawPath(path, paint);
             paint.setStyle(Paint.Style.FILL);
         }
+    }
+
+    /**
+     * The animation, fitted into the visualizer strip, or covering the whole display (dimmed, so the
+     * track text stays readable). It runs faster when the music is loud and stands still when paused.
+     */
+    private void drawAnimation(Canvas c, RectF area, boolean cover) {
+        long now = SystemClock.uptimeMillis();
+        long dt = animationAt == 0 ? 0 : Math.min(200, now - animationAt);
+        animationAt = now;
+        if (state.playing) animation.advance(dt, 0.5f + 1.5f * avg(0, bands.length));
+        int tint = animationTint ? (neon() ? bright(skin.lcdInk(illumination)) : skin.lcdInk(illumination)) : 0;
+        android.graphics.Bitmap bm = animation.bitmap(tint);
+        if (bm == null) return;
+        float s = cover ? Math.max(area.width() / bm.getWidth(), area.height() / bm.getHeight())
+                : Math.min(area.width() / bm.getWidth(), area.height() / bm.getHeight());
+        float w = bm.getWidth() * s, h = bm.getHeight() * s;
+        rect.set(area.centerX() - w / 2, area.centerY() - h / 2, area.centerX() + w / 2, area.centerY() + h / 2);
+        paint.setFilterBitmap(true);
+        paint.setColor(0xFFFFFFFF);
+        paint.setAlpha(cover ? 0x90 : 0xFF);
+        int save = c.save();
+        c.clipRect(area);
+        c.drawBitmap(bm, null, rect, paint);
+        c.restoreToCount(save);
+        paint.setAlpha(0xFF);
+        paint.setFilterBitmap(false);
+    }
+
+    /** Animation chosen but no GIF yet: say where to get one. */
+    private void drawNoAnimation(Canvas c, RectF v) {
+        lcdText(skin.lcdStyle);
+        text.setTextSize(v.height() * 0.28f);
+        text.setColor(Illumination.withAlpha(skin.lcdInk(illumination), 0x90));
+        text.setTextAlign(Paint.Align.CENTER);
+        c.drawText(fit("NO ANIMATION  ·  ADD A GIF IN VEHICLE BRANDING", v.width()), v.centerX(),
+                v.centerY() - (text.descent() + text.ascent()) / 2, text);
+        text.setTextAlign(Paint.Align.LEFT);
     }
 
     private float avg(int from, int to) {

@@ -25,7 +25,10 @@ final class PackIO {
 
     static void export(ProfileStore store, List<VehicleProfile> profiles, OutputStream out, String createdWith) throws IOException {
         Map<VehicleProfile, byte[][]> logos = new HashMap<>();
+        Map<VehicleProfile, byte[]> animations = new HashMap<>();
         for (VehicleProfile p : profiles) {
+            File anim = store.animation(p);
+            if (anim != null && anim.exists()) animations.put(p, read(anim));
             byte[][] b = new byte[2][];
             for (int r = 0; r < 2; r++) {
                 File f = store.logo(p, r);
@@ -34,7 +37,7 @@ final class PackIO {
             logos.put(p, b);
         }
         String name = profiles.size() == 1 ? profiles.get(0).displayName() : profiles.size() + " vehicles";
-        BrandingPack.write(out, name, profiles, logos, createdWith);
+        BrandingPack.write(out, name, profiles, logos, animations, createdWith);
     }
 
     /**
@@ -61,9 +64,18 @@ final class PackIO {
                     p.logoFile[r] = dest.getName();
                     p.logoColor[r] = res.color;
                 }
+                if (e.animation != null) {
+                    // Already checked by BrandingPack.read; GIFs are kept as they are, frames and all.
+                    File dest = store.newAnimationFile(p.id);
+                    try (java.io.FileOutputStream out = new java.io.FileOutputStream(dest)) {
+                        out.write(e.animation);
+                    }
+                    written.add(dest);
+                    p.animationFile = dest.getName();
+                }
                 ready.add(p);
             }
-        } catch (LogoImporter.ImportException ex) {
+        } catch (LogoImporter.ImportException | IOException ex) {
             for (File f : written) store.discard(f);
             throw ex;
         }

@@ -18,6 +18,10 @@ Thank you for your interest in contributing to RetroDeck, a retro car stereo for
 
 A skin is a `Skin` in `Skins.java`: colours, a box for each control, and boxes for the branding zones. How it looks (metal, plastic, glass, shadows) is drawn in `Faceplate.java`; check it with `./gradlew :core:testDebugUnitTest -Prender`, which writes PNGs of every skin to `core/build/skin-renders`. Every box is a fraction of the screen. Zones must stay clear of the buttons, knob, presets and track text; `SkinTest` checks this for every skin, so run the tests.
 
+## GIPHY Key
+
+GIPHY search needs an API key, and it is never committed. To build with one, add `giphy.apiKey=<your key>` to `local.properties` (or set `GIPHY_API_KEY`). Builds without a key still work; the search screen then asks the user for their own. Make a free key on GIPHY's developer site: Create an App, then API (not SDK).
+
 ## Rendered Skins
 
 Every skin is modelled in 3D and rendered with [Blender](https://www.blender.org/) (free), instead of being drawn in code: its faceplate is a set of pictures in `core/src/main/assets/skins/<id>/` (day, night, and both with every key pressed in). The model reads the skin's layout from the app, so keys always sit on their touch areas. Z32 Factory 1990 has its own model, `tools/blender/z32.py`; the others are in `tools/blender/skins.py`, built from the parts in `tools/blender/rd.py`:

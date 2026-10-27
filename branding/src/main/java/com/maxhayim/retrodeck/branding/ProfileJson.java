@@ -27,6 +27,11 @@ public final class ProfileJson {
         o.put("trim", p.trim);
         o.put("skin", p.skin);
         o.put("visualizer", p.visualizer);
+        JSONObject anim = new JSONObject();
+        if (p.animationFile != null) anim.put("file", p.animationFile);
+        anim.put("tint", p.animationTint);
+        anim.put("full", p.animationFull);
+        o.put("animation", anim);
         o.put("updatedAt", p.updatedAt);
 
         JSONObject palette = new JSONObject();
@@ -96,6 +101,13 @@ public final class ProfileJson {
         p.skin = Skins.exists(skin) ? skin : Skins.CLASSIC;
         String viz = o.optString("visualizer", Visualizers.BARS);
         p.visualizer = Visualizers.exists(viz) ? viz : Visualizers.BARS;
+        JSONObject anim = o.optJSONObject("animation");
+        if (anim != null) {
+            String file = anim.optString("file", null);
+            p.animationFile = file != null && isAnimationName(file) ? file : null;
+            p.animationTint = anim.optBoolean("tint", true);
+            p.animationFull = anim.optBoolean("full", false);
+        }
         p.updatedAt = o.optLong("updatedAt", 0);
 
         JSONObject palette = o.optJSONObject("palette");
@@ -172,6 +184,11 @@ public final class ProfileJson {
     /** Logo files are named by us: letters, digits, dash and dot, ending in .png. */
     public static boolean isAssetName(String name) {
         return name.matches("[A-Za-z0-9-]{1,48}\\.png");
+    }
+
+    /** Animation files are named by us too, ending in .gif. */
+    public static boolean isAnimationName(String name) {
+        return name.matches("animation-[0-9]{1,20}\\.gif");
     }
 
     static String safeId(String id) {

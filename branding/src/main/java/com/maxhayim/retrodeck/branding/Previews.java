@@ -29,6 +29,7 @@ final class Previews {
         v.setAccent(p.accentColor);
         v.setKeyLighting(p.keyLighting);
         v.setVisualizer(p.visualizer);
+        Animations.apply(v, ProfileStore.get(v.getContext()), p);
         v.invalidate();
     }
 }

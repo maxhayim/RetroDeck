@@ -14,14 +14,14 @@
     <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   </a>
   <img src="https://img.shields.io/badge/Screens-1024%C3%97600%20and%20up-lightgrey" alt="1024x600 and up">
-  <img src="https://img.shields.io/badge/Network-none-FF9F43" alt="No network access">
+  <img src="https://img.shields.io/badge/Network-GIPHY%20search%20only-FF9F43" alt="Network: GIPHY search only">
 </p>
 
 <h1>RetroDeck</h1>
 
 <p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (six of them, from a 1984 hi-fi deck and a 1990 factory stack to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
 
-<p>Everything works offline. There is no account, no cloud service and no network access at all, and it needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
+<p>Everything works offline. There is no account and no cloud service; the only time RetroDeck goes online is while you search GIPHY for a visualizer animation. It needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
 
 <h2>Screenshots</h2>
 
@@ -82,6 +82,7 @@
   <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text</li>
   <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting, then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
   <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights. At night the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too. On Z32 Factory 1990 the legends are white, printed by day and backlit at night</li>
+  <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the visualizer is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text. GIFs travel in branding packs</li>
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
   <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
   <li><strong>Music</strong>: plays audio files from the device; SRC adds files, presets 1–6 jump to tracks, the knob sets the media volume, steering-wheel media keys work</li>
@@ -182,7 +183,7 @@ adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim
 
 <p><strong>Images.</strong> An imported file is copied to a temporary file (25 MB limit), recognised by its content, decoded with a power-of-two sample size so a huge photo never loads at full size, turned upright from its EXIF data, scaled to 1024 px (512 px on low-memory devices), trimmed of transparent margins and saved as PNG in the profile's folder. SVGs are drawn by AndroidSVG at that size. Crop, rotation and colour edits are applied when drawing and cached, so the stored image never changes.</p>
 
-<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Nothing is sent anywhere: the app has no <code>INTERNET</code> permission.</p>
+<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Animations are GIF files next to them, checked when they come in and kept as they are. Nothing is sent anywhere except by GIPHY search: while its screen is open, the words you search for and RetroDeck's API key go to GIPHY, and the pictures come from GIPHY's servers over HTTPS. That is the only use of the <code>INTERNET</code> permission.</p>
 
 <p><strong>Startup.</strong> The sequence is a pure function of time (<code>StartupTimeline</code>), drawn over the stereo, which is already running underneath; a tap skips it and it never runs longer than six seconds. Each frame only draws the cached logo bitmaps with alpha and colour filters on a hardware layer.</p>
 
@@ -226,9 +227,10 @@ my-vehicle.zip
 <h2>Known Limitations</h2>
 
 <ul>
-  <li><strong>The visualizer is simulated.</strong> It moves while music plays but doesn't follow the audio: reading the output mix on Android needs the microphone permission, which a car stereo shouldn't ask for.</li>
+  <li><strong>The visualizer is simulated.</strong> It moves while music plays but doesn't follow the audio (nor does an animation's speed): reading the output mix on Android needs the microphone permission, which a car stereo shouldn't ask for.</li>
   <li><strong>Media from SRC</strong> is a list of files. There is no radio tuner, Bluetooth audio or folder browsing yet.</li>
-  <li><strong>Animated WebP and GIF</strong> logos aren't supported; WebP files with transparency need Android 4.3 or newer, which RetroDeck's minimum already covers.</li>
+  <li><strong>GIPHY search</strong> uses a free key that allows 100 searches an hour for everyone using the same copy of RetroDeck. If it runs out, wait an hour, paste your own free key from GIPHY's developer site, or import a GIF file instead.</li>
+  <li><strong>Animated WebP and GIF</strong> logos aren't supported (a GIF can be the visualizer animation instead); WebP files with transparency need Android 4.3 or newer, which RetroDeck's minimum already covers.</li>
   <li><strong>SVG support</strong> is AndroidSVG's: text uses the device's fonts, and filters and some CSS are ignored. For an exact look, export the logo as PNG.</li>
   <li><strong>Some head units</strong> keep their own status bar or volume overlay on top of full-screen apps.</li>
 </ul>

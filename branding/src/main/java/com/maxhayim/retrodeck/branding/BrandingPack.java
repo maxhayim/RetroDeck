@@ -28,14 +28,17 @@ import java.util.zip.ZipOutputStream;
  * <pre>
  * manifest.json        {"format": "retrodeck-branding-pack", "formatVersion": 1, "profiles": [...]}
  * assets/NAME.png      logos (png, jpg, jpeg, webp or svg)
+ * assets/NAME.gif      visualizer animations
  * </pre>
- * Each profile is the ProfileJson object with "assets": {"manufacturer": "assets/...", "model": ...}.
+ * Each profile is the ProfileJson object with "assets": {"manufacturer": "assets/...", "model": ...,
+ * "animation": ...}. Packs with an animation are format 2, so older versions say they need an update
+ * instead of refusing the GIF as an unknown file.
  */
 public final class BrandingPack {
 
     public static final String FORMAT = "retrodeck-branding-pack";
     /** Packs with a newer major version are refused; unknown fields in this version are ignored. */
-    public static final int FORMAT_VERSION = 1;
+    public static final int FORMAT_VERSION = 2;
     public static final String MIME = "application/zip";
 
     public static final long MAX_PACK_BYTES = 24L * 1024 * 1024;
@@ -57,6 +60,8 @@ public final class BrandingPack {
         public final VehicleProfile profile;
         public final byte[][] logos = new byte[2][];
         public final String[] formats = new String[2];
+        /** The visualizer animation's GIF bytes, or null. */
+        public byte[] animation;
 
         Entry(VehicleProfile profile) {
             this.profile = profile;
@@ -147,6 +152,19 @@ public final class BrandingPack {
                 entry.formats[r] = checkImage(path, data);
                 entry.logos[r] = data;
             }
+            entry.profile.animationFile = null;
+            String anim = assets == null ? null : assets.optString("animation", null);
+            if (anim != null && !anim.isEmpty()) {
+                byte[] data = files.get(anim);
+                if (data == null) throw new InvalidPackException("The pack is missing " + anim + ".");
+                if (!anim.endsWith(".gif")) throw new InvalidPackException(anim + " isn't a GIF.");
+                try {
+                    com.maxhayim.retrodeck.core.Gif.parse(data);
+                } catch (com.maxhayim.retrodeck.core.Gif.FormatException ex) {
+                    throw new InvalidPackException(anim + ": " + ex.getMessage());
+                }
+                entry.animation = data;
+            }
             pack.entries.add(entry);
         }
         return pack;
@@ -180,7 +198,7 @@ public final class BrandingPack {
             return "The pack contains an unsafe file path: " + printable(name);
         }
         if (name.equals("manifest.json")) return null;
-        if (name.matches("assets/[A-Za-z0-9._-]{1,64}\\.(png|jpg|jpeg|webp|svg)")) return null;
+        if (name.matches("assets/[A-Za-z0-9._-]{1,64}\\.(png|jpg|jpeg|webp|svg|gif)")) return null;
         return "The pack contains a file RetroDeck doesn't accept: " + printable(name);
     }
 
@@ -241,6 +259,12 @@ public final class BrandingPack {
     /** Writes a pack. logos.get(profile)[role] is the PNG bytes of that logo or null. */
     public static void write(OutputStream out, String name, List<VehicleProfile> profiles,
                              Map<VehicleProfile, byte[][]> logos, String createdWith) throws IOException {
+        write(out, name, profiles, logos, new java.util.HashMap<>(), createdWith);
+    }
+
+    /** Writes a pack; animations.get(profile) is the GIF bytes of its animation, if it has one. */
+    public static void write(OutputStream out, String name, List<VehicleProfile> profiles, Map<VehicleProfile, byte[][]> logos,
+                             Map<VehicleProfile, byte[]> animations, String createdWith) throws IOException {
         try (ZipOutputStream zip = new ZipOutputStream(out)) {
             JSONObject m = new JSONObject();
             JSONArray list = new JSONArray();
@@ -248,7 +272,9 @@ public final class BrandingPack {
             Set<String> skins = new HashSet<>();
             try {
                 m.put("format", FORMAT);
-                m.put("formatVersion", FORMAT_VERSION);
+                boolean animated = false;
+                for (VehicleProfile p : profiles) animated |= animations.get(p) != null;
+                m.put("formatVersion", animated ? FORMAT_VERSION : 1);
                 m.put("name", name);
                 m.put("createdWith", createdWith);
                 int i = 0;
@@ -266,6 +292,13 @@ public final class BrandingPack {
                         String path = "assets/p" + i + "-" + VehicleProfile.ROLES[r] + ".png";
                         assets.put(path, bytes[r]);
                         a.put(VehicleProfile.ROLES[r], path);
+                    }
+                    JSONObject anim = po.optJSONObject("animation");
+                    if (anim != null) anim.remove("file");
+                    if (animations.get(p) != null) {
+                        String path = "assets/p" + i + "-animation.gif";
+                        assets.put(path, animations.get(p));
+                        a.put("animation", path);
                     }
                     po.put("assets", a);
                     list.put(po);

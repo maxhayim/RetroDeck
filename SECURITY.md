@@ -51,7 +51,11 @@ Responsible disclosure is required.
 
 ## Privacy
 
-- No account, no cloud service, no network access: RetroDeck has no `INTERNET` permission.
+- No account and no cloud service. The `INTERNET` permission is used only by GIPHY search, while its screen is
+  open: the search words and the API key go to GIPHY's API, and results and the chosen GIF come from GIPHY's media
+  servers, over HTTPS with TLS 1.2 or newer. Links anywhere else are never followed.
+- GIFs, from GIPHY, a file or a pack, are size-checked (8 MB, 800 pixels a side, 500 frames) and decoded by
+  RetroDeck's own decoder, never by anything that could run code.
 - Profiles and logos stay in the app's private storage. Exporting a pack is the only way they leave the device,
   and only to where you choose.
 

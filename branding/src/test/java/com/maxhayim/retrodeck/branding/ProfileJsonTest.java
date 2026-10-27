@@ -127,6 +127,31 @@ public class ProfileJsonTest {
     }
 
     @Test
+    public void animationSettings() throws Exception {
+        VehicleProfile p = sample();
+        p.visualizer = Visualizers.ANIMATION;
+        p.animationFile = "animation-42.gif";
+        p.animationTint = false;
+        p.animationFull = true;
+        VehicleProfile q = ProfileJson.read(ProfileJson.write(p));
+        assertEquals(Visualizers.ANIMATION, q.visualizer);
+        assertEquals("animation-42.gif", q.animationFile);
+        assertFalse(q.animationTint);
+        assertTrue(q.animationFull);
+        // Only names RetroDeck makes itself are kept.
+        for (String bad : new String[]{"../x.gif", "animation-1.png", "logo.gif", "animation-1.gif/../../a"}) {
+            JSONObject o = ProfileJson.write(p);
+            o.getJSONObject("animation").put("file", bad);
+            assertNull(bad, ProfileJson.read(o).animationFile);
+        }
+        // Profiles from before animations get the defaults.
+        VehicleProfile old = ProfileJson.read(new JSONObject().put("id", "a"));
+        assertNull(old.animationFile);
+        assertTrue(old.animationTint);
+        assertFalse(old.animationFull);
+    }
+
+    @Test
     public void years() {
         assertEquals("1989", VehicleProfile.cleanYear(" 1989 "));
         assertEquals("", VehicleProfile.cleanYear("1885"));

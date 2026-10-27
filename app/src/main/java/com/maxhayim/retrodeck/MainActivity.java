@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.maxhayim.retrodeck.branding.Animations;
 import com.maxhayim.retrodeck.branding.BrandingRenderer;
 import com.maxhayim.retrodeck.branding.ProfileStore;
 import com.maxhayim.retrodeck.branding.StartupView;
@@ -82,6 +83,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         stereo.setAccent(profile.accentColor);
         stereo.setKeyLighting(profile.keyLighting);
         stereo.setVisualizer(profile.visualizer);
+        Animations.apply(stereo, store, profile);
         stereo.invalidate();
     }
 

@@ -6,9 +6,11 @@ public final class Visualizers {
     public static final String BARS = "bars";
     public static final String LADDER = "ladder";
     public static final String SCOPE = "scope";
+    /** A GIF chosen in Vehicle Branding, moving with the music. */
+    public static final String ANIMATION = "animation";
     public static final String OFF = "off";
 
-    public static final String[] ALL = {BARS, LADDER, SCOPE, OFF};
+    public static final String[] ALL = {BARS, LADDER, SCOPE, ANIMATION, OFF};
 
     private Visualizers() {}
 
@@ -17,6 +19,7 @@ public final class Visualizers {
             case BARS: return "Spectrum bars";
             case LADDER: return "Level ladder";
             case SCOPE: return "Oscilloscope";
+            case ANIMATION: return "Animation (GIF)";
             case OFF: return "Off";
             default: return id;
         }
