@@ -100,6 +100,8 @@ public class MainActivity extends Activity implements StereoView.Listener {
     protected void onResume() {
         super.onResume();
         Ui.immersive(this);
+        // Time spent in Settings doesn't count as the stereo sitting idle.
+        lastInput = android.os.SystemClock.uptimeMillis();
         buttons = ButtonsActivity.load(this);
         applyProfile();
         main.post(tick);
@@ -213,13 +215,6 @@ public class MainActivity extends Activity implements StereoView.Listener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         String action = buttons.action(keyCode);
-        if (stereo.isFullscreen() && !ButtonMap.keepsFullscreen(action) && !ButtonMap.FULLSCREEN.equals(action)
-                && !isVolumeKey(keyCode)) {
-            // The first press only brings the stereo back, as a touch does.
-            stereo.setFullscreen(false);
-            swallowUp = keyCode;
-            return true;
-        }
         if (action == null) return super.onKeyDown(keyCode, event);
         if (ButtonMap.preset(action) > 0) {
             // Decided on release: a short press plays, a long one saves.
@@ -242,10 +237,6 @@ public class MainActivity extends Activity implements StereoView.Listener {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (swallowUp == keyCode) {
-            swallowUp = -1;
-            return true;
-        }
         String action = buttons.action(keyCode);
         if (action == null) return super.onKeyUp(keyCode, event);
         if (ButtonMap.preset(action) > 0 && event.isTracking() && !event.isCanceled()) perform(action);
@@ -267,6 +258,22 @@ public class MainActivity extends Activity implements StereoView.Listener {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         lastInput = android.os.SystemClock.uptimeMillis();
+        int code = event.getKeyCode();
+        // Checked here, before the screen sees the key: in full screen, the first press of a key
+        // other than a media key only brings the stereo back, as a touch does. After a touch, Android
+        // keeps the press of OK and the arrows to leave touch mode, so only their release arrives.
+        if (stereo.isFullscreen()) {
+            String action = buttons.action(code);
+            if (!ButtonMap.keepsFullscreen(action) && !ButtonMap.FULLSCREEN.equals(action) && !isVolumeKey(code)) {
+                stereo.setFullscreen(false);
+                if (event.getAction() == KeyEvent.ACTION_DOWN) swallowUp = code;
+                return true;
+            }
+        }
+        if (event.getAction() == KeyEvent.ACTION_UP && code == swallowUp) {
+            swallowUp = -1;
+            return true;
+        }
         return super.dispatchKeyEvent(event);
     }
 
