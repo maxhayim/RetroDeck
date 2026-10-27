@@ -9,7 +9,7 @@ A car maker's factory CD and tape unit from the mid-1990s, in charcoal plastic: 
 Taken from the running app (v0.10.0) on an Android TV box at 1920×1080 (240 dpi). The faceplate is the 3D render; the display, logos and knob pointer are drawn live on top.
 
 ![At night](a80-night.jpg)
-<sub>At night (Key Lighting on): the legends and the display lit green</sub>
+<sub>At night (Key Lighting Always on, 18:19): the legends and both displays lit lime green</sub>
 
 ![By day](a80-day.jpg)
 <sub>By day (Key Lighting Off): white print on charcoal plastic, the displays olive grey</sub>
