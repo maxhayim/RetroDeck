@@ -19,7 +19,7 @@ final class LiveLevels implements Levels {
     private final Levels fallback = new Levels.Simulated();
     private final float[] live = new float[BANDS];
     private Visualizer visualizer;
-    private byte[] fft;
+    private byte[] wave;
     private int session, rateHz;
     private long attachedAt, heardAt;
 
@@ -39,7 +39,7 @@ final class LiveLevels implements Levels {
             v.setCaptureSize(Math.max(range[0], Math.min(1024, range[1])));
             v.setEnabled(true);
             visualizer = v;
-            fft = new byte[v.getCaptureSize()];
+            wave = new byte[v.getCaptureSize()];
             rateHz = v.getSamplingRate() / 1000;
             attachedAt = SystemClock.uptimeMillis();
             heardAt = 0;
@@ -73,13 +73,13 @@ final class LiveLevels implements Levels {
         boolean got = false;
         if (playing) {
             try {
-                got = visualizer.getFft(fft) == Visualizer.SUCCESS;
+                got = visualizer.getWaveForm(wave) == Visualizer.SUCCESS;
             } catch (IllegalStateException ignored) {
                 // Its player was released; the next attach replaces it.
             }
         }
         if (got) {
-            FftBands.read(fft, rateHz, live);
+            FftBands.read(wave, rateHz, live);
             for (float v : live) {
                 if (v > 0.02f) {
                     heardAt = SystemClock.uptimeMillis();
