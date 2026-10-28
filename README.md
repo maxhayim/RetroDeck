@@ -25,23 +25,39 @@
 
 <h2>Screenshots</h2>
 
-<p>Each skin fades between its day and night looks. Every skin has its own page in <a href="themes/">themes</a>, by era, with more screenshots and day and night renders.</p>
+<p>Recorded on a TV playing a song: the visualizer follows the music, the display shows the song's own title and artist, and the knob turns as the volume goes up and back down. Each clip starts by day and fades to night. Every skin has its own page in <a href="themes/">themes</a>, with more screenshots and day and night renders.</p>
 
-<p align="center"><img src="themes/1980s/classic-1985/day-night.webp" alt="The Classic 1985 skin branded as a 1989 Halcyon Mesa GT, playing, fading between day and night"/><br/><sub>Classic 1985, by day and at night: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door, branded with the demo car's logo and badge</sub></p>
+<p align="center"><img src="themes/1980s/classic-1985/day-night.webp" alt="The Classic 1985 skin playing, fading between day and night"/><br/><sub>Classic 1985, a single-DIN radio set into the dash, with the visualizer screen above it: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</sub></p>
+
+<h3>Single DIN</h3>
 
 <table>
   <tr>
-    <td width="50%"><img src="themes/1990s/z32-factory-1990/day-night.webp" alt="Z32 Factory 1990, fading between day and night"/><br/><sub>Z32 Factory 1990: satin black plastic and gloss doors by day; at night backlit legends, and the display's icy blue behind smoked plum glass</sub></td>
-    <td width="50%"><img src="themes/1990s/a80-factory-1994/day-night.webp" alt="A80 Factory 1994, fading between day and night"/><br/><sub>A80 Factory 1994: charcoal plastic and olive grey displays by day; at night the displays and legends lit lime green</sub></td>
+    <td width="50%"><img src="themes/1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984, playing, fading between day and night"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
+    <td width="50%"><img src="themes/1990s/digital-1996/day-night.webp" alt="Digital 1996, playing, fading between day and night"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="themes/1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984, fading between day and night"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
-    <td width="50%"><img src="themes/1990s/detachable-1998/day-night.webp" alt="Detachable 1998, fading between day and night"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
+    <td width="50%"><img src="themes/1990s/detachable-1998/day-night.webp" alt="Detachable 1998, playing, fading between day and night"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
+    <td width="50%"></td>
+  </tr>
+</table>
+
+<h3>Double DIN</h3>
+
+<table>
+  <tr>
+    <td width="50%"><img src="themes/1990s/z32-factory-1990/day-night.webp" alt="Z32 Factory 1990, playing, fading between day and night"/><br/><sub>Z32 Factory 1990: satin black plastic and gloss doors by day; at night backlit legends, and the display's icy blue behind smoked plum glass</sub></td>
+    <td width="50%"><img src="themes/1990s/a80-factory-1994/day-night.webp" alt="A80 Factory 1994, playing, fading between day and night"/><br/><sub>A80 Factory 1994: charcoal plastic and olive grey displays by day; at night the displays and legends lit lime green</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="themes/1990s/digital-1996/day-night.webp" alt="Digital 1996, fading between day and night"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
-    <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
+    <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
+    <td width="50%"></td>
   </tr>
+</table>
+
+<h3>Settings</h3>
+
+<table>
   <tr>
     <td width="50%"><img src="docs/screenshots/branding.jpg" alt="Settings → Personalization → Vehicle Branding, with the live preview"/><br/><sub>Settings → Personalization → Vehicle Branding, with the live preview</sub></td>
     <td width="50%"><img src="docs/screenshots/logo-editor.jpg" alt="Adjusting the model badge: rotation and brightness, shown on the stereo as you go"/><br/><sub>Adjusting the model badge: rotation and brightness, shown on the stereo as you go</sub></td>
