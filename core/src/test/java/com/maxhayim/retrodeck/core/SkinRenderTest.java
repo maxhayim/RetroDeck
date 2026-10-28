@@ -40,6 +40,8 @@ public class SkinRenderTest {
         }
         // -Prender.code draws the faceplates in code instead, as a device does when it can't load the art.
         boolean code = System.getProperty("render.code") != null;
+        // -Prender.colours=#visualizer,#screen,#body renders with a vehicle's own colours.
+        String colours = System.getProperty("render.colours");
         for (Skin skin : Skins.all()) for (String keys : new String[]{KeyLights.ON, KeyLights.OFF}) {
             StereoView v = new StereoView(RuntimeEnvironment.getApplication());
             String art = skin.art;
@@ -56,13 +58,19 @@ public class SkinRenderTest {
             v.setState(s);
             v.setIllumination(Illumination.preset(Illumination.AMBER));
             v.setKeyLighting(keys);
+            if (colours != null) {
+                String[] c = colours.split(",");
+                v.setVisualizerColor(Illumination.parse(c[0], 0));
+                v.setScreenColor(Illumination.parse(c[1], 0));
+                v.setBodyColor(Illumination.parse(c[2], 0));
+            }
             v.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
             v.layout(0, 0, w, h);
             Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             v.draw(new Canvas(bm));
             skin.art = art;
-            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + (code ? "-code" : "") + (KeyLights.ON.equals(keys) ? "" : "-day") + ".png"))) {
+            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + (code ? "-code" : "") + (colours != null ? "-colours" : "") + (KeyLights.ON.equals(keys) ? "" : "-day") + ".png"))) {
                 bm.compress(Bitmap.CompressFormat.PNG, 100, out);
             }
         }

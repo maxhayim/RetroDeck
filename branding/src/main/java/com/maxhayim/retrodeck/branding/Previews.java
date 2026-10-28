@@ -27,6 +27,9 @@ final class Previews {
         v.setSkin(Skins.get(p.skin));
         v.setIllumination(p.illuminationColor());
         v.setAccent(p.accentColor);
+        v.setVisualizerColor(p.visualizerColor);
+        v.setScreenColor(p.screenColor);
+        v.setBodyColor(p.bodyColor);
         v.setKeyLighting(p.keyLighting);
         v.setVisualizer(p.visualizer);
         Animations.apply(v, ProfileStore.get(v.getContext()), p);

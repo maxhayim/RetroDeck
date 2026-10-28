@@ -60,7 +60,7 @@ public class VehicleBrandingActivity extends Activity {
     private List<VehicleProfile> pendingExport;
 
     private Ui.Row rowProfiles, rowManufacturer, rowModel, rowYear, rowTrim, rowLogo, rowBadge, rowEditLogo,
-            rowPlacement, rowSkin, rowVisualizer, rowAnimation, rowIllumination, rowAccent, rowKeys, rowStartup;
+            rowPlacement, rowSkin, rowVisualizer, rowAnimation, rowIllumination, rowAccent, rowVisColour, rowScreen, rowBody, rowKeys, rowStartup;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -130,6 +130,9 @@ public class VehicleBrandingActivity extends Activity {
         rowAnimation = add(l, "Animation", v -> chooseAnimation());
         rowIllumination = add(l, "Dashboard Illumination", v -> chooseIllumination());
         rowAccent = add(l, "Accent Colour", v -> chooseAccent());
+        rowVisColour = add(l, "Visualizer Colour", v -> chooseOwnColour(OWN_VISUALIZER));
+        rowScreen = add(l, "Visualizer Background", v -> chooseOwnColour(OWN_SCREEN));
+        rowBody = add(l, "Radio Colour", v -> chooseOwnColour(OWN_BODY));
         rowKeys = add(l, "Key Lighting", v -> chooseKeyLighting());
         rowStartup = add(l, "Startup Animation", v -> startActivity(new Intent(this, StartupEditorActivity.class)));
         add(l, "Preview", v -> openPreview()).value("Startup, stereo and standby, full screen");
@@ -173,6 +176,10 @@ public class VehicleBrandingActivity extends Activity {
         rowAnimation.value(animationValue());
         rowIllumination.value(Illumination.label(profile.illumination) + "  ·  " + Illumination.hex(profile.illuminationColor()));
         rowAccent.value(Illumination.hex(profile.accentColor));
+        rowVisColour.value(profile.visualizerColor != 0 ? Illumination.hex(profile.visualizerColor) : "The display's own colour");
+        rowScreen.value(profile.screenColor != 0 ? Illumination.hex(profile.screenColor)
+                : "Black  ·  full screen, and the screen above a single-DIN radio");
+        rowBody.value(profile.bodyColor != 0 ? Illumination.hex(profile.bodyColor) : "The skin's own");
         rowKeys.value(KeyLights.label(profile.keyLighting) + "  ·  " + KeyLights.describe(profile.keyLighting));
         rowStartup.value(profile.startup.enabled
                 ? StartupConfig.label(profile.startup.preset) + (StartupConfig.INSTANT.equals(profile.startup.preset) ? ""
@@ -658,6 +665,68 @@ public class VehicleBrandingActivity extends Activity {
                 .create();
         dialog.show();
         Ui.beside(dialog);
+    }
+
+    private static final int OWN_VISUALIZER = 0, OWN_SCREEN = 1, OWN_BODY = 2;
+
+    /** The visualizer's colour, the screen behind it or the radio's body: the vehicle's own, or the skin's. */
+    private void chooseOwnColour(final int which) {
+        final VehicleProfile before = profile.copy();
+        final String[] titles = {"Visualizer colour", "Visualizer background", "Radio colour"};
+        final String[] notes = {
+                "The visualizer's bars, ladder and wave. Peaks stay in the accent colour.",
+                "Behind the visualizer, in full screen and on the screen above a single-DIN radio.",
+                "The radio's body, keeping its shading: dark plastic takes a dark shade of it, metal a bright one, and the print stays light."};
+        final String[] skins = {"Display's own", "Black", "Skin's own"};
+        final int[] start = {profile.illuminationColor(), 0xFF101826, 0xFF8A1020};
+        int now = own(which);
+        LinearLayout box = Ui.vertical(this);
+        TextView note = Ui.text(this, notes[which], 13, Ui.SUB, false);
+        note.setPadding(Ui.dp(this, 18), Ui.dp(this, 8), Ui.dp(this, 18), 0);
+        box.addView(note);
+        final ColorPicker picker = new ColorPicker(this, now != 0 ? now : start[which], c -> {
+            setOwn(which, c);
+            Previews.apply(preview, profile);
+        });
+        LinearLayout row = Ui.horizontal(this);
+        row.setPadding(Ui.dp(this, 14), Ui.dp(this, 8), 0, 0);
+        row.addView(Ui.chip(this, skins[which], now == 0, v -> {
+            setOwn(which, 0);
+            Previews.apply(preview, profile);
+        }));
+        final int logo = profile.logoColor[0] != 0 ? profile.logoColor[0] : profile.logoColor[1];
+        if (logo != 0) {
+            row.addView(Ui.chip(this, "Logo colour " + Illumination.hex(logo), false, v -> {
+                picker.set(logo);
+                setOwn(which, logo);
+                Previews.apply(preview, profile);
+            }));
+        }
+        box.addView(row);
+        box.addView(picker);
+        AlertDialog dialog = Ui.dialog(this).setTitle(titles[which]).setView(Ui.scroll(this, box))
+                .setPositiveButton("Save", (d, w) -> save())
+                .setNegativeButton("Cancel", (d, w) -> {
+                    profile = before;
+                    refresh();
+                })
+                .setOnCancelListener(d -> {
+                    profile = before;
+                    refresh();
+                })
+                .create();
+        dialog.show();
+        Ui.beside(dialog);
+    }
+
+    private int own(int which) {
+        return which == OWN_VISUALIZER ? profile.visualizerColor : which == OWN_SCREEN ? profile.screenColor : profile.bodyColor;
+    }
+
+    private void setOwn(int which, int color) {
+        if (which == OWN_VISUALIZER) profile.visualizerColor = color;
+        else if (which == OWN_SCREEN) profile.screenColor = color;
+        else profile.bodyColor = color;
     }
 
     private void openPreview() {

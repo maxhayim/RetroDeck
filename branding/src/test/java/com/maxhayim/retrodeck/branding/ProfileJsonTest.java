@@ -34,6 +34,8 @@ public class ProfileJsonTest {
         p.illumination = Illumination.CUSTOM;
         p.customColor = 0xFF00C8FF;
         p.accentColor = 0xFFFF00AA;
+        p.visualizerColor = 0xFF00C8FF;
+        p.bodyColor = 0xFF8A1020;
         p.keyLighting = com.maxhayim.retrodeck.core.KeyLights.OFF;
         p.startup.preset = StartupConfig.CRT;
         p.startup.durationMs = 4500;
@@ -68,6 +70,9 @@ public class ProfileJsonTest {
         assertEquals(Illumination.CUSTOM, q.illumination);
         assertEquals(0xFF00C8FF, q.customColor);
         assertEquals(0xFFFF00AA, q.accentColor);
+        assertEquals(0xFF00C8FF, q.visualizerColor);
+        assertEquals(0, q.screenColor);
+        assertEquals(0xFF8A1020, q.bodyColor);
         assertEquals(com.maxhayim.retrodeck.core.KeyLights.OFF, q.keyLighting);
         assertEquals(StartupConfig.CRT, q.startup.preset);
         assertEquals(4500, q.startup.durationMs);

@@ -50,6 +50,8 @@ public class StereoView extends View {
     private Skin skin = Skins.get(Skins.CLASSIC);
     private int illumination = Illumination.preset(Illumination.AMBER);
     private int accent = 0xFFFF3B30;
+    /** The vehicle's own colours for the visualizer, the screen behind it and the radio's body; 0 for the skin's. */
+    private int visualizerColor, screenColor, bodyColor;
     private String visualizer = Visualizers.BARS;
     private GifPlayer animation;
     private boolean animationTint = true, animationFull;
@@ -134,6 +136,25 @@ public class StereoView extends View {
     public void setAccent(int color) {
         accent = color;
         invalidate();
+    }
+
+    /** The visualizer's bars, ladder and wave, or 0 for the display's own colour. Peaks stay in the accent. */
+    public void setVisualizerColor(int color) {
+        visualizerColor = color;
+        invalidate();
+    }
+
+    /** Behind the visualizer, in full screen and on a single-DIN radio's screen in the dash; 0 for black. */
+    public void setScreenColor(int color) {
+        screenColor = color;
+        invalidate();
+    }
+
+    /** The radio's body, recoloured keeping its shading; 0 for the skin's own. */
+    public void setBodyColor(int color) {
+        if (color == bodyColor) return;
+        bodyColor = color;
+        dropBackground();
     }
 
     /** When the key legends are backlit: {@link KeyLights#AUTO}, ON or OFF. */
@@ -311,7 +332,7 @@ public class StereoView extends View {
             for (Skin.Control ctl : skin.controls) if (ctl.id.equals(pressed)) key = ctl.box;
         }
         if (key == null) return;
-        if (pressedArt == null) pressedArt = withGlow(loadArt(skin.art + (keysLit ? "/night-pressed.webp" : "/day-pressed.webp"), w, h), w, h);
+        if (pressedArt == null) pressedArt = withGlow(recolor(loadArt(skin.art + (keysLit ? "/night-pressed.webp" : "/day-pressed.webp"), w, h), w, h), w, h);
         if (pressedArt == null) return;
         android.graphics.Rect r = new android.graphics.Rect(Math.round(key.left * w), Math.round(key.top * h),
                 Math.round(key.right * w), Math.round(key.bottom * h));
@@ -361,10 +382,27 @@ public class StereoView extends View {
         return base;
     }
 
+    /** The radio's body in the vehicle's colour, if it has one; the display window and the dash keep theirs. */
+    private Bitmap recolor(Bitmap base, int w, int h) {
+        if (base == null || bodyColor == 0) return base;
+        try {
+            if (!base.isMutable()) {
+                Bitmap copy = base.copy(base.getConfig(), true);
+                if (copy == null) return base;
+                base.recycle();
+                base = copy;
+            }
+            Recolor.apply(base, bodyColor, px(skin.body), px(skin.lcd));
+        } catch (OutOfMemoryError e) {
+            // The skin's own colour is still usable.
+        }
+        return base;
+    }
+
     private Bitmap buildBackground(int w, int h) {
         if (skin.art != null) {
             artNight = keysLit;
-            Bitmap art = withGlow(loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h), w, h);
+            Bitmap art = withGlow(recolor(loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h), w, h), w, h);
             if (art != null) return art;
         }
         // Full colour keeps the metal and glass gradients smooth; low-RAM head units get 16-bit.
@@ -373,7 +411,7 @@ public class StereoView extends View {
         try {
             Bitmap bm = Bitmap.createBitmap(w, h, lowRam ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
             Faceplate.draw(new Canvas(bm), skin, w, h);
-            return bm;
+            return recolor(bm, w, h);
         } catch (OutOfMemoryError e) {
             // Not even that: draw a plain faceplate every frame instead.
             return null;
@@ -813,6 +851,11 @@ public class StereoView extends View {
         return skin.lcdStyle == Skin.LCD_REFLECTIVE && fullscreen ? skin.backlight(illumination) : skin.lcdInk(illumination);
     }
 
+    /** The visualizer's colour: the vehicle's own, or the display's lettering. */
+    private int visualizerInk() {
+        return visualizerColor != 0 ? visualizerColor : displayInk();
+    }
+
     private void drawVisualizer(Canvas c, RectF v, float u) {
         if (Visualizers.OFF.equals(visualizer)) return;
         if (Visualizers.ANIMATION.equals(visualizer)) {
@@ -822,7 +865,8 @@ public class StereoView extends View {
         }
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
         boolean reflective = reflective();
-        int ink = displayInk();
+        int ink = visualizerInk();
+        int base = visualizerColor != 0 ? visualizerColor : illumination;
         int n = bands.length;
         if (Visualizers.BARS.equals(visualizer)) {
             float gap = v.width() * 0.012f;
@@ -834,10 +878,10 @@ public class StereoView extends View {
                 peaks[i] = Math.max(lv, peaks[i] - 0.012f);
                 float l = v.left + i * (bw + gap);
                 if (modern) {
-                    paint.setColor(Illumination.withAlpha(illumination, 0x30));
+                    paint.setColor(Illumination.withAlpha(base, 0x30));
                     rect.set(l, v.top, l + bw, v.bottom);
                     c.drawRoundRect(rect, bw / 3, bw / 3, paint);
-                    paint.setColor(illumination);
+                    paint.setColor(base);
                     rect.set(l, v.bottom - v.height() * lv, l + bw, v.bottom);
                     c.drawRoundRect(rect, bw / 3, bw / 3, paint);
                 } else {
@@ -846,7 +890,7 @@ public class StereoView extends View {
                     for (int s = 0; s < segs; s++) {
                         float top = v.bottom - (s + 1) * sh + sh * 0.18f;
                         // Colour displays shade each column from the illumination up into the accent.
-                        int col = skin.gradientBars ? Illumination.mix(illumination, accent, s / (float) (segs - 1)) : ink;
+                        int col = skin.gradientBars ? Illumination.mix(base, accent, s / (float) (segs - 1)) : ink;
                         if (s < lit && !reflective) {
                             // Lit phosphor bleeds light around itself.
                             paint.setColor(Illumination.withAlpha(col, neon() ? 0x50 : 0x30));
@@ -858,7 +902,7 @@ public class StereoView extends View {
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
                     if (pk > lit) {
                         // One-colour displays have no second colour for the peaks.
-                        paint.setColor(reflective || skin.phosphor != 0 ? ink : accent);
+                        paint.setColor((reflective || skin.phosphor != 0) && visualizerColor == 0 ? ink : accent);
                         float top = v.bottom - (pk + 1) * sh + sh * 0.18f;
                         c.drawRect(l, top, l + bw, v.bottom - pk * sh, paint);
                     }
@@ -938,7 +982,7 @@ public class StereoView extends View {
 
     private void drawLadder(Canvas c, float x, float y, float w, float h, float level, String label) {
         lcdText(skin.lcdStyle);
-        int ink = displayInk();
+        int ink = visualizerInk();
         boolean reflective = reflective();
         text.setTextSize(h * 0.8f);
         text.setColor(ink);
@@ -949,7 +993,7 @@ public class StereoView extends View {
         int lit = Math.round(level * segs);
         for (int s = 0; s < segs; s++) {
             boolean hot = s >= segs - 4;
-            int col = hot && !reflective ? accent : ink;
+            int col = hot && (!reflective || visualizerColor != 0) ? accent : ink;
             paint.setColor(s < lit ? col : Illumination.withAlpha(col, reflective ? 0x12 : 0x1C));
             float l = x + lw + s * sw;
             c.drawRect(l, y, l + sw * 0.75f, y + h, paint);
@@ -1093,7 +1137,7 @@ public class StereoView extends View {
     }
 
     private void drawFullscreen(Canvas c, int w, int h, long now) {
-        c.drawColor(0xFF000000);
+        c.drawColor(screenColor != 0 ? screenColor : 0xFF000000);
         levels.read(bands, now, state.playing);
         drawScreen(c, new RectF(0, 0, w, h), now, true);
         if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
@@ -1108,7 +1152,7 @@ public class StereoView extends View {
         int save = c.save();
         c.clipRect(s);
         if (!full) {
-            paint.setColor(0xFF030405);
+            paint.setColor(screenColor != 0 ? screenColor : 0xFF030405);
             c.drawRect(s, paint);
         }
         float u = Math.min(s.width(), s.height());

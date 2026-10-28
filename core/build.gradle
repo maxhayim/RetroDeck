@@ -17,6 +17,7 @@ android {
             if (project.hasProperty('render')) systemProperty 'render', 'true'
             if (project.hasProperty('render.size')) systemProperty 'render.size', project.property('render.size')
             if (project.hasProperty('render.code')) systemProperty 'render.code', 'true'
+            if (project.hasProperty('render.colours')) systemProperty 'render.colours', project.property('render.colours')
         }
     }
 

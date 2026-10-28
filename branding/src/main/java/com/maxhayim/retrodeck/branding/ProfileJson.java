@@ -38,6 +38,9 @@ public final class ProfileJson {
         palette.put("illumination", p.illumination);
         palette.put("custom", Illumination.hex(p.customColor));
         palette.put("accent", Illumination.hex(p.accentColor));
+        if (p.visualizerColor != 0) palette.put("visualizer", Illumination.hex(p.visualizerColor));
+        if (p.screenColor != 0) palette.put("screen", Illumination.hex(p.screenColor));
+        if (p.bodyColor != 0) palette.put("body", Illumination.hex(p.bodyColor));
         palette.put("keys", p.keyLighting);
         o.put("palette", palette);
 
@@ -116,6 +119,9 @@ public final class ProfileJson {
             p.illumination = isMode(mode) ? mode : Illumination.AMBER;
             p.customColor = Illumination.parse(palette.optString("custom", null), p.customColor) | 0xFF000000;
             p.accentColor = Illumination.parse(palette.optString("accent", null), p.accentColor) | 0xFF000000;
+            p.visualizerColor = own(palette, "visualizer");
+            p.screenColor = own(palette, "screen");
+            p.bodyColor = own(palette, "body");
             String keys = palette.optString("keys", KeyLights.AUTO);
             p.keyLighting = KeyLights.exists(keys) ? keys : KeyLights.AUTO;
         }
@@ -174,6 +180,12 @@ public final class ProfileJson {
     private static Placement readPlacement(JSONObject o) {
         return new Placement(o.optBoolean("visible", false), (float) o.optDouble("scale", 1),
                 (float) o.optDouble("x", 0.5), (float) o.optDouble("y", 0.5)).sanitize();
+    }
+
+    /** A colour of the vehicle's own, opaque, or 0 if the pack keeps the skin's. */
+    private static int own(JSONObject palette, String key) {
+        int c = Illumination.parse(palette.optString(key, null), 0);
+        return c == 0 ? 0 : c | 0xFF000000;
     }
 
     private static boolean isMode(String m) {

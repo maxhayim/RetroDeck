@@ -42,6 +42,8 @@ public final class VehicleProfile {
     public int customColor = 0xFFFF7A00;
     /** Second vehicle colour, used for visualizer peaks and the start-up glow. */
     public int accentColor = 0xFFFF3B30;
+    /** The visualizer's colour, the screen behind it and the radio's body; 0 keeps the skin's own. */
+    public int visualizerColor, screenColor, bodyColor;
     /** When the key legends are backlit; see KeyLights. */
     public String keyLighting = KeyLights.AUTO;
     public StartupConfig startup = new StartupConfig();
@@ -122,6 +124,9 @@ public final class VehicleProfile {
         p.illumination = illumination;
         p.customColor = customColor;
         p.accentColor = accentColor;
+        p.visualizerColor = visualizerColor;
+        p.screenColor = screenColor;
+        p.bodyColor = bodyColor;
         p.keyLighting = keyLighting;
         p.startup = startup.copy();
         p.placements.clear();

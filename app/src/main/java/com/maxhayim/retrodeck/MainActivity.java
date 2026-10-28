@@ -104,6 +104,9 @@ public class MainActivity extends Activity implements StereoView.Listener {
         stereo.setSkin(Skins.get(profile.skin));
         stereo.setIllumination(profile.illuminationColor());
         stereo.setAccent(profile.accentColor);
+        stereo.setVisualizerColor(profile.visualizerColor);
+        stereo.setScreenColor(profile.screenColor);
+        stereo.setBodyColor(profile.bodyColor);
         stereo.setKeyLighting(profile.keyLighting);
         stereo.setVisualizer(profile.visualizer);
         Animations.apply(stereo, store, profile);
