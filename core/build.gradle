@@ -12,10 +12,11 @@ android {
 
     testOptions {
         unitTests.includeAndroidResources = true
-        // ./gradlew :core:testDebugUnitTest -Prender (optionally -Prender.size=1920x1080) writes skin PNGs.
+        // ./gradlew :core:testDebugUnitTest -Prender (optionally -Prender.size=1920x1080, and -Prender.code for the code-drawn faceplates) writes skin PNGs.
         unitTests.all {
             if (project.hasProperty('render')) systemProperty 'render', 'true'
             if (project.hasProperty('render.size')) systemProperty 'render.size', project.property('render.size')
+            if (project.hasProperty('render.code')) systemProperty 'render.code', 'true'
         }
     }
 

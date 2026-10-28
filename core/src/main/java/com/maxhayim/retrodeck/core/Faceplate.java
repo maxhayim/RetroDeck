@@ -37,6 +37,8 @@ final class Faceplate {
     private final Skin skin;
     private final int w, h;
     private final float u;
+    /** The radio's outline in pixels: the whole view, or a single-DIN radio's slim strip. */
+    private final RectF body;
     private final Paint p = new Paint(AA);
 
     private Faceplate(Canvas c, Skin skin, int w, int h) {
@@ -44,7 +46,29 @@ final class Faceplate {
         this.skin = skin;
         this.w = w;
         this.h = h;
-        this.u = Math.min(w, h);
+        // A single-DIN face is half as tall: its print, radii and screws are smaller, though not by half.
+        this.u = Math.min(w, h) * (skin.din == 1 ? 0.72f : 1f);
+        this.body = new RectF(skin.body.left * w, skin.body.top * h, skin.body.right * w, skin.body.bottom * h);
+    }
+
+    /** A fraction across the radio's face, in pixels. */
+    private float fx(float f) {
+        return body.left + f * body.width();
+    }
+
+    /** A fraction down the radio's face, in pixels. */
+    private float fy(float f) {
+        return body.top + f * body.height();
+    }
+
+    /** The radio's face, inset a little from its outline. */
+    private RectF face() {
+        return new RectF(fx(0.006f), fy(0.012f), fx(0.994f), fy(0.988f));
+    }
+
+    /** Halfway down the gap between the display and the presets, where single-DIN faces have their trim. */
+    private float underDisplay() {
+        return (skin.lcd.bottom + skin.presetBoxes().get(0).top) / 2 * h;
     }
 
     static void draw(Canvas c, Skin skin, int w, int h) {
@@ -67,7 +91,7 @@ final class Faceplate {
     /** Brushed aluminium with black keys, a spun-metal knob and a recessed VFD window. */
     private void classic() {
         housing();
-        RectF face = new RectF(w * 0.006f, h * 0.012f, w * 0.994f, h * 0.988f);
+        RectF face = face();
         float fr = u * 0.018f;
         drop(face, fr, u * 0.02f, u * 0.006f, 0xD0);
         p.setShader(new LinearGradient(0, face.top, 0, face.bottom,
@@ -83,7 +107,8 @@ final class Faceplate {
         bevel(face, fr, u * 0.004f, 0x90FFFFFF, 0x90000000);
 
         // Engraved lines framing the display, as on stamped faceplates.
-        groove(w * 0.215f, h * 0.645f, w * 0.785f);
+        RectF lcd0 = px(skin.lcd);
+        groove(lcd0.left - w * 0.01f, underDisplay(), lcd0.right + w * 0.01f);
         screws(0.018f, 0.045f);
 
         RectF lcd = px(skin.lcd);
@@ -102,7 +127,7 @@ final class Faceplate {
     /** Grained black plastic, soft rubber keys, a ribbed knob and a glossy dot-matrix window. */
     private void digital() {
         housing();
-        RectF face = new RectF(w * 0.006f, h * 0.012f, w * 0.994f, h * 0.988f);
+        RectF face = face();
         float fr = u * 0.04f;
         drop(face, fr, u * 0.02f, u * 0.006f, 0xE0);
         p.setShader(new LinearGradient(0, face.top, 0, face.bottom,
@@ -113,8 +138,9 @@ final class Faceplate {
         overlay(grain(256, 96, 22), 0.7f);
         light(face, 0x22, 0x40);
         // A soft sheen across the top, from the rounded front edge.
-        p.setShader(new LinearGradient(0, face.top, 0, face.top + h * 0.12f, 0x26FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
-        c.drawRect(face.left, face.top, face.right, face.top + h * 0.12f, p);
+        float sheen = body.height() * 0.12f;
+        p.setShader(new LinearGradient(0, face.top, 0, face.top + sheen, 0x26FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        c.drawRect(face.left, face.top, face.right, face.top + sheen, p);
         p.setShader(null);
         c.restore();
         bevel(face, fr, u * 0.004f, 0x70FFFFFF, 0xA0000000);
@@ -174,7 +200,7 @@ final class Faceplate {
      */
     private void hifi() {
         housing();
-        RectF face = new RectF(w * 0.006f, h * 0.012f, w * 0.994f, h * 0.988f);
+        RectF face = face();
         float fr = u * 0.008f;
         drop(face, fr, u * 0.02f, u * 0.006f, 0xD0);
         p.setShader(new LinearGradient(0, face.top, 0, face.bottom,
@@ -189,9 +215,12 @@ final class Faceplate {
         // The cut edge of the plate catches the light all the way round.
         bevel(face, fr, u * 0.005f, 0xC0FFFFFF, 0x50FFFFFF);
 
-        pinstripe(w * 0.03f, h * 0.145f, w * 0.97f);
-        pinstripe(w * 0.22f, h * 0.655f, w * 0.78f);
-        pinstripe(w * 0.22f, h * 0.81f, w * 0.78f);
+        // Across under the top row, and either side of the presets.
+        RectF lcd0 = px(skin.lcd), pre = px(skin.presets);
+        float sw = px(skin.decor.get(0).box).top;
+        pinstripe(fx(0.03f), (px(skin.slot).bottom + lcd0.top) / 2, fx(0.97f));
+        pinstripe(lcd0.left - w * 0.01f, (lcd0.bottom + pre.top) / 2, lcd0.right + w * 0.01f);
+        pinstripe(lcd0.left - w * 0.01f, (pre.bottom + sw) / 2, lcd0.right + w * 0.01f);
 
         window(px(skin.lcd), u * 0.012f, skin.corner * u, 0xFF050605, 0xFF0D100E);
         keys(skin.corner * u, KEY_SLIM);
@@ -201,12 +230,12 @@ final class Faceplate {
 
         RectF s = px(skin.slot);
         slot(s, true);
-        // Under the slot, so the header logo beside it never runs into them.
-        float py = s.bottom + u * 0.032f;
-        print("AUTO REVERSE", s.left + s.height() * 0.5f, py, u * 0.016f, skin.printColor, Paint.Align.LEFT);
-        print("METAL", s.right - s.height() * 0.5f, py, u * 0.016f, skin.printColor, Paint.Align.RIGHT);
-        print("QUARTZ PLL SYNTHESIZER", w * 0.035f, h * 0.90f, u * 0.017f, skin.printColor, false);
-        print("FM/AM STEREO", w * 0.035f, h * 0.94f, u * 0.017f, 0xFF8A7C60, false);
+        // Beside the slot, clear of the header logo at the left.
+        float py = s.centerY() + u * 0.006f;
+        print("AUTO REVERSE", s.left - w * 0.012f, py, u * 0.016f, skin.printColor, Paint.Align.RIGHT);
+        print("METAL", s.right + w * 0.012f, py, u * 0.016f, skin.printColor, Paint.Align.LEFT);
+        print("QUARTZ PLL SYNTHESIZER", fx(0.655f), fy(0.08f), u * 0.017f, skin.printColor, false);
+        print("FM/AM STEREO", fx(0.655f), fy(0.14f), u * 0.017f, 0xFF8A7C60, false);
     }
 
     /**
@@ -257,10 +286,10 @@ final class Faceplate {
     private void detachable() {
         housing();
         Path face = new Path();
-        face.moveTo(w * 0.008f, h * 0.08f);
-        face.quadTo(w * 0.5f, -h * 0.02f, w * 0.992f, h * 0.08f);
-        face.lineTo(w * 0.992f, h * 0.92f);
-        face.quadTo(w * 0.5f, h * 1.02f, w * 0.008f, h * 0.92f);
+        face.moveTo(fx(0.008f), fy(0.08f));
+        face.quadTo(fx(0.5f), fy(-0.02f), fx(0.992f), fy(0.08f));
+        face.lineTo(fx(0.992f), fy(0.92f));
+        face.quadTo(fx(0.5f), fy(1.02f), fx(0.008f), fy(0.92f));
         face.close();
         Paint sh = new Paint(AA);
         sh.setColor(0xE0000000);
@@ -286,12 +315,13 @@ final class Faceplate {
 
         // Chrome trim along the top curve, and a swoosh under the display.
         Path trim = new Path();
-        trim.moveTo(w * 0.02f, h * 0.09f);
-        trim.quadTo(w * 0.5f, -h * 0.005f, w * 0.98f, h * 0.09f);
+        trim.moveTo(fx(0.02f), fy(0.09f));
+        trim.quadTo(fx(0.5f), fy(-0.005f), fx(0.98f), fy(0.09f));
         chrome(trim, u * 0.006f);
         Path swoosh = new Path();
-        swoosh.moveTo(w * 0.095f, h * 0.635f);
-        swoosh.quadTo(w * 0.42f, h * 0.665f, w * 0.725f, h * 0.60f);
+        float gy = underDisplay();
+        swoosh.moveTo(px(skin.lcd).left - w * 0.005f, gy);
+        swoosh.quadTo(fx(0.42f), gy + h * 0.012f, px(skin.knob).left - w * 0.005f, gy - h * 0.014f);
         chrome(swoosh, u * 0.005f);
 
         window(px(skin.lcd), u * 0.014f, u * 0.035f, 0xFF02060B, 0xFF071322);
@@ -305,7 +335,8 @@ final class Faceplate {
         p.setShader(null);
         ring(cx, cy, rad * 1.2f, Math.max(1, u * 0.002f), 0xC0FFFFFF, 0xA0000000);
         knob(k, true, true);
-        print("MOSFET 50W \u00D7 4", cx, h * 0.655f, u * 0.018f, skin.printColor, true);
+        print("MOSFET 50W \u00D7 4", cx, (k.bottom + px(skin.zone(Zones.FACEPLATE)).top) / 2 + h * 0.004f, u * 0.018f,
+                skin.printColor, true);
     }
 
     // ---- parts ----
@@ -474,6 +505,18 @@ final class Faceplate {
     private void housing() {
         c.drawColor(0xFF0C0D0F);
         overlay(grain(256, 7, 18), 0.6f);
+        if (skin.screen == null) return;
+        // The radio's slot in the dash, and the dash's own screen above it; StereoView fills the screen.
+        RectF slot = new RectF(body);
+        slot.inset(-u * 0.008f, -u * 0.008f);
+        p.setColor(0xFF000000);
+        c.drawRect(slot, p);
+        RectF bezel = px(skin.screen);
+        bezel.inset(-u * 0.02f, -u * 0.02f);
+        drop(bezel, u * 0.03f, u * 0.015f, u * 0.006f, 0xB0);
+        p.setColor(0xFF141517);
+        c.drawRoundRect(bezel, u * 0.03f, u * 0.03f, p);
+        bevel(bezel, u * 0.03f, u * 0.003f, 0x50FFFFFF, 0x90000000);
     }
 
     /** A recessed window: a bevelled cut in the faceplate, a dark surround, then the glass. */
@@ -688,7 +731,7 @@ final class Faceplate {
         float r = u * 0.011f;
         Random rnd = new Random(7);
         for (float[] a : at) {
-            float x = a[0] * w, y = a[1] * h;
+            float x = fx(a[0]), y = fy(a[1]);
             p.setColor(0xFF1A1B1D);
             c.drawCircle(x, y, r * 1.12f, p);
             p.setShader(new RadialGradient(x - r * 0.4f, y - r * 0.4f, r * 1.6f, 0xFFE6E9EC, 0xFF5B6067, Shader.TileMode.CLAMP));

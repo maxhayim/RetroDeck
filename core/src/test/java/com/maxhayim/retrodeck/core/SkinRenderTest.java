@@ -38,8 +38,12 @@ public class SkinRenderTest {
                 out.write(layout(skin));
             }
         }
+        // -Prender.code draws the faceplates in code instead, as a device does when it can't load the art.
+        boolean code = System.getProperty("render.code") != null;
         for (Skin skin : Skins.all()) for (String keys : new String[]{KeyLights.ON, KeyLights.OFF}) {
             StereoView v = new StereoView(RuntimeEnvironment.getApplication());
+            String art = skin.art;
+            if (code) skin.art = null;
             v.setSkin(skin);
             StereoState s = new StereoState();
             s.playing = true;
@@ -57,7 +61,8 @@ public class SkinRenderTest {
             v.layout(0, 0, w, h);
             Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             v.draw(new Canvas(bm));
-            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + (KeyLights.ON.equals(keys) ? "" : "-day") + ".png"))) {
+            skin.art = art;
+            try (FileOutputStream out = new FileOutputStream(new File(dir, skin.id + "-" + size + (code ? "-code" : "") + (KeyLights.ON.equals(keys) ? "" : "-day") + ".png"))) {
                 bm.compress(Bitmap.CompressFormat.PNG, 100, out);
             }
         }
