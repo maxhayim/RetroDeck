@@ -14,6 +14,6 @@ A brushed-aluminium single-DIN unit with black keys, a big spun-metal volume kno
 
 ## [EQ Stack 1989](eq-stack-1989/)
 
-[![EQ Stack 1989](eq-stack-1989/render-night.jpg)](eq-stack-1989/)
+[![EQ Stack 1989](eq-stack-1989/tv-night.jpg)](eq-stack-1989/)
 
 A late-1980s silver stack: a graphic equaliser, its bars yellow under blue with red peaks, over a CD head unit with an orange fluorescent display, a volume rocker and mint green keys.

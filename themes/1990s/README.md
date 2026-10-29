@@ -8,13 +8,13 @@ A car maker's factory stack from around 1990: a tuner and tape deck over a three
 
 ## [Level Meter 1991](level-meter-1991/)
 
-[![Level Meter 1991](level-meter-1991/render-night.jpg)](level-meter-1991/)
+[![Level Meter 1991](level-meter-1991/tv-night.jpg)](level-meter-1991/)
 
 An early-1990s black head unit with one big window: an orange readout over a cyan spectrum analyser whose bars turn orange at the top, between columns of slim keys.
 
 ## [Trio Stack 1993](trio-stack-1993/)
 
-[![Trio Stack 1993](trio-stack-1993/render-night.jpg)](trio-stack-1993/)
+[![Trio Stack 1993](trio-stack-1993/tv-night.jpg)](trio-stack-1993/)
 
 An early-1990s stack of three black units: an equaliser with green bars, a disc changer controller and a head unit with a tape door, their main keys moulded in mint green.
 
@@ -32,6 +32,6 @@ A late-1990s detachable faceplate: curved graphite with chrome trim along the to
 
 ## [Spectrum 1997](spectrum-1997/)
 
-[![Spectrum 1997](spectrum-1997/render-night.jpg)](spectrum-1997/)
+[![Spectrum 1997](spectrum-1997/tv-night.jpg)](spectrum-1997/)
 
 A late-1990s silver stack: a receiver with a blue-white dot-matrix display and a knob, over a CD player whose window is a spectrum analyser, its fine bars white under a green line and blue above.

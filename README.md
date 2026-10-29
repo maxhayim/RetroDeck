@@ -38,7 +38,7 @@
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/detachable-1998/day-night.webp" alt="Detachable 1998, playing, fading between day and night"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
-    <td width="50%"></td>
+    <td width="50%"><img src="themes/2010s/bluetooth-2016/day-night.webp" alt="Bluetooth 2016, playing, fading between day and night"/><br/><sub>Bluetooth 2016: gloss black, a big knob in a lit ring and keys edged with light strips that glow in the dash colour at night</sub></td>
   </tr>
 </table>
 
@@ -46,12 +46,20 @@
 
 <table>
   <tr>
+    <td width="50%"><img src="themes/1980s/eq-stack-1989/day-night.webp" alt="EQ Stack 1989, playing, fading between day and night"/><br/><sub>EQ Stack 1989: a silver equaliser over a CD unit, its bars yellow under blue with red peaks, and an orange display</sub></td>
     <td width="50%"><img src="themes/1990s/z32-factory-1990/day-night.webp" alt="Z32 Factory 1990, playing, fading between day and night"/><br/><sub>Z32 Factory 1990: satin black plastic and gloss doors by day; at night backlit legends, and the display's icy blue behind smoked plum glass</sub></td>
-    <td width="50%"><img src="themes/1990s/a80-factory-1994/day-night.webp" alt="A80 Factory 1994, playing, fading between day and night"/><br/><sub>A80 Factory 1994: charcoal plastic and olive grey displays by day; at night the displays and legends lit lime green</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/1990s/level-meter-1991/day-night.webp" alt="Level Meter 1991, playing, fading between day and night"/><br/><sub>Level Meter 1991: one big window, an orange readout over a cyan spectrum analyser</sub></td>
+    <td width="50%"><img src="themes/1990s/trio-stack-1993/day-night.webp" alt="Trio Stack 1993, playing, fading between day and night"/><br/><sub>Trio Stack 1993: three black units with mint green keys and a green equaliser</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/1990s/a80-factory-1994/day-night.webp" alt="A80 Factory 1994, playing, fading between day and night"/><br/><sub>A80 Factory 1994: charcoal plastic and olive grey displays by day; at night the displays and legends lit lime green</sub></td>
+    <td width="50%"><img src="themes/1990s/spectrum-1997/day-night.webp" alt="Spectrum 1997, playing, fading between day and night"/><br/><sub>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2000s/multi-control-2000/day-night.webp" alt="Multi Control 2000, playing, fading between day and night"/><br/><sub>Multi Control 2000: nearly all display, its bars fanned round a half circle in blue</sub></td>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
-    <td width="50%"></td>
   </tr>
   <tr>
     <td colspan="2"><img src="docs/screenshots/fullscreen.webp" alt="The full-screen visualizer on Z32 Factory 1990, A80 Factory 1994 and Modern Glass, following the music"/><br/><sub>Full screen: hold DISP, or leave it playing, and the visualizer takes the whole screen in the display's own lettering. Here it steps through Z32 Factory 1990's icy blue, A80 Factory 1994's lime and Modern Glass, following the song.</sub></td>
