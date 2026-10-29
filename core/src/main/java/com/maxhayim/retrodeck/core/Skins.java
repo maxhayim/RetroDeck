@@ -13,6 +13,12 @@ public final class Skins {
     public static final String FACTORY_94 = "a80factory94";
     public static final String HIFI = "hifi84";
     public static final String DETACHABLE = "detach98";
+    public static final String BLUETOOTH = "bt16";
+    public static final String EQ_STACK = "eqstack89";
+    public static final String LEVEL = "level91";
+    public static final String TRIO = "trio93";
+    public static final String SPECTRUM = "spectrum97";
+    public static final String MULTI = "multi2000";
 
     private static List<Skin> all;
 
@@ -26,8 +32,14 @@ public final class Skins {
             all.add(classic());
             all.add(digital());
             all.add(detachable());
+            all.add(bluetooth());
+            all.add(eqStack());
             all.add(factory());
+            all.add(level());
+            all.add(trio());
             all.add(factory94());
+            all.add(spectrum());
+            all.add(multi());
             all.add(modern());
         }
         return all;
@@ -78,6 +90,7 @@ public final class Skins {
                 built.add(classic());
                 built.add(digital());
                 built.add(detachable());
+                built.add(bluetooth());
             } finally {
                 face = SINGLE_BODY;
             }
@@ -348,6 +361,273 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, in(0.735f, 0.74f, 0.965f, 0.84f))
                 .zone(Zones.CORNER, in(0.735f, 0.86f, 0.965f, 0.96f))
                 .zone(Zones.VISUALIZER, in(0.115f, 0.42f, 0.69f, 0.53f));
+        return s;
+    }
+
+    /**
+     * A budget Bluetooth unit of the 2010s in one DIN: gloss black, a big knob in a lit ring, curved
+     * keys either side of it edged with light, and a segment display lit blue.
+     */
+    private static Skin bluetooth() {
+        Skin s = new Skin(BLUETOOTH, "Bluetooth 2016", "2010s", 1, 0xFF1A1C20, 0xFF060607, 0xFF020203, 0xFF02040A,
+                0xFF000000, 0xFF16181C, 0xFF050506, 0xFFC8CCD2, Skin.LCD_SEGMENT, 0.02f);
+        single(s);
+        s.art = "skins/" + BLUETOOTH;
+        s.phosphor = 0xFF4A86FF;
+        s.knobDots = false;
+        s.keyPrint = 0xFFC8CCD2;
+        s.knob = in(0.205f, 0.08f, 0.395f, 0.92f);
+        s.lcd = in(0.555f, 0.13f, 0.80f, 0.80f);
+        s.lcdText = in(0.62f, 0.17f, 0.79f, 0.47f);
+        s.presets = in(0.82f, 0.10f, 0.965f, 0.58f);
+        s.presetRows = 2;
+        s.control(Skin.PREV, "|<<", in(0.07f, 0.10f, 0.19f, 0.44f))
+                .control(Skin.POWER, "PWR", in(0.07f, 0.56f, 0.19f, 0.90f))
+                .control(Skin.NEXT, ">>|", in(0.41f, 0.10f, 0.53f, 0.44f))
+                .control(Skin.SOURCE, "SRC", in(0.41f, 0.56f, 0.53f, 0.90f))
+                .control(Skin.PLAY, "PLAY", in(0.82f, 0.64f, 0.865f, 0.88f))
+                .control(Skin.DISPLAY, "DISP", in(0.87f, 0.64f, 0.915f, 0.88f))
+                .control(Skin.MENU, "MENU", in(0.92f, 0.64f, 0.965f, 0.88f));
+        s.zone(Zones.HEADER, in(0.60f, 0.025f, 0.78f, 0.11f))
+                .zone(Zones.LCD, in(0.565f, 0.17f, 0.61f, 0.47f))
+                .zone(Zones.FACEPLATE, in(0.555f, 0.84f, 0.80f, 0.96f))
+                .zone(Zones.CORNER, in(0.82f, 0.91f, 0.965f, 0.975f))
+                .zone(Zones.VISUALIZER, in(0.565f, 0.53f, 0.79f, 0.76f));
+        return s;
+    }
+
+    /**
+     * A late-1980s silver stack: a graphic equaliser, its bars yellow under blue with red peaks, over a
+     * CD unit with an orange fluorescent display, a volume rocker and mint green keys.
+     */
+    private static Skin eqStack() {
+        Skin s = new Skin(EQ_STACK, "EQ Stack 1989", "1980s", 2, 0xFFB9BDC2, 0xFF8A8E94, 0xFF0A0A0B, 0xFF050606,
+                0xFF0A0B0C, 0xFF45484D, 0xFF1A1B1D, 0xFF2A2C30, Skin.LCD_SEGMENT, 0.006f);
+        s.art = "skins/" + EQ_STACK;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.phosphor = 0xFFFF9A3C;
+        int y = 0xFFF4D23A, b = 0xFF4FB0F0;
+        s.barInks = new int[]{y, y, y, y, y, y, b, b, b, b};
+        s.peakInk = 0xFFFF4A3A;
+        s.keyPrint = 0xFFD8DCE0;
+        s.units.add(new Box(0.02f, 0.03f, 0.98f, 0.48f));
+        s.units.add(new Box(0.02f, 0.52f, 0.98f, 0.97f));
+        // The equaliser.
+        s.eq = new Box(0.05f, 0.075f, 0.95f, 0.355f);
+        s.control(Skin.MENU, "MENU", 0.33f, 0.395f, 0.4233f, 0.44f);
+        String[] eqKeys = {"FLAT", "CURVE", "BASS", "TREB", "DEFEAT"};
+        for (int i = 0; i < eqKeys.length; i++) {
+            float l = 0.4353f + i * 0.1053f;
+            s.decor(eqKeys[i], l, 0.395f, l + 0.0933f, 0.44f);
+        }
+        // The CD unit.
+        s.slot = new Box(0.20f, 0.57f, 0.86f, 0.625f);
+        s.lcd = new Box(0.585f, 0.665f, 0.955f, 0.875f);
+        s.lcdText = new Box(0.665f, 0.685f, 0.945f, 0.86f);
+        s.presets = new Box(0.315f, 0.675f, 0.515f, 0.915f);
+        s.presetRows = 2;
+        s.control(Skin.POWER, "PWR", 0.05f, 0.565f, 0.11f, 0.625f)
+                .control(Skin.VOL_UP, "\u25B2", 0.05f, 0.675f, 0.11f, 0.79f)
+                .control(Skin.VOL_DOWN, "\u25BC", 0.05f, 0.80f, 0.11f, 0.915f)
+                .control(Skin.SOURCE, "SRC", 0.125f, 0.675f, 0.205f, 0.79f)
+                .control(Skin.DISPLAY, "DISP", 0.215f, 0.675f, 0.295f, 0.79f)
+                .control(Skin.PREV, "|<<", 0.125f, 0.80f, 0.175f, 0.915f)
+                .control(Skin.PLAY, "PLAY", 0.183f, 0.80f, 0.237f, 0.915f)
+                .control(Skin.NEXT, ">>|", 0.245f, 0.80f, 0.295f, 0.915f)
+                .decor("A", 0.53f, 0.675f, 0.565f, 0.745f)
+                .decor("B", 0.53f, 0.76f, 0.565f, 0.83f)
+                .decor("C", 0.53f, 0.845f, 0.565f, 0.915f)
+                .decor("MUTE", 0.585f, 0.89f, 0.65f, 0.945f)
+                .decor("TITLE", 0.66f, 0.89f, 0.725f, 0.945f);
+        s.zone(Zones.HEADER, 0.05f, 0.385f, 0.30f, 0.455f)
+                .zone(Zones.LCD, 0.595f, 0.685f, 0.655f, 0.86f)
+                .zone(Zones.FACEPLATE, 0.745f, 0.89f, 0.955f, 0.95f)
+                .zone(Zones.CORNER, 0.88f, 0.56f, 0.955f, 0.635f)
+                .zone(Zones.VISUALIZER, 0.43f, 0.15f, 0.93f, 0.315f);
+        return s;
+    }
+
+    /**
+     * An early-1990s black head unit with one big window: an orange fluorescent readout over a cyan
+     * spectrum analyser whose bars turn orange at the top, between columns of slim keys.
+     */
+    private static Skin level() {
+        Skin s = new Skin(LEVEL, "Level Meter 1991", "1990s", 2, 0xFF222326, 0xFF0D0E10, 0xFF050506, 0xFF040607,
+                0xFF000000, 0xFF2A2C30, 0xFF0E0F11, 0xFFA8ADB4, Skin.LCD_SEGMENT, 0.01f);
+        s.art = "skins/" + LEVEL;
+        s.knobDots = false;
+        s.phosphor = 0xFFFFA040;
+        int cy = 0xFF4FE3F0, or = 0xFFFF8A2A;
+        s.barInks = new int[]{cy, cy, cy, cy, cy, cy, cy, cy, cy, or, or, or};
+        s.barSegs = 12;
+        s.peakInk = or;
+        s.slot = new Box(0.20f, 0.06f, 0.80f, 0.12f);
+        s.lcd = new Box(0.17f, 0.18f, 0.86f, 0.78f);
+        s.lcdText = new Box(0.30f, 0.21f, 0.84f, 0.40f);
+        s.presets = new Box(0.17f, 0.82f, 0.62f, 0.93f);
+        s.control(Skin.POWER, "PWR", 0.03f, 0.05f, 0.13f, 0.14f)
+                .control(Skin.SOURCE, "SRC", 0.03f, 0.17f, 0.13f, 0.28f)
+                .control(Skin.DISPLAY, "DISP", 0.03f, 0.30f, 0.13f, 0.41f)
+                .control(Skin.MENU, "MENU", 0.03f, 0.43f, 0.13f, 0.54f)
+                .control(Skin.VOL_UP, "\u25B2", 0.03f, 0.57f, 0.13f, 0.72f)
+                .control(Skin.VOL_DOWN, "\u25BC", 0.03f, 0.74f, 0.13f, 0.89f)
+                .control(Skin.PREV, "|<<", 0.65f, 0.82f, 0.715f, 0.93f)
+                .control(Skin.PLAY, "PLAY", 0.725f, 0.82f, 0.79f, 0.93f)
+                .control(Skin.NEXT, ">>|", 0.80f, 0.82f, 0.86f, 0.93f);
+        String[] side = {"EQ", "LOUD", "BASS", "TREB", "BAL", "FADE"};
+        for (int i = 0; i < side.length; i++) {
+            float t = 0.18f + i * 0.1f;
+            s.decor(side[i], 0.89f, t, 0.97f, t + 0.085f);
+        }
+        s.zone(Zones.HEADER, 0.82f, 0.045f, 0.97f, 0.13f)
+                .zone(Zones.LCD, 0.18f, 0.21f, 0.28f, 0.40f)
+                .zone(Zones.FACEPLATE, 0.89f, 0.82f, 0.97f, 0.93f)
+                .zone(Zones.CORNER, 0.03f, 0.91f, 0.13f, 0.975f)
+                .zone(Zones.VISUALIZER, 0.20f, 0.45f, 0.84f, 0.75f);
+        return s;
+    }
+
+    /**
+     * An early-1990s three-piece stack in black: an equaliser with green fluorescent bars, a disc
+     * changer controller and a head unit with a tape door, their keys moulded in mint green.
+     */
+    private static Skin trio() {
+        Skin s = new Skin(TRIO, "Trio Stack 1993", "1990s", 2, 0xFF1E1F22, 0xFF0B0C0D, 0xFF040405, 0xFF030605,
+                0xFF000000, 0xFF2A2C30, 0xFF0E0F11, 0xFFB4B9C0, Skin.LCD_SEGMENT, 0.008f);
+        s.art = "skins/" + TRIO;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.phosphor = 0xFF6CF29A;
+        s.peakInk = 0xFFE4FFE8;
+        s.keyPrint = 0xFF1A2A24;
+        s.keyLight = 0xFF9CFFD0;
+        s.units.add(new Box(0.03f, 0.03f, 0.97f, 0.33f));
+        s.units.add(new Box(0.03f, 0.355f, 0.97f, 0.645f));
+        s.units.add(new Box(0.03f, 0.67f, 0.97f, 0.97f));
+        // The equaliser.
+        s.eq = new Box(0.18f, 0.06f, 0.88f, 0.30f);
+        s.control(Skin.SOURCE, "SRC", 0.06f, 0.065f, 0.15f, 0.135f)
+                .control(Skin.DISPLAY, "DISP", 0.06f, 0.15f, 0.15f, 0.22f)
+                .control(Skin.MENU, "MENU", 0.06f, 0.235f, 0.15f, 0.305f);
+        for (int i = 0; i < 4; i++) {
+            float t = 0.065f + i * 0.06f;
+            s.decor("M" + (i + 1), 0.905f, t, 0.955f, t + 0.05f);
+        }
+        // The changer controller.
+        s.slot = new Box(0.20f, 0.385f, 0.70f, 0.435f);
+        s.lcd = new Box(0.58f, 0.465f, 0.95f, 0.62f);
+        s.lcdText = new Box(0.65f, 0.475f, 0.94f, 0.61f);
+        s.decor("OPEN", 0.06f, 0.385f, 0.13f, 0.435f)
+                .control(Skin.PREV, "|<<", 0.06f, 0.465f, 0.13f, 0.535f)
+                .control(Skin.PLAY, "PLAY", 0.14f, 0.465f, 0.21f, 0.535f)
+                .control(Skin.NEXT, ">>|", 0.22f, 0.465f, 0.29f, 0.535f)
+                .decor("SCAN", 0.06f, 0.55f, 0.13f, 0.61f)
+                .decor("RPT", 0.14f, 0.55f, 0.21f, 0.61f)
+                .decor("RDM", 0.22f, 0.55f, 0.29f, 0.61f);
+        // The head unit.
+        s.changer = new Box(0.26f, 0.70f, 0.62f, 0.79f);
+        s.presets = new Box(0.26f, 0.82f, 0.62f, 0.94f);
+        s.presetRows = 2;
+        s.control(Skin.VOL_UP, "\u25B2", 0.06f, 0.70f, 0.12f, 0.825f)
+                .control(Skin.VOL_DOWN, "\u25BC", 0.06f, 0.835f, 0.12f, 0.94f)
+                .control(Skin.POWER, "PWR", 0.14f, 0.70f, 0.22f, 0.78f)
+                .decor("MODE", 0.14f, 0.79f, 0.22f, 0.86f)
+                .decor("LOUD", 0.14f, 0.87f, 0.22f, 0.94f)
+                .decor("BAND", 0.66f, 0.70f, 0.80f, 0.79f)
+                .decor("SCAN", 0.81f, 0.70f, 0.95f, 0.79f);
+        s.zone(Zones.HEADER, 0.32f, 0.47f, 0.55f, 0.53f)
+                .zone(Zones.LCD, 0.59f, 0.475f, 0.64f, 0.61f)
+                .zone(Zones.FACEPLATE, 0.66f, 0.85f, 0.95f, 0.94f)
+                .zone(Zones.CORNER, 0.72f, 0.385f, 0.95f, 0.435f)
+                .zone(Zones.VISUALIZER, 0.21f, 0.12f, 0.85f, 0.265f);
+        return s;
+    }
+
+    /**
+     * A late-1990s silver stack: a receiver with a blue-white dot-matrix display and a knob, over a CD
+     * player whose window is a spectrum analyser, its fine bars white under a green line and blue above.
+     */
+    private static Skin spectrum() {
+        Skin s = new Skin(SPECTRUM, "Spectrum 1997", "1990s", 2, 0xFFC4C8CD, 0xFF8C9097, 0xFF0A0A0B, 0xFF03050A,
+                0xFF000000, 0xFF505359, 0xFF1C1D20, 0xFF2A2C30, Skin.LCD_DOT, 0.01f);
+        s.art = "skins/" + SPECTRUM;
+        s.knobDots = false;
+        s.phosphor = 0xFFD8E6FF;
+        s.barSegs = 20;
+        int[] inks = new int[20];
+        for (int i = 0; i < inks.length; i++) inks[i] = i < 6 ? 0xFFE8F0FF : i == 6 ? 0xFF3CE0A0 : 0xFF4A74FF;
+        s.barInks = inks;
+        s.peakInk = 0xFFE8F0FF;
+        s.keyPrint = 0xFFE4E7EB;
+        s.units.add(new Box(0.02f, 0.03f, 0.98f, 0.47f));
+        s.units.add(new Box(0.02f, 0.51f, 0.98f, 0.97f));
+        // The receiver.
+        s.slot = new Box(0.22f, 0.055f, 0.66f, 0.10f);
+        s.lcd = new Box(0.13f, 0.135f, 0.70f, 0.33f);
+        s.lcdText = new Box(0.25f, 0.15f, 0.69f, 0.32f);
+        s.knob = new Box(0.73f, 0.10f, 0.86f, 0.36f);
+        s.presets = new Box(0.13f, 0.37f, 0.70f, 0.44f);
+        s.decor("LOUD", 0.04f, 0.15f, 0.11f, 0.23f)
+                .control(Skin.SOURCE, "SRC", 0.88f, 0.07f, 0.96f, 0.15f)
+                .control(Skin.DISPLAY, "DISP", 0.88f, 0.17f, 0.96f, 0.25f)
+                .control(Skin.MENU, "MENU", 0.88f, 0.27f, 0.96f, 0.35f)
+                .control(Skin.POWER, "PWR", 0.04f, 0.37f, 0.11f, 0.44f)
+                .decor("AUD", 0.73f, 0.38f, 0.86f, 0.44f);
+        // The CD player.
+        s.eq = new Box(0.20f, 0.56f, 0.78f, 0.86f);
+        s.control(Skin.PREV, "|<<", 0.81f, 0.58f, 0.875f, 0.66f)
+                .control(Skin.NEXT, ">>|", 0.885f, 0.58f, 0.95f, 0.66f)
+                .control(Skin.PLAY, "PLAY", 0.81f, 0.68f, 0.95f, 0.76f)
+                .decor("OPEN", 0.81f, 0.78f, 0.95f, 0.86f);
+        s.zone(Zones.HEADER, 0.04f, 0.045f, 0.20f, 0.11f)
+                .zone(Zones.LCD, 0.14f, 0.15f, 0.24f, 0.32f)
+                .zone(Zones.FACEPLATE, 0.04f, 0.56f, 0.18f, 0.64f)
+                .zone(Zones.CORNER, 0.81f, 0.89f, 0.95f, 0.95f)
+                .zone(Zones.VISUALIZER, 0.23f, 0.58f, 0.75f, 0.83f);
+        return s;
+    }
+
+    /**
+     * A double-DIN unit from around 2000, nearly all display: a big blue fluorescent window whose bars
+     * fan round a half circle, keys down both sides and along the foot with a chrome volume lever.
+     */
+    private static Skin multi() {
+        Skin s = new Skin(MULTI, "Multi Control 2000", "2000s", 2, 0xFF1C1D20, 0xFF08090A, 0xFF030304, 0xFF02050A,
+                0xFF000000, 0xFF202226, 0xFF0A0A0C, 0xFFE0A040, Skin.LCD_SEGMENT, 0.012f);
+        s.art = "skins/" + MULTI;
+        s.knobDots = false;
+        s.arcBars = true;
+        s.barSegs = 8;
+        s.phosphor = 0xFF5CC8FF;
+        int c = 0xFF46D2FF;
+        s.barInks = new int[]{c, c, c, c, c, c, c, 0xFFFFC040};
+        s.peakInk = 0xFFFF8A30;
+        s.keyPrint = 0xFFE0A040;
+        s.keyLight = 0xFFFFB050;
+        s.lcd = new Box(0.13f, 0.05f, 0.87f, 0.76f);
+        s.lcdText = new Box(0.40f, 0.13f, 0.76f, 0.32f);
+        s.control(Skin.DISPLAY, "DSPL", 0.025f, 0.08f, 0.105f, 0.17f)
+                .decor("REP", 0.025f, 0.21f, 0.105f, 0.29f)
+                .decor("SHUF", 0.025f, 0.32f, 0.105f, 0.40f)
+                .decor("PGM", 0.025f, 0.43f, 0.105f, 0.51f)
+                .decor("SA", 0.025f, 0.55f, 0.105f, 0.62f)
+                .decor("OPEN", 0.895f, 0.08f, 0.975f, 0.17f)
+                .decor("ANGLE", 0.895f, 0.20f, 0.975f, 0.29f)
+                .control(Skin.POWER, "OFF", 0.895f, 0.33f, 0.975f, 0.42f)
+                .control(Skin.SOURCE, "SOURCE", 0.04f, 0.81f, 0.15f, 0.93f)
+                .control(Skin.MENU, "MODE", 0.16f, 0.81f, 0.27f, 0.93f)
+                .decor("TI", 0.33f, 0.82f, 0.39f, 0.92f)
+                .control(Skin.VOL_DOWN, "VOL-", 0.42f, 0.80f, 0.50f, 0.95f)
+                .control(Skin.VOL_UP, "VOL+", 0.50f, 0.80f, 0.58f, 0.95f)
+                .control(Skin.PLAY, "PLAY", 0.61f, 0.82f, 0.69f, 0.92f)
+                .control(Skin.PREV, "|<<", 0.75f, 0.81f, 0.85f, 0.93f)
+                .control(Skin.NEXT, ">>|", 0.86f, 0.81f, 0.96f, 0.93f);
+        s.zone(Zones.HEADER, 0.42f, 0.06f, 0.58f, 0.12f)
+                .zone(Zones.LCD, 0.15f, 0.36f, 0.30f, 0.70f)
+                .zone(Zones.FACEPLATE, 0.025f, 0.66f, 0.105f, 0.76f)
+                .zone(Zones.CORNER, 0.895f, 0.46f, 0.975f, 0.76f)
+                .zone(Zones.VISUALIZER, 0.32f, 0.34f, 0.76f, 0.74f);
         return s;
     }
 }

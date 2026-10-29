@@ -39,6 +39,7 @@ public class SkinTest {
             for (String z : Zones.ALL) assertTrue(s.name + " " + z, SCREEN.contains(s.zone(z)));
             for (Box b : s.keepClear()) assertTrue(s.name + " " + b, SCREEN.contains(b));
             assertTrue(SCREEN.contains(s.lcd));
+            if (s.eq != null) assertTrue(SCREEN.contains(s.eq));
         }
     }
 
@@ -46,7 +47,8 @@ public class SkinTest {
     public void lcdAndVisualizerZonesSitInsideTheLcd() {
         for (Skin s : Skins.all()) {
             assertTrue(s.name, s.lcd.contains(s.zone(Zones.LCD)));
-            assertTrue(s.name, s.lcd.contains(s.zone(Zones.VISUALIZER)));
+            // A stack with its own equaliser window shows the visualizer there.
+            assertTrue(s.name, (s.eq != null ? s.eq : s.lcd).contains(s.zone(Zones.VISUALIZER)));
             assertTrue(s.name, s.lcd.contains(s.lcdText));
         }
     }
@@ -94,7 +96,7 @@ public class SkinTest {
             for (String z : s.faceplateZones()) assertTrue(s.name + " " + z, s.body.contains(s.zone(z)));
             assertTrue(s.name, s.body.contains(s.lcd));
         }
-        assertEquals(4, singles);
+        assertEquals(5, singles);
     }
 
     @Test
@@ -136,6 +138,36 @@ public class SkinTest {
             assertSame(s, Skins.fit(wide, 1920, 1080));
             assertSame(s, Skins.fit(s, 1024, 600));
             for (Box b : wide.keepClear()) assertTrue(wide.id + " " + b, b.left >= 0 && b.top >= 0 && b.right <= 1 && b.bottom <= 1);
+        }
+    }
+
+    /** Every key, display and zone of a stack is on one of its units, and the units don't overlap. */
+    @Test
+    public void stacksKeepEverythingOnAUnit() {
+        for (Skin s : Skins.all()) {
+            if (s.units.isEmpty()) continue;
+            java.util.List<Box> all = s.keepClear();
+            all.add(s.lcd);
+            if (s.eq != null) all.add(s.eq);
+            if (s.slot != null) all.add(s.slot);
+            if (s.changer != null) all.add(s.changer);
+            for (String z : s.faceplateZones()) all.add(s.zone(z));
+            for (Box b : all) {
+                boolean on = false;
+                for (Box u : s.units) on |= u.contains(b);
+                assertTrue(s.name + " " + b + " is off its units", on);
+            }
+            for (int i = 0; i + 1 < s.units.size(); i++) assertTrue(s.name, s.units.get(i).bottom < s.units.get(i + 1).top);
+        }
+    }
+
+    @Test
+    public void barColoursAreWhole() {
+        for (Skin s : Skins.all()) {
+            assertTrue(s.name, s.barSegs >= 4);
+            if (s.barInks == null) continue;
+            assertTrue(s.name, s.barInks.length > 0 && s.barInks.length <= s.barSegs);
+            for (int c : s.barInks) assertEquals(s.name, 0xFF, c >>> 24);
         }
     }
 }

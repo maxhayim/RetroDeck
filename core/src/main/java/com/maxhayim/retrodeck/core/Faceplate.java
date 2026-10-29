@@ -78,6 +78,12 @@ final class Faceplate {
             case Skins.HIFI: f.hifi(); return;
             case Skins.FACTORY: f.factory(); return;
             case Skins.DETACHABLE: f.detachable(); return;
+            case Skins.BLUETOOTH:
+            case Skins.EQ_STACK:
+            case Skins.LEVEL:
+            case Skins.TRIO:
+            case Skins.SPECTRUM:
+            case Skins.MULTI: f.plain(); return;
             default: break;
         }
         switch (skin.lcdStyle) {
@@ -338,6 +344,35 @@ final class Faceplate {
         knob(k, true, true);
         print("MOSFET 50W \u00D7 4", cx, (k.bottom + px(skin.zone(Zones.FACEPLATE)).top) / 2 + h * 0.004f, u * 0.018f,
                 skin.printColor, true);
+    }
+
+    /**
+     * A plain stand-in for the skins drawn only as rendered pictures: each unit of a stack (or the one
+     * face) in the skin's colours, its windows, slot, tape door, keys and knob.
+     */
+    private void plain() {
+        housing();
+        java.util.List<RectF> faces = new java.util.ArrayList<>();
+        if (skin.units.isEmpty()) faces.add(face());
+        for (Box b : skin.units) faces.add(px(b));
+        float fr = u * 0.012f;
+        for (RectF f : faces) {
+            drop(f, fr, u * 0.02f, u * 0.006f, 0xD0);
+            p.setShader(new LinearGradient(0, f.top, 0, f.bottom, skin.faceTop, skin.faceBottom, Shader.TileMode.CLAMP));
+            c.drawRoundRect(f, fr, fr, p);
+            p.setShader(null);
+            save(f, fr);
+            overlay(grain(256, 7, 12), 0.5f);
+            light(f, 0x20, 0x40);
+            c.restore();
+            bevel(f, fr, u * 0.003f, 0x60FFFFFF, 0x90000000);
+        }
+        window(px(skin.lcd), u * 0.012f, skin.corner * u, 0xFF040506, 0xFF0A0D10);
+        if (skin.eq != null) window(px(skin.eq), u * 0.012f, skin.corner * u, 0xFF040506, 0xFF0A0D10);
+        if (skin.slot != null) slot(px(skin.slot), false);
+        if (skin.changer != null) tapeDoor(px(skin.changer));
+        keys(skin.corner * u, KEY_BLACK);
+        if (skin.knob != null) knob(px(skin.knob), true, true);
     }
 
     // ---- parts ----

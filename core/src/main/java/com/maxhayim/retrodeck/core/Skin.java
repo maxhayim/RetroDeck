@@ -75,6 +75,25 @@ public final class Skin {
     /** Visualizer segments shade from the illumination colour at the bottom to the accent at the top. */
     public boolean gradientBars;
     /**
+     * A display that prints its bars in colours of its own, from the bottom segment up, as graphic
+     * equalisers and spectrum analysers did (yellow under blue, white under blue), or null. A colour
+     * of the vehicle's own replaces them.
+     */
+    public int[] barInks;
+    /** The peak marker's own colour on such a display, or 0 for the usual. */
+    public int peakInk;
+    /** Segments in each bar. */
+    public int barSegs = 10;
+    /** Bars fanned out round a half circle from the bass on the left, as on big fluorescent displays around 2000. */
+    public boolean arcBars;
+    /**
+     * A second display window for the visualizer alone, like a graphic equaliser or spectrum analyser
+     * stacked with the radio, or null. The visualizer zone sits in it instead of the main display.
+     */
+    public Box eq;
+    /** The separate units of a stack, each its own faceplate, top to bottom; empty for one faceplate. */
+    public final List<Box> units = new ArrayList<>();
+    /**
      * A fluorescent display with real segments: 14-segment letters in fixed character cells, a 7-segment
      * clock and printed indicators that light, instead of text in a font.
      */

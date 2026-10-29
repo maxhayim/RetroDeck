@@ -91,8 +91,8 @@ public class StereoView extends View {
     private boolean artNight;
     /** The cached background is the skin's rendered picture, not the faceplate drawn in code. */
     private boolean backgroundIsArt;
-    private Shader dotGrid, mesh, glare, panel, panelShade, panelLeft, panelRight, panelFoot;
-    private RectF glareFor, panelFor;
+    private Shader dotGrid, mesh, glare, eqGlare, panel, panelShade, panelLeft, panelRight, panelFoot;
+    private RectF glareFor, panelFor, eqGlareFor;
     private int panelColor;
     private int lastVolume = -1;
     private long volumeChangedAt = -10_000;
@@ -231,6 +231,7 @@ public class StereoView extends View {
         dotGrid = null;
         mesh = null;
         glare = null;
+        eqGlare = null;
         panel = null;
         invalidate();
     }
@@ -291,6 +292,7 @@ public class StereoView extends View {
         if (keysLit && !art) c.drawColor(NIGHT_DIM);
 
         drawLcd(c, u, now);
+        if (skin.eq != null) drawEq(c, u, now);
         if (skin.screen != null) drawScreen(c, px(skin.screen), now, false);
         if (art) drawPressedArt(c, w, h);
         else drawButtons(c, u);
@@ -515,15 +517,17 @@ public class StereoView extends View {
         if (skin.lcdStyle == Skin.LCD_REFLECTIVE) drawPanel(c, lcd, u);
         if (skin.lcdGlass != 0) drawGlass(c, lcd, u);
 
-        // A whole-display animation goes behind everything else on it.
-        boolean fullAnimation = Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null;
+        // A whole-display animation goes behind everything else on it. A stack with a window of its
+        // own for the visualizer shows it there instead.
+        boolean fullAnimation = Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null
+                && skin.eq == null;
         if (fullAnimation) {
             levels.read(bands, now, state.playing);
             drawAnimation(c, lcd, true);
         }
         // Visualizer first, so its overlay logo sits behind the bars.
         Box vz = skin.zone(Zones.VISUALIZER);
-        if (vz != null) {
+        if (vz != null && skin.eq == null) {
             drawOverlay(c, Zones.VISUALIZER, false);
             if (!fullAnimation) {
                 levels.read(bands, now, state.playing);
@@ -533,7 +537,26 @@ public class StereoView extends View {
         drawOverlay(c, Zones.LCD, false);
         if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
         else drawTrackText(c, px(skin.lcdText), u);
+        finish(c, lcd, u, false);
+        c.restoreToCount(save);
+    }
 
+    /** A stack's equaliser or analyser window: the visualizer alone, behind the same glass as the display. */
+    private void drawEq(Canvas c, float u, long now) {
+        RectF eq = px(skin.eq);
+        int save = c.save();
+        c.clipRect(eq);
+        if (skin.lcdGlass != 0) drawGlass(c, eq, u);
+        drawOverlay(c, Zones.VISUALIZER, false);
+        levels.read(bands, now, state.playing);
+        if (Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null) drawAnimation(c, eq, true);
+        else drawVisualizer(c, px(skin.zone(Zones.VISUALIZER)), u);
+        finish(c, eq, u, true);
+        c.restoreToCount(save);
+    }
+
+    /** What lies over a display: its mesh or dot grid, smoke by day behind tinted glass, and the front glass. */
+    private void finish(Canvas c, RectF lcd, float u, boolean eq) {
         if (skin.lcdStyle == Skin.LCD_DOT) {
             if (dotGrid == null) dotGrid = dotGridShader(Math.max(3, Math.round(u * 0.006f)));
             paint.setShader(dotGrid);
@@ -551,18 +574,24 @@ public class StereoView extends View {
             c.drawRect(lcd, paint);
         }
         // The front glass: a diagonal reflection and a bright rim along the top.
-        if (glare == null || !lcd.equals(glareFor)) {
-            glareFor = new RectF(lcd);
-            glare = new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * 0.45f, lcd.bottom,
+        Shader g = eq ? eqGlare : glare;
+        if (g == null || !lcd.equals(eq ? eqGlareFor : glareFor)) {
+            g = new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * 0.45f, lcd.bottom,
                     new int[]{0x20FFFFFF, 0x12FFFFFF, 0x03FFFFFF, 0x00FFFFFF, 0x07FFFFFF, 0x00FFFFFF},
                     new float[]{0f, 0.30f, 0.40f, 0.60f, 0.66f, 0.76f}, Shader.TileMode.CLAMP);
+            if (eq) {
+                eqGlare = g;
+                eqGlareFor = new RectF(lcd);
+            } else {
+                glare = g;
+                glareFor = new RectF(lcd);
+            }
         }
-        paint.setShader(glare);
+        paint.setShader(g);
         c.drawRect(lcd, paint);
         paint.setShader(null);
         paint.setColor(0x22FFFFFF);
         c.drawRect(lcd.left, lcd.top, lcd.right, lcd.top + Math.max(1, u * 0.002f), paint);
-        c.restoreToCount(save);
     }
 
     /**
@@ -652,11 +681,6 @@ public class StereoView extends View {
         spacing(text, modern ? 0.05f : 0.12f);
         float y1 = t.top + h * 0.20f;
         text.setTextAlign(Paint.Align.LEFT);
-        String status = state.source + (state.track > 0 ? "   TRK " + two(state.track) : "");
-        boolean segments = skin.lcdStyle == Skin.LCD_SEGMENT || reflective;
-        if (segments) ghostText(c, status, t.left, y1, t.width() * 0.6f);
-        c.drawText(status, t.left, y1, text);
-        text.setTextAlign(Paint.Align.RIGHT);
         long now = SystemClock.uptimeMillis();
         if (state.volume != lastVolume) {
             if (lastVolume >= 0) volumeChangedAt = now;
@@ -664,6 +688,13 @@ public class StereoView extends View {
         }
         String right = now - volumeChangedAt < VOLUME_SHOWN_MS ? "VOL " + two(state.volume)
                 : state.durationMs > 0 ? time(state.positionMs) : clock.format(new Date());
+        String status = state.source + (state.track > 0 ? "   TRK " + two(state.track) : "");
+        // A narrow display drops the track number rather than run it into the time.
+        if (text.measureText(status + "  " + right) > t.width()) status = state.source;
+        boolean segments = skin.lcdStyle == Skin.LCD_SEGMENT || reflective;
+        if (segments) ghostText(c, status, t.left, y1, t.width() * 0.6f);
+        c.drawText(status, t.left, y1, text);
+        text.setTextAlign(Paint.Align.RIGHT);
         c.drawText(right, t.right, y1, text);
 
         // Title.
@@ -876,10 +907,12 @@ public class StereoView extends View {
         int ink = visualizerInk();
         int base = visualizerColor != 0 ? visualizerColor : illumination;
         int n = bands.length;
-        if (Visualizers.BARS.equals(visualizer)) {
+        if (Visualizers.BARS.equals(visualizer) && skin.arcBars && !modern) {
+            drawArcBars(c, v, u);
+        } else if (Visualizers.BARS.equals(visualizer)) {
             float gap = v.width() * 0.012f;
             float bw = (v.width() - gap * (n - 1)) / n;
-            int segs = 10;
+            int segs = skin.barSegs;
             float sh = v.height() / segs;
             for (int i = 0; i < n; i++) {
                 float lv = bands[i];
@@ -898,7 +931,7 @@ public class StereoView extends View {
                     for (int s = 0; s < segs; s++) {
                         float top = v.bottom - (s + 1) * sh + sh * 0.18f;
                         // Colour displays shade each column from the illumination up into the accent.
-                        int col = skin.gradientBars ? Illumination.mix(base, accent, s / (float) (segs - 1)) : ink;
+                        int col = barInk(s, segs, base, ink);
                         if (s < lit && !reflective) {
                             // Lit phosphor bleeds light around itself.
                             paint.setColor(Illumination.withAlpha(col, neon() ? 0x50 : 0x30));
@@ -909,8 +942,7 @@ public class StereoView extends View {
                     }
                     int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
                     if (pk > lit) {
-                        // One-colour displays have no second colour for the peaks.
-                        paint.setColor((reflective || skin.phosphor != 0) && visualizerColor == 0 ? ink : accent);
+                        paint.setColor(peakInk(ink, reflective));
                         float top = v.bottom - (pk + 1) * sh + sh * 0.18f;
                         c.drawRect(l, top, l + bw, v.bottom - pk * sh, paint);
                     }
@@ -942,6 +974,53 @@ public class StereoView extends View {
             c.drawPath(path, paint);
             paint.setStyle(Paint.Style.FILL);
         }
+    }
+
+    /** Segment s of segs, from the bottom: the display's own colours, a shade into the accent, or one ink. */
+    private int barInk(int s, int segs, int base, int ink) {
+        if (skin.barInks != null && visualizerColor == 0) {
+            return skin.barInks[Math.min(skin.barInks.length - 1, s * skin.barInks.length / segs)];
+        }
+        return skin.gradientBars ? Illumination.mix(base, accent, s / (float) (segs - 1)) : ink;
+    }
+
+    private int peakInk(int ink, boolean reflective) {
+        if (visualizerColor == 0 && skin.peakInk != 0) return skin.peakInk;
+        // One-colour displays have no second colour for the peaks.
+        return (reflective || skin.phosphor != 0) && visualizerColor == 0 ? ink : accent;
+    }
+
+    /**
+     * Bars fanned round a half circle standing on the visualizer's foot, the bass on the left: each
+     * band a spoke of curved segments, lit outwards from the hub.
+     */
+    private void drawArcBars(Canvas c, RectF v, float u) {
+        int n = bands.length, segs = skin.barSegs;
+        int ink = visualizerInk();
+        int base = visualizerColor != 0 ? visualizerColor : illumination;
+        float outer = Math.min(v.width() / 2, v.height()) * 0.98f, hub = outer * 0.34f;
+        float ring = (outer - hub) / segs;
+        float cx = v.centerX(), cy = v.bottom;
+        float step = 180f / n, gapDeg = step * 0.16f;
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(ring * 0.72f);
+        for (int i = 0; i < n; i++) {
+            float lv = bands[i];
+            peaks[i] = Math.max(lv, peaks[i] - 0.012f);
+            int lit = Math.round(lv * segs);
+            int pk = Math.min(segs - 1, Math.round(peaks[i] * segs));
+            float start = 180f + i * step + gapDeg / 2;
+            for (int s = 0; s < segs; s++) {
+                float r = hub + (s + 0.5f) * ring;
+                rect.set(cx - r, cy - r, cx + r, cy + r);
+                int col = barInk(s, segs, base, ink);
+                if (s < lit) paint.setColor(bright(col));
+                else if (s == pk && pk > lit) paint.setColor(peakInk(ink, false));
+                else paint.setColor(Illumination.withAlpha(col, skin.phosphor != 0 ? UNLIT : 0x16));
+                c.drawArc(rect, start, step - gapDeg, false, paint);
+            }
+        }
+        paint.setStyle(Paint.Style.FILL);
     }
 
     /**

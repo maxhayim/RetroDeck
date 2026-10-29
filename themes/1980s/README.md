@@ -11,3 +11,9 @@ A Japanese hi-fi car deck from the mid-1980s: a black anodised aluminium plate w
 [![Classic 1985](classic-1985/stereo-classic.jpg)](classic-1985/)
 
 A brushed-aluminium single-DIN unit with black keys, a big spun-metal volume knob, a fluorescent display and a cassette door with AUTO REVERSE printed above it. Corner screws hold the plate.
+
+## [EQ Stack 1989](eq-stack-1989/)
+
+[![EQ Stack 1989](eq-stack-1989/render-night.jpg)](eq-stack-1989/)
+
+A late-1980s silver stack: a graphic equaliser, its bars yellow under blue with red peaks, over a CD head unit with an orange fluorescent display, a volume rocker and mint green keys.

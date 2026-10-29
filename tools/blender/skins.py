@@ -316,7 +316,282 @@ def detachable():
     return lights
 
 
-BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable}
+# ---- stacks and later units ----
+
+def pocket():
+    """The opening in the dash a stack stands in: dark in the gaps between its units."""
+    us = L["units"]
+    x0, y0, x1, y1 = rect([min(u[0] for u in us), min(u[1] for u in us), max(u[2] for u in us), max(u[3] for u in us)])
+    box("pocket", x0 - 0.06, y0 - 0.06, x1 + 0.06, y1 + 0.06, -0.12, -0.099, hole)
+
+
+def units(mat, r, edge=0.03, edge_mat=None):
+    for u in L["units"]:
+        plate_box(u[0], u[1], u[2], u[3], r, mat, edge, edge_mat)
+
+
+def on_glass(s, x, y, size, mat, align="CENTER", spacing=1.2):
+    """Printed on a display's glass, as its fixed legends are: x, y as screen fractions, y the baseline."""
+    return text(s, X(x), Y(y) + size * 0.36, FACE - 0.079, size, mat, align, spacing)
+
+
+def band_x(i, zone, n=16):
+    """The centre of visualizer band i, as the app draws it."""
+    w = zone[2] - zone[0]
+    gap = w * 0.012
+    bw = (w - gap * (n - 1)) / n
+    return zone[0] + i * (bw + gap) + bw / 2
+
+
+def bands_print(zone, y, size, mat, put=None):
+    """Frequency marks under the bars, at the bands the app gives those pitches."""
+    for i, f in ((0, "63"), (3, "160"), (5, "400"), (8, "1K"), (11, "2.5K"), (13, "6.3K"), (15, "12K")):
+        (put or on_glass)(f, band_x(i, zone), y, size, mat, spacing=1.0)
+
+
+def glowing(*mats, day=0.0, night=0.12):
+    """Keys moulded in a light, clear plastic glow at night with the lamp behind them."""
+    def lit(pressed, n):
+        for m in mats:
+            m.node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = night if n else day
+    for m in mats:
+        p = m.node_tree.nodes["Principled BSDF"]
+        p.inputs["Emission Color"].default_value = p.inputs["Base Color"].default_value
+    return lit
+
+
+def eqstack():
+    """Silver stack: an equaliser window with its curves and bands printed on the glass, over a CD unit."""
+    lights = Lights(sun=1800, fill=100, softbox=0.6)
+    silver = material("silver", (0.50, 0.52, 0.55), 0.34, metal=0.85, aniso=0.5, brushed=True, bump=0.08)
+    edge = material("edge", (0.78, 0.79, 0.81), 0.2, metal=1.0)
+    keycap = material("keycap", (0.040, 0.041, 0.045), 0.35, 0.5, bump=0.05, bump_scale=1200)
+    mint = material("mint", srgb(0x86D9BC), 0.42, 0.4, bump=0.04, bump_scale=900)
+    ink = material("ink", srgb(0x26282C), 0.6)
+    red = material("red", srgb(0xB3261E), 0.5)
+    white = legend_material("legend", srgb(0xE2E5E8))
+    dark = legend_material("legend-dark", srgb(0x1F3A30))
+    tab = emitter("tab", srgb(0x8FC8FF), 0.9)
+    curve = emitter("curve", srgb(0xE8ECEF), 0.7)
+    dash()
+    pocket()
+    units(silver, 0.010 * U, edge=0.03, edge_mat=edge)
+    glass = material("vfd", (0.004, 0.005, 0.006), 0.4, 0.15)
+    surround = material("surround", (0.010, 0.010, 0.011), 0.6, 0.3)
+    window(L["eq"], 0.010 * U, L["corner"] * U, glass, surround)
+    window(L["lcd"], 0.010 * U, L["corner"] * U, glass, surround)
+    vz = L["zones"]["visualizer"]
+    for i, t in enumerate(("FLAT", "ROCK", "POPS", "VOCAL", "JAZZ", "NEWS")):
+        on_glass(t, vz[0] + (i + 0.5) * (vz[2] - vz[0]) / 6, vz[1] - 0.022, 0.018 * U, tab, spacing=1.15)
+    bands_print(vz, vz[3] + 0.024, 0.014 * U, tab)
+    e = L["eq"]
+    on_glass("6-PATTERN EQUALIZER CURVE", e[0] + 0.02, e[1] + 0.05, 0.017 * U, curve, "LEFT", 1.2)
+    for i, t in enumerate(("FLAT    ROCK", "POPS    VOCAL", "JAZZ    NEWS")):
+        on_glass(t, e[0] + 0.035, e[1] + 0.105 + i * 0.045, 0.016 * U, curve, "LEFT", 1.25)
+    on_glass("16-BAND", e[0] + 0.035, e[3] - 0.035, 0.016 * U, tab, "LEFT", 1.3)
+
+    def pick(k):
+        return (mint, dark) if k["label"] in ("SRC", "DISP") else (keycap, white)
+    for k in CONTROLS + DECOR:
+        mat, legend = pick(k)
+        key(k, FACE, mat, hole, legend, min(fit([k]), 0.22), r=min(0.08, (rect(k["box"])[3] - rect(k["box"])[1]) / 2 - 0.04),
+            height=0.10)
+    slot(L["slot"], edge)
+    cylinder("led", X(0.125), Y(0.595), 0.035, FACE, FACE + 0.02, emitter("led", (0.9, 0.08, 0.05), 1.2))
+    printed("AM STEREO", 0.20, 0.553, 0.016 * U, red, "LEFT", 1.3)
+    printed("DISC TITLE MEMORY", 0.125, 0.662, 0.013 * U, ink, "LEFT", 1.2)
+    printed("16-BAND GRAPHIC EQUALIZER", 0.95, 0.468, 0.016 * U, ink, "RIGHT", 1.3)
+    printed("CD HEAD UNIT  ·  4 × 35 W", 0.315, 0.948, 0.014 * U, ink, "LEFT", 1.3)
+    return lights, glowing(mint)
+
+
+def level():
+    """One black face, a big window between columns of slim keys, the analyser's bands printed under it."""
+    lights = Lights(sun=2200, fill=120, softbox=0.4)
+    plastic = material("plastic", (0.022, 0.023, 0.026), 0.42, 0.45, bump=0.25, bump_scale=450)
+    keycap = material("keycap", (0.030, 0.031, 0.035), 0.32, 0.5, bump=0.05, bump_scale=1200)
+    satin = material("satin", (0.10, 0.105, 0.115), 0.35, metal=0.6)
+    grey = material("ink", srgb(0x9097A0), 0.6)
+    tab = emitter("tab", srgb(0x58C8D8), 0.6)
+    dash()
+    plate_box(0.006, 0.012, 0.994, 0.988, 0.02 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.012 * U, L["corner"] * U, material("vfd", (0.003, 0.004, 0.005), 0.35, 0.2),
+           material("surround", (0.008, 0.008, 0.009), 0.5, 0.3))
+    vz = L["zones"]["visualizer"]
+    bands_print(vz, vz[3] + 0.022, 0.016 * U, tab)
+    on_glass("SPECTRUM", vz[0], vz[1] - 0.012, 0.016 * U, tab, "LEFT", 1.3)
+    legend = legend_material("legend", srgb(0xB4B9C0))
+    for k in CONTROLS + DECOR:
+        key(k, FACE, keycap, hole, legend, min(fit([k]), 0.24), r=0.06, height=0.10)
+    slot(L["slot"], satin)
+    printed("SOUND FIELD PROCESSOR", 0.17, 0.155, 0.017 * U, grey, "LEFT", 1.3)
+    printed("4 × 45 W", 0.86, 0.155, 0.017 * U, grey, "RIGHT", 1.3)
+    return lights
+
+
+def trio():
+    """Three black units, their main keys in mint green: equaliser, disc changer controller, head unit."""
+    lights = Lights(sun=2200, fill=120, softbox=0.35)
+    plastic = material("plastic", (0.020, 0.021, 0.024), 0.45, 0.45, bump=0.28, bump_scale=420)
+    keycap = material("keycap", (0.028, 0.029, 0.032), 0.34, 0.5, bump=0.05, bump_scale=1200)
+    mint = material("mint", srgb(0x7FD8B4), 0.40, 0.4, bump=0.04, bump_scale=900)
+    flap = material("flap", (0.012, 0.012, 0.014), 0.25, 0.5, coat=0.5)
+    satin = material("satin", (0.09, 0.095, 0.105), 0.35, metal=0.6)
+    grey = material("ink", srgb(0x9097A0), 0.6)
+    white = legend_material("legend", srgb(0xC8CDD3))
+    dark = legend_material("legend-dark", srgb(0x163327))
+    tab = emitter("tab", srgb(0x7CF0A0), 0.5)
+    dash()
+    pocket()
+    units(plastic, 0.012 * U, edge=0.045)
+    glass = material("vfd", (0.003, 0.005, 0.004), 0.35, 0.2)
+    surround = material("surround", (0.008, 0.008, 0.009), 0.5, 0.3)
+    window(L["eq"], 0.010 * U, L["corner"] * U, glass, surround)
+    window(L["lcd"], 0.010 * U, L["corner"] * U, glass, surround)
+    vz = L["zones"]["visualizer"]
+    bands_print(vz, vz[3] + 0.022, 0.014 * U, tab)
+    on_glass("EQ", vz[0], vz[1] - 0.025, 0.017 * U, tab, "LEFT", 1.3)
+    on_glass("MEMO 1  2  3  4", vz[2], vz[1] - 0.025, 0.017 * U, tab, "RIGHT", 1.3)
+    mints = ("SRC", "DISP", "MENU", "|<<", "PLAY", ">>|", "PWR", "MODE", "LOUD")
+    for k in CONTROLS + DECOR:
+        m = k["label"] in mints
+        key(k, FACE, mint if m else keycap, hole, dark if m else white, min(fit([k]), 0.22), r=0.05, height=0.11)
+    slot(L["slot"], satin)
+    tape_door(L["changer"], satin, flap)
+    printed("GRAPHIC EQUALIZER", 0.88, 0.318, 0.015 * U, grey, "RIGHT", 1.3)
+    printed("DISC CHANGER CONTROL", 0.32, 0.60, 0.015 * U, grey, "LEFT", 1.3)
+    printed("AUTO REVERSE", 0.26, 0.688, 0.013 * U, grey, "LEFT", 1.3)
+    return lights, glowing(mint)
+
+
+def spectrum():
+    """Silver stack with black glass bands: a receiver with a knob over a CD player that's mostly analyser."""
+    lights = Lights(sun=1800, fill=100, softbox=0.7)
+    silver = material("silver", (0.56, 0.58, 0.61), 0.30, metal=0.85, aniso=0.4, brushed=True, bump=0.06)
+    edge = material("edge", (0.82, 0.83, 0.85), 0.18, metal=1.0)
+    panel = material("panel", (0.003, 0.003, 0.004), 0.22, 0.5, coat=0.4)
+    keycap = material("keycap", (0.34, 0.35, 0.37), 0.30, metal=0.8, aniso=0.3, brushed=True)
+    darkkey = material("darkkey", (0.030, 0.031, 0.035), 0.3, 0.5)
+    knurl = material("knurl", (0.02, 0.02, 0.022), 0.45, 0.4)
+    spun = material("spun", (0.62, 0.63, 0.65), 0.24, metal=1.0, rings=True, bump=0.12)
+    white = material("ink-white", srgb(0xE6E9EC), 0.5)
+    ink = material("ink", srgb(0x2A2C30), 0.6)
+    legend = legend_material("legend", srgb(0x24262A))
+    tab = emitter("teal", srgb(0x2FD0B8), 0.5)
+    dash()
+    pocket()
+    units(silver, 0.012 * U, edge=0.03, edge_mat=edge)
+    # Black glass bands the displays sit in.
+    for b in ((0.12, 0.125, 0.71, 0.345), (0.035, 0.545, 0.795, 0.935)):
+        x0, y0, x1, y1 = rect(b)
+        target(rbox("band", x0, y0, x1, y1, FACE - 0.02, FACE + 0.02, panel, 0.012 * U, bevel=0.01))
+    glass = material("vfd", (0.002, 0.003, 0.006), 0.3, 0.2)
+    surround = material("surround", (0.004, 0.004, 0.005), 0.5, 0.3)
+    window(L["lcd"], 0.006 * U, L["corner"] * U, glass, surround)
+    window(L["eq"], 0.006 * U, L["corner"] * U, glass, surround)
+    def on_band(s, x, y, size, mat, align="CENTER", spacing=1.2):
+        return text(s, X(x), Y(y) + size * 0.36, FACE + 0.021, size, mat, align, spacing)
+    vz = L["zones"]["visualizer"]
+    bands_print(vz, L["eq"][3] + 0.035, 0.016 * U, white, on_band)
+    for side in (-1, 1):
+        cx = (L["eq"][0] + 0.012) if side < 0 else (L["eq"][2] - 0.012)
+        on_glass("(((" if side < 0 else ")))", cx, (vz[1] + vz[3]) / 2 + 0.01, 0.05 * U, tab, "CENTER", 0.5)
+    for k in CONTROLS + DECOR:
+        key(k, FACE, keycap, hole, legend, min(fit([k]), 0.22), r=0.06, height=0.10, edge=edge)
+    knob(L["knob"], FACE, hole, knurl, spun, ridges=100, height=0.34)
+    slot(L["slot"], edge)
+    on_band("CD PLAYER", 0.05, 0.70, 0.022 * U, white, "LEFT", 1.25)
+    on_band("DIGITAL SERVO", 0.05, 0.905, 0.014 * U, white, "LEFT", 1.25)
+    on_band("16-BAND SPECTRUM ANALYZER", 0.785, 0.915, 0.014 * U, white, "RIGHT", 1.25)
+    printed("1-BIT D/A CONVERTER", 0.95, 0.535, 0.013 * U, ink, "RIGHT", 1.25)
+    printed("DISC RECEIVER  ·  4 × 45 W", 0.70, 0.115, 0.014 * U, white, "RIGHT", 1.25)
+    return lights
+
+
+def multi():
+    """Black, nearly all window: fixed legends on the glass, keys down both sides, a chrome volume lever."""
+    lights = Lights(sun=2000, fill=110, softbox=0.45)
+    plastic = material("plastic", (0.018, 0.019, 0.022), 0.40, 0.45, bump=0.22, bump_scale=480)
+    keycap = material("keycap", (0.024, 0.025, 0.028), 0.30, 0.5, bump=0.05, bump_scale=1200)
+    chrome = material("chrome-ribbed", (0.42, 0.43, 0.45), 0.22, metal=1.0, aniso=0.6, brushed=True)
+    lever = legend_material("legend-lever", srgb(0x16171A))
+    legend = legend_material("legend", srgb(0xE0A040))
+    blue = emitter("frame", srgb(0x3FA8FF), 0.45)
+    amber = emitter("amber", srgb(0xF0A040), 0.45)
+    ink = material("ink", srgb(0xC8962E), 0.55)
+    dash()
+    plate_box(0.006, 0.012, 0.994, 0.988, 0.02 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.010 * U, L["corner"] * U, material("vfd", (0.002, 0.003, 0.006), 0.25, 0.25),
+           material("surround", (0.006, 0.006, 0.007), 0.5, 0.3))
+    # The glass's fixed legends: framed names beside the keys, and three dials on the right.
+    for k in DECOR:
+        if k["label"] in ("REP", "SHUF", "PGM"):
+            y = (k["box"][1] + k["box"][3]) / 2 + 0.012
+            on_glass(k["label"], 0.145, y, 0.02 * U, blue, "LEFT", 1.2)
+            x0, y0, x1, y1 = rect([0.14, k["box"][1] + 0.01, 0.235, k["box"][3] - 0.01])
+            for a, b in (((x0, y0), (x1, y0)), ((x0, y1), (x1, y1)), ((x0, y0), (x0, y1)), ((x1, y0), (x1, y1))):
+                tube("frame", [(a[0], a[1], FACE - 0.079), (b[0], b[1], FACE - 0.079)], 0.012, blue)
+    for i, t in enumerate(("HIGH", "MID", "LOW")):
+        cy = 0.40 + i * 0.12
+        on_glass(t, 0.845, cy + 0.045, 0.015 * U, amber, "CENTER", 1.2)
+        cx, cyw = X(0.82), Y(cy)
+        pts = [(cx + math.cos(a) * 0.42, cyw + math.sin(a) * 0.42, FACE - 0.079)
+               for a in [math.radians(-60 + j * 6) for j in range(21)]]
+        tube("dial", pts, 0.02, blue)
+    vz = L["zones"]["visualizer"]
+    on_glass("VOL", (vz[0] + vz[2]) / 2, vz[3] - 0.03, 0.02 * U, amber, "CENTER", 1.3)
+    for k in CONTROLS + DECOR:
+        if k["id"] in ("vol_down", "vol_up"):
+            k = dict(k, label="-" if k["id"] == "vol_down" else "+")
+            key(k, FACE, chrome, hole, lever, 0.5, r=0.03, height=0.14, gap=0.012, face_up=0.25)
+        else:
+            key(k, FACE, keycap, hole, legend, min(fit([k]), 0.24), r=0.06, height=0.10)
+    x0, y0, x1, y1 = rect([0.42, 0.80, 0.58, 0.95])
+    for i in range(1, 24):
+        x = x0 + (x1 - x0) * i / 24
+        if abs(x - (x0 + x1) / 2) > 0.05:
+            box("rib", x - 0.014, y0 + 0.10, x + 0.014, y0 + 0.42, FACE + 0.14, FACE + 0.17, chrome)
+    printed("MD · CD CHANGER CONTROL", 0.50, 0.785, 0.016 * U, ink, "CENTER", 1.3)
+    printed("4 × 40 W", 0.96, 0.785, 0.016 * U, ink, "RIGHT", 1.3)
+    return lights
+
+
+def bluetooth():
+    """Gloss black, curved side keys edged with light strips, a big knob in a lit ring, a mic hole."""
+    lights = Lights(sun=2200, fill=120, softbox=0.5)
+    gloss = material("gloss-face", (0.006, 0.006, 0.007), 0.12, 0.6, coat=1.0)
+    keycap = material("keycap", (0.012, 0.012, 0.014), 0.18, 0.55, coat=0.6)
+    rubber = material("rubber", (0.022, 0.022, 0.025), 0.7, 0.3, bump=0.3, bump_scale=600)
+    silver = material("silver-ring", (0.70, 0.71, 0.73), 0.2, metal=1.0, rings=True)
+    led = legend_material("led", srgb(0x1C2F70))
+    legend = legend_material("legend", srgb(0xC8CCD2))
+    grey = material("ink", srgb(0x8A9098), 0.55)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.05 * U, gloss, edge=0.06)
+    window(L["lcd"], 0.012 * U, 0.01 * U, material("lcd", (0.002, 0.003, 0.006), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    for k in CONTROLS + DECOR:
+        x0, y0, x1, y1 = rect(k["box"])
+        key(k, FACE, keycap, hole, legend, min(fit([k]), 0.24), r=min(0.18, (y1 - y0) / 2 - 0.05), height=0.12)
+    # Light strips curving down the outer edge of each pair of side keys.
+    for x, bow in ((0.055, -0.012), (0.545, 0.012)):
+        pts = quad((X(bx(x)), Y(by(0.10))), (X(bx(x + bow)), Y(by(0.50))), (X(bx(x)), Y(by(0.90))))
+        tube("strip", [(px_, py_, FACE + 0.03) for px_, py_ in pts], 0.045, led)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("ring", cx, cy, kr * 1.16, FACE - 0.05, FACE + 0.05, led, bevel=0.02)
+    _, _, r = knob(L["knob"], FACE + 0.05, hole, rubber, rubber, ridges=36, cap_frac=0.80, height=0.42)
+    gloss_cap(cx, cy, r * 0.80, FACE + 0.05 + 0.44, silver)
+    cut_circle(X(bx(0.575)), Y(by(0.07)), 0.011 * U, FACE, 0.05, hole)
+    printed("BLUETOOTH", bx(0.80), by(0.07), 0.026 * U, grey, "RIGHT", 1.25)
+    printed("4 × 50 W", bx(0.965), by(0.05), 0.022 * U, grey, "RIGHT", 1.25)
+    return lights
+
+
+BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
+         "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
+         "bt16": bluetooth}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

@@ -84,18 +84,24 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+  <li><strong>Thirteen skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
+      <li>Bluetooth 2016: gloss black, a big knob in a lit ring, keys edged with light strips and a blue segment display</li>
     </ul>
     Double DIN, filling the screen:
     <ul>
+      <li>EQ Stack 1989: a silver graphic equaliser, its bars yellow under blue with red peaks, over a CD unit with an orange fluorescent display and mint green keys</li>
       <li>Z32 Factory 1990: a car maker's tuner and tape deck over a three-disc changer, set into a carbon-look dash, with a fluorescent display behind black glass; the tape keys double as presets</li>
+      <li>Level Meter 1991: a black unit with one big window, an orange readout over a cyan spectrum analyser</li>
+      <li>Trio Stack 1993: three black units, an equaliser with green bars, a disc changer controller and a head unit, with mint green keys</li>
       <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with a strip display numbering the presets and a reflective LCD, olive grey by day; at night the displays and legends glow lime green</li>
+      <li>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser, white bars under a green line and blue above</li>
+      <li>Multi Control 2000: nearly all display, a big blue fluorescent window whose bars fan round a half circle</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>

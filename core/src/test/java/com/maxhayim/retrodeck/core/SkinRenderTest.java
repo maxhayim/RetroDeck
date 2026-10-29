@@ -94,6 +94,10 @@ public class SkinRenderTest {
         box(b, "lcdText", s.lcdText);
         box(b, "slot", s.slot);
         box(b, "changer", s.changer);
+        box(b, "eq", s.eq);
+        b.append(",\"units\":[");
+        for (int i = 0; i < s.units.size(); i++) b.append(i > 0 ? "," : "").append(arr(s.units.get(i)));
+        b.append(']');
         b.append(",\"keys\":[");
         String sep = "";
         for (Skin.Control c : s.controls) { b.append(sep); key(b, c.id, c.label, c.box, c.round); sep = ","; }
