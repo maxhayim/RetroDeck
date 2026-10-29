@@ -38,6 +38,12 @@ public class SkinRenderTest {
                 out.write(layout(skin));
             }
         }
+        // The single-DIN skins laid out for a single-DIN unit's own wide screen.
+        for (Skin skin : Skins.wide()) {
+            try (java.io.Writer out = new java.io.FileWriter(new File(dir, skin.id + "-wide.json"))) {
+                out.write(layout(skin));
+            }
+        }
         // -Prender.code draws the faceplates in code instead, as a device does when it can't load the art.
         boolean code = System.getProperty("render.code") != null;
         // -Prender.colours=#visualizer,#screen,#body renders with a vehicle's own colours.

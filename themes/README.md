@@ -4,7 +4,7 @@ Every RetroDeck skin, by size, fading between its day and night looks. Each page
 
 ## Single DIN
 
-One-slot radios, about 3.5 times as wide as they are tall. RetroDeck draws them at that shape across the lower half of the screen, set into the dash, with a screen above them for the visualizer, the song and the clock.
+One-slot radios. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen RetroDeck draws it at a real one's shape, about 3.5 times as wide as it is tall, across the lower half and set into the dash, with a screen above it for the visualizer, the song and the clock.
 
 <table>
   <tr>

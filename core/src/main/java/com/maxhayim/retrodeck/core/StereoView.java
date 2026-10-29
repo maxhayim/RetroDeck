@@ -89,6 +89,8 @@ public class StereoView extends View {
     /** For a rendered skin: the faceplate with every key pressed in, and whether both are the night ones. */
     private Bitmap pressedArt;
     private boolean artNight;
+    /** The cached background is the skin's rendered picture, not the faceplate drawn in code. */
+    private boolean backgroundIsArt;
     private Shader dotGrid, mesh, glare, panel, panelShade, panelLeft, panelRight, panelFoot;
     private RectF glareFor, panelFor;
     private int panelColor;
@@ -116,7 +118,9 @@ public class StereoView extends View {
     }
 
     public void setSkin(Skin skin) {
-        if (skin == null || skin == this.skin) return;
+        if (skin == null) return;
+        skin = Skins.fit(skin, getWidth(), getHeight());
+        if (skin == this.skin) return;
         this.skin = skin;
         dropBackground();
     }
@@ -233,6 +237,8 @@ public class StereoView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
+        // A single-DIN skin changes shape between a wide screen and an ordinary one.
+        skin = Skins.fit(skin, w, h);
         dropBackground();
     }
 
@@ -270,7 +276,8 @@ public class StereoView extends View {
         if (background == null) background = buildBackground(w, h);
         if (background != null) c.drawBitmap(background, 0, 0, null);
         else drawStatic(c, w, h);
-        art = art && background != null;
+        // Its picture couldn't be read: the faceplate was drawn in code, so its keys are too.
+        art = art && background != null && backgroundIsArt;
 
         float u = Math.min(w, h);
         // Logos are printed on the faceplate: at night they fall dark with it.
@@ -403,6 +410,7 @@ public class StereoView extends View {
         if (skin.art != null) {
             artNight = keysLit;
             Bitmap art = withGlow(recolor(loadArt(skin.art + (keysLit ? "/night.webp" : "/day.webp"), w, h), w, h), w, h);
+            backgroundIsArt = art != null;
             if (art != null) return art;
         }
         // Full colour keeps the metal and glass gradients smooth; low-RAM head units get 16-bit.

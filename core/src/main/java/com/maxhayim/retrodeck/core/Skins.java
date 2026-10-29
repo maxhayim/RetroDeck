@@ -40,19 +40,66 @@ public final class Skins {
         return all().get(0);
     }
 
-    /** Where a single-DIN radio sits: across the lower half of the screen, about 3.5 to 1 as a real one is. */
+    /**
+     * Where a single-DIN radio sits on an ordinary screen: across the lower half, about 3.5 to 1 as a
+     * real one is, with a screen of its own above it.
+     */
     static final Box SINGLE_BODY = new Box(0.02f, 0.48f, 0.98f, 0.97f);
     /** The visualizer screen above it, set into the dash. */
     static final Box SINGLE_SCREEN = new Box(0.10f, 0.06f, 0.90f, 0.40f);
+    /** On a single-DIN head unit's own wide screen the radio is the whole screen. */
+    static final Box WIDE_BODY = new Box(0f, 0f, 1f, 1f);
+    /** Screens at least this wide for their height are a single-DIN unit's: 1280 x 480 and 1920 x 720 are 2.67. */
+    static final float WIDE_ASPECT = 2.2f;
+
+    /** The faceplate being built: SINGLE_BODY, or WIDE_BODY while building the wide variants. */
+    private static Box face = SINGLE_BODY;
+    private static List<Skin> wide;
 
     private static void single(Skin s) {
-        s.body = SINGLE_BODY;
-        s.screen = SINGLE_SCREEN;
+        s.body = face;
+        s.screen = face == SINGLE_BODY ? SINGLE_SCREEN : null;
+    }
+
+    /**
+     * The skin as it should be drawn on a w x h view: a single-DIN skin fills a wide screen on its
+     * own, and on any other it sits under a visualizer screen. Other skins are drawn as they are.
+     */
+    public static synchronized Skin fit(Skin s, int w, int h) {
+        if (s.din != 1 || h <= 0) return s;
+        boolean wantWide = w >= h * WIDE_ASPECT;
+        if (wantWide == s.wide) return s;
+        if (!wantWide) return get(s.id);
+        if (wide == null) {
+            List<Skin> built = new ArrayList<>();
+            face = WIDE_BODY;
+            try {
+                built.add(hifi());
+                built.add(classic());
+                built.add(digital());
+                built.add(detachable());
+            } finally {
+                face = SINGLE_BODY;
+            }
+            for (Skin k : built) {
+                k.wide = true;
+                k.art = k.art + "-wide";
+            }
+            wide = built;
+        }
+        for (Skin k : wide) if (k.id.equals(s.id)) return k;
+        return s;
+    }
+
+    /** The wide variants, for tools and tests. */
+    static List<Skin> wide() {
+        fit(get(CLASSIC), 3, 1);
+        return wide;
     }
 
     /** A box on a single-DIN faceplate, given as fractions of the faceplate, on the screen. */
     private static Box in(float l, float t, float r, float b) {
-        Box f = SINGLE_BODY;
+        Box f = face;
         return new Box(f.left + l * f.width(), f.top + t * f.height(), f.left + r * f.width(), f.top + b * f.height());
     }
 

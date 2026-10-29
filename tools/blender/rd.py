@@ -11,7 +11,9 @@ import os
 import bmesh
 import bpy
 
-W, H = 16.0, 9.0
+# SIZE=1920x720 renders for a single-DIN unit's wide screen: still 16 units across, less tall.
+PX_W, PX_H = (int(v) for v in os.environ.get("SIZE", "1920x1080").split("x"))
+W, H = 16.0, 16.0 * PX_H / PX_W
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -39,7 +41,7 @@ def scene_setup(samples):
     sc.cycles.samples = samples
     sc.cycles.use_adaptive_sampling = True
     sc.cycles.use_denoising = True
-    sc.render.resolution_x, sc.render.resolution_y = 1920, 1080
+    sc.render.resolution_x, sc.render.resolution_y = PX_W, PX_H
     sc.render.resolution_percentage = int(os.environ.get("PCT", "100"))
     sc.view_settings.view_transform = "Standard"
     prefs = bpy.context.preferences.addons["cycles"].preferences

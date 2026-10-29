@@ -85,7 +85,7 @@
 
 <ul>
   <li><strong>Seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
-    <br/>Single DIN, drawn at their real slim shape across the lower half of the screen, with a screen in the dash above them for the visualizer, the song and the clock:
+    <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>

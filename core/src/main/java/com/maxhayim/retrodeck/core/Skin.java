@@ -50,6 +50,8 @@ public final class Skin {
     public final int din;
     /** The radio's outline on the screen: all of it for double DIN. */
     public Box body = new Box(0, 0, 1, 1);
+    /** A single-DIN skin laid out to fill a single-DIN unit's own wide screen; see Skins.fit. */
+    public boolean wide;
     /** A single-DIN radio's visualizer screen, set into the dash above it, or null. */
     public Box screen;
     public final int faceTop, faceBottom, bezel, lcdBack, lcdFrame, buttonFace, buttonEdge, printColor;

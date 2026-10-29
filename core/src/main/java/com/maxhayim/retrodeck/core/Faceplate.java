@@ -46,8 +46,9 @@ final class Faceplate {
         this.skin = skin;
         this.w = w;
         this.h = h;
-        // A single-DIN face is half as tall: its print, radii and screws are smaller, though not by half.
-        this.u = Math.min(w, h) * (skin.din == 1 ? 0.72f : 1f);
+        // A single-DIN face is short: its print, radii and screws follow its height, a little larger
+        // than in proportion so they stay legible.
+        this.u = skin.din == 1 ? skin.body.height() * h * 1.47f : Math.min(w, h);
         this.body = new RectF(skin.body.left * w, skin.body.top * h, skin.body.right * w, skin.body.bottom * h);
     }
 

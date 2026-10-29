@@ -30,7 +30,7 @@ BODY = L.get("body", [0.0, 0.0, 1.0, 1.0])
 SINGLE = L.get("din", 2) == 1
 # The screen's short side: sizes in the app are fractions of it. A single-DIN face is half as tall,
 # so its print, radii and screws are made smaller too, though not by half, so they stay legible.
-U = 9.0 * (0.72 if SINGLE else 1.0)
+U = (BODY[3] - BODY[1]) * H * 1.47 if SINGLE else min(W, H)
 FACE = 0.30      # the front of the faceplate
 hole = hole_material()
 CONTROLS = [k for k in L["keys"] if k["id"] is not None]
@@ -50,8 +50,9 @@ def by(f):
 def dash():
     box("dash", -1, -1, W + 1, H + 1, -0.6, -0.1, material("dash", (0.012, 0.012, 0.014), 0.62, 0.35, bump=0.35,
                                                            bump_scale=220))
-    if SINGLE:
-        # The radio's slot in the dash, and the dash's own screen above it for the visualizer.
+    if SINGLE and L.get("screen"):
+        # The radio's slot in the dash, and the dash's own screen above it for the visualizer. On a
+        # single-DIN unit's own wide screen the radio fills it, and there is neither.
         x0, y0, x1, y1 = rect(BODY)
         box("pocket", x0 - 0.06, y0 - 0.06, x1 + 0.06, y1 + 0.06, -0.12, -0.099, hole)
         x0, y0, x1, y1 = rect(L["screen"])

@@ -3,6 +3,8 @@ package com.maxhayim.retrodeck.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -115,5 +117,25 @@ public class SkinTest {
     @Test
     public void unknownSkinFallsBackToClassic() {
         assertEquals(Skins.CLASSIC, Skins.get("nope").id);
+    }
+
+    @Test
+    public void singleDinFillsAWideScreenAndSitsUnderAScreenOnAnOrdinaryOne() {
+        for (Skin s : Skins.all()) {
+            if (s.din != 1) {
+                assertSame(s, Skins.fit(s, 1920, 720));
+                continue;
+            }
+            Skin wide = Skins.fit(s, 1920, 720);
+            assertTrue(wide.wide);
+            assertEquals(s.id, wide.id);
+            assertNull(wide.screen);
+            assertEquals(1f, wide.body.height(), 0.001f);
+            assertTrue(wide.art.endsWith("-wide"));
+            assertSame(wide, Skins.fit(s, 1280, 480));
+            assertSame(s, Skins.fit(wide, 1920, 1080));
+            assertSame(s, Skins.fit(s, 1024, 600));
+            for (Box b : wide.keepClear()) assertTrue(wide.id + " " + b, b.left >= 0 && b.top >= 0 && b.right <= 1 && b.bottom <= 1);
+        }
     }
 }
