@@ -53,6 +53,9 @@
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
     <td width="50%"></td>
   </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/fullscreen.webp" alt="The full-screen visualizer on Z32 Factory 1990, A80 Factory 1994 and Modern Glass, following the music"/><br/><sub>Full screen: hold DISP, or leave it playing, and the visualizer takes the whole screen in the display's own lettering. Here it steps through Z32 Factory 1990's icy blue, A80 Factory 1994's lime and Modern Glass, following the song.</sub></td>
+  </tr>
 </table>
 
 <h3>Settings</h3>
@@ -105,6 +108,7 @@
   <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights. At night the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too. On Z32 Factory 1990 the legends are white, printed by day and backlit at night</li>
   <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the visualizer is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text. GIFs travel in branding packs</li>
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
+  <li><strong>Your own colours</strong> for the visualizer, the background behind it, and the radio itself: the radio's greys and blacks take the colour keeping their shading, while its displays, lamps and print keep theirs</li>
   <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
   <li><strong>Music</strong>: plays audio files from the device; SRC adds files (or songs from the music folder), the knob sets the media volume</li>
   <li><strong>Full-screen visualizer</strong>: the visualizer (or your GIF) over the whole screen, with the song and clock along the bottom. Hold DISP or press a key set to it, or let it come on by itself after a while without a touch while music plays (Settings → Display; off until you choose a time). A touch or key brings the stereo back; media keys and presets keep working while it shows</li>
@@ -170,6 +174,7 @@ adb install RetroDeck-0.1.0.apk
   <tr><td><strong>Edit Logo Placement</strong></td><td>Choose a zone and a logo, then show it, size it and drag it into place.</td></tr>
   <tr><td><strong>Radio Skin, Visualizer</strong></td><td>The profile's preferred skin and visualizer.</td></tr>
   <tr><td><strong>Dashboard Illumination, Accent Colour</strong></td><td>Preset colours, RGB sliders or the colour of your logos.</td></tr>
+  <tr><td><strong>Visualizer Colour, Visualizer Background, Radio Colour</strong></td><td>RGB sliders or the colour of your logos, or the skin's own. The background is behind the full-screen visualizer and the screen above a single-DIN radio.</td></tr>
   <tr><td><strong>Startup Animation</strong></td><td>Style, length, the power-on and LCD steps, or off. Plays as you choose.</td></tr>
   <tr><td><strong>Preview</strong></td><td>The whole thing full screen: startup, stereo and (with PWR) standby.</td></tr>
   <tr><td><strong>Import/Export Branding Pack</strong></td><td>ZIP files with profiles and logos.</td></tr>
@@ -223,7 +228,7 @@ my-vehicle.zip
     └── p0-model.png
 </pre>
 
-<p>Each profile in <code>profiles</code> holds the names, palette (illumination, custom and accent colours), skin, visualizer, startup settings, logo adjustments, placements per zone, and <code>"assets": {"manufacturer": "assets/...", "model": "assets/..."}</code>. Unknown fields are ignored, so newer packs of format 1 still import; a newer format version is refused. Before importing, RetroDeck checks:</p>
+<p>Each profile in <code>profiles</code> holds the names, palette (illumination, custom and accent colours, and the visualizer, screen and body colours when set), skin, visualizer, startup settings, logo adjustments, placements per zone, and <code>"assets": {"manufacturer": "assets/...", "model": "assets/..."}</code>. Unknown fields are ignored, so newer packs of format 1 still import; a newer format version is refused. Before importing, RetroDeck checks:</p>
 
 <ul>
   <li>only <code>manifest.json</code> and <code>assets/*.png|jpg|jpeg|webp|svg</code>; anything else (a script, an APK) fails the pack, and nothing in a pack is ever run</li>
