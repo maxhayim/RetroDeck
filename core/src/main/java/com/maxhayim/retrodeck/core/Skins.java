@@ -19,6 +19,11 @@ public final class Skins {
     public static final String TRIO = "trio93";
     public static final String SPECTRUM = "spectrum97";
     public static final String MULTI = "multi2000";
+    public static final String CHROME = "chrome65";
+    public static final String TAPE = "tape87";
+    public static final String RED = "red19";
+    public static final String MATTE = "cd20";
+    public static final String HERITAGE = "heritage23";
 
     private static List<Skin> all;
 
@@ -28,11 +33,16 @@ public final class Skins {
         if (all == null) {
             // Single DIN, then double DIN, each by year: the order Settings lists them in.
             all = new ArrayList<>();
+            all.add(chrome());
             all.add(hifi());
             all.add(classic());
+            all.add(tape());
             all.add(digital());
             all.add(detachable());
             all.add(bluetooth());
+            all.add(red());
+            all.add(matte());
+            all.add(heritage());
             all.add(eqStack());
             all.add(factory());
             all.add(level());
@@ -86,11 +96,16 @@ public final class Skins {
             List<Skin> built = new ArrayList<>();
             face = WIDE_BODY;
             try {
+                built.add(chrome());
                 built.add(hifi());
                 built.add(classic());
+                built.add(tape());
                 built.add(digital());
                 built.add(detachable());
                 built.add(bluetooth());
+                built.add(red());
+                built.add(matte());
+                built.add(heritage());
             } finally {
                 face = SINGLE_BODY;
             }
@@ -628,6 +643,185 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, 0.025f, 0.66f, 0.105f, 0.76f)
                 .zone(Zones.CORNER, 0.895f, 0.46f, 0.975f, 0.76f)
                 .zone(Zones.VISUALIZER, 0.32f, 0.34f, 0.76f, 0.74f);
+        return s;
+    }
+
+    /**
+     * A chrome-framed radio in the style of the 1960s, as made again for classic cars: a ribbed black
+     * grille between two chrome knobs, a small blue-white segment display and a row of chiclet keys.
+     */
+    private static Skin chrome() {
+        Skin s = new Skin(CHROME, "Chrome 1965", "1960s", 1, 0xFF2C2E32, 0xFF141518, 0xFF060607, 0xFF03050A,
+                0xFF000000, 0xFF101113, 0xFF050506, 0xFFE6E8EB, Skin.LCD_SEGMENT, 0.01f);
+        single(s);
+        s.art = "skins/" + CHROME;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.phosphor = 0xFFD6E4FF;
+        s.keyPrint = 0xFFE8EAEC;
+        // Big chrome knobs set in from the ends, the window and keys between them.
+        s.knob = in(0.14f, 0.24f, 0.29f, 0.83f);
+        // The tuning knob on the right: only part of the look.
+        s.trim("TUNE|", in(0.79f, 0.24f, 0.94f, 0.83f));
+        s.lcd = in(0.31f, 0.17f, 0.77f, 0.51f);
+        s.lcdText = in(0.39f, 0.20f, 0.76f, 0.37f);
+        String[] ids = {Skin.POWER, Skin.SOURCE, Skin.PREV, Skin.PLAY, Skin.NEXT, Skin.DISPLAY, Skin.MENU};
+        String[] labels = {"PWR", "SRC", "|<<", "PLAY", ">>|", "DISP", "MENU"};
+        for (int i = 0; i < ids.length; i++) {
+            float l = 0.315f + i * 0.0643f;
+            s.control(ids[i], labels[i], in(l, 0.61f, l + 0.0573f, 0.81f));
+        }
+        s.zone(Zones.HEADER, in(0.40f, 0.03f, 0.68f, 0.14f))
+                .zone(Zones.LCD, in(0.32f, 0.20f, 0.38f, 0.37f))
+                .zone(Zones.FACEPLATE, in(0.12f, 0.86f, 0.31f, 0.95f))
+                .zone(Zones.CORNER, in(0.77f, 0.86f, 0.96f, 0.95f))
+                .zone(Zones.VISUALIZER, in(0.32f, 0.40f, 0.76f, 0.49f));
+        return s;
+    }
+
+    /**
+     * A late-1980s cassette deck in one DIN: black, a tape door across the top with tone sliders beside
+     * it, a green-lit LCD with dark digits, and presets moulded in clear plastic that glow green.
+     */
+    private static Skin tape() {
+        Skin s = new Skin(TAPE, "Tape Deck 1987", "1980s", 1, 0xFF26272A, 0xFF141516, 0xFF070708, 0xFF9EB89A,
+                0xFF0A0B0C, 0xFF26272A, 0xFF0E0F11, 0xFFC9CDD2, Skin.LCD_REFLECTIVE, 0.006f);
+        single(s);
+        s.art = "skins/" + TAPE;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.backlight = 0xFF86F25E;
+        s.panelDay = 0xFF6F7A5E;
+        s.keyLight = 0xFF9CFF8A;
+        s.keyPrint = 0xFFD0D4D8;
+        s.knob = in(0.02f, 0.46f, 0.115f, 0.95f);
+        s.changer = in(0.25f, 0.07f, 0.585f, 0.38f);
+        s.decor("⏏", in(0.195f, 0.09f, 0.235f, 0.30f))
+                .control(Skin.PLAY, "PLAY", in(0.60f, 0.07f, 0.74f, 0.18f))
+                .decor("<<", in(0.60f, 0.22f, 0.665f, 0.38f))
+                .decor(">>", in(0.675f, 0.22f, 0.74f, 0.38f))
+                .control(Skin.PREV, "DN", in(0.76f, 0.07f, 0.855f, 0.38f))
+                .control(Skin.NEXT, "UP", in(0.865f, 0.07f, 0.96f, 0.38f));
+        s.control(Skin.POWER, "PWR", in(0.13f, 0.48f, 0.175f, 0.66f))
+                .control(Skin.MENU, "MENU", in(0.13f, 0.74f, 0.175f, 0.92f))
+                .decor("MONO", in(0.185f, 0.48f, 0.23f, 0.66f))
+                .decor("LOUD", in(0.185f, 0.74f, 0.23f, 0.92f));
+        s.lcd = in(0.25f, 0.46f, 0.53f, 0.93f);
+        s.lcdText = in(0.32f, 0.50f, 0.52f, 0.70f);
+        s.presets = in(0.55f, 0.46f, 0.78f, 0.93f);
+        s.presetRows = 2;
+        s.control(Skin.SOURCE, "SRC", in(0.80f, 0.46f, 0.96f, 0.68f))
+                .control(Skin.DISPLAY, "DISP", in(0.80f, 0.71f, 0.96f, 0.93f));
+        s.zone(Zones.HEADER, in(0.33f, 0.11f, 0.50f, 0.22f))
+                .zone(Zones.LCD, in(0.26f, 0.50f, 0.31f, 0.70f))
+                .zone(Zones.FACEPLATE, in(0.13f, 0.35f, 0.235f, 0.44f))
+                .zone(Zones.CORNER, in(0.76f, 0.395f, 0.96f, 0.445f))
+                .zone(Zones.VISUALIZER, in(0.26f, 0.74f, 0.52f, 0.90f));
+        return s;
+    }
+
+    /**
+     * A budget media unit of the late 2010s in one DIN: matt black, a red segment display, a knob in a
+     * red ring, round red-lit power and source keys, and rows of keys with red legends.
+     */
+    private static Skin red() {
+        Skin s = new Skin(RED, "Red Line 2019", "2010s", 1, 0xFF1C1D20, 0xFF0B0B0D, 0xFF040405, 0xFF0A0303,
+                0xFF000000, 0xFF1A1B1E, 0xFF070708, 0xFFE03A30, Skin.LCD_SEGMENT, 0.012f);
+        single(s);
+        s.art = "skins/" + RED;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.phosphor = 0xFFFF2E22;
+        s.keyPrint = 0xFFE84034;
+        s.keyLight = 0xFFFF3A2E;
+        s.lcd = in(0.035f, 0.07f, 0.465f, 0.45f);
+        s.lcdText = in(0.13f, 0.09f, 0.455f, 0.28f);
+        s.control(Skin.DISPLAY, "DISP", in(0.475f, 0.12f, 0.52f, 0.42f))
+                .decor("▲", in(0.85f, 0.08f, 0.905f, 0.36f))
+                .decor("▼", in(0.91f, 0.08f, 0.965f, 0.36f));
+        s.knob = in(0.03f, 0.48f, 0.15f, 0.96f);
+        s.control(Skin.POWER, "PWR", in(0.175f, 0.56f, 0.245f, 0.90f), true)
+                .control(Skin.SOURCE, "SRC", in(0.265f, 0.56f, 0.335f, 0.90f), true)
+                .control(Skin.MENU, "MENU", in(0.395f, 0.51f, 0.47f, 0.71f))
+                .decor("EQ", in(0.48f, 0.51f, 0.555f, 0.71f))
+                .control(Skin.PREV, "|<<", in(0.395f, 0.75f, 0.47f, 0.95f))
+                .control(Skin.NEXT, ">>|", in(0.48f, 0.75f, 0.555f, 0.95f));
+        s.presets = in(0.575f, 0.51f, 0.815f, 0.95f);
+        s.presetRows = 2;
+        s.control(Skin.PLAY, "PLAY", in(0.835f, 0.51f, 0.965f, 0.71f))
+                .decor("CLK", in(0.835f, 0.75f, 0.965f, 0.95f));
+        s.zone(Zones.HEADER, in(0.56f, 0.11f, 0.815f, 0.27f))
+                .zone(Zones.LCD, in(0.045f, 0.09f, 0.12f, 0.28f))
+                .zone(Zones.FACEPLATE, in(0.165f, 0.465f, 0.375f, 0.54f))
+                .zone(Zones.CORNER, in(0.85f, 0.38f, 0.965f, 0.47f))
+                .zone(Zones.VISUALIZER, in(0.045f, 0.31f, 0.455f, 0.43f));
+        return s;
+    }
+
+    /**
+     * A CD and Bluetooth unit of the 2020s in one DIN: matt black, a CD slot across the top, a knob in a
+     * chrome ring, a white dot-matrix display and a row of keys along the foot with red legends.
+     */
+    private static Skin matte() {
+        Skin s = new Skin(MATTE, "Matte CD 2020", "2020s", 1, 0xFF2A2B2E, 0xFF1A1B1D, 0xFF060607, 0xFF050505,
+                0xFF000000, 0xFF2A2B2E, 0xFF0E0F11, 0xFFD04848, Skin.LCD_DOT, 0.01f);
+        single(s);
+        s.art = "skins/" + MATTE;
+        s.knobDots = false;
+        s.phosphor = 0xFFF2F4F6;
+        s.keyPrint = 0xFFD8504A;
+        s.keyLight = 0xFFFF4A40;
+        s.slot = in(0.18f, 0.10f, 0.82f, 0.16f);
+        s.control(Skin.SOURCE, "SRC", in(0.03f, 0.06f, 0.15f, 0.26f))
+                .control(Skin.POWER, "PWR", in(0.85f, 0.06f, 0.97f, 0.26f));
+        s.knob = in(0.05f, 0.31f, 0.19f, 0.75f);
+        s.lcd = in(0.25f, 0.29f, 0.70f, 0.67f);
+        s.lcdText = in(0.33f, 0.32f, 0.69f, 0.50f);
+        s.control(Skin.NEXT, ">>|", in(0.73f, 0.29f, 0.81f, 0.47f))
+                .control(Skin.PREV, "|<<", in(0.73f, 0.49f, 0.81f, 0.67f));
+        s.control(Skin.MENU, "MENU", in(0.03f, 0.79f, 0.12f, 0.95f))
+                .control(Skin.DISPLAY, "DISP", in(0.13f, 0.79f, 0.22f, 0.95f));
+        s.presets = in(0.24f, 0.79f, 0.71f, 0.95f);
+        s.control(Skin.PLAY, "PLAY", in(0.73f, 0.79f, 0.81f, 0.95f));
+        s.zone(Zones.HEADER, in(0.25f, 0.69f, 0.47f, 0.775f))
+                .zone(Zones.LCD, in(0.26f, 0.32f, 0.32f, 0.50f))
+                .zone(Zones.FACEPLATE, in(0.30f, 0.185f, 0.70f, 0.265f))
+                .zone(Zones.CORNER, in(0.84f, 0.29f, 0.97f, 0.45f))
+                .zone(Zones.VISUALIZER, in(0.26f, 0.53f, 0.69f, 0.64f));
+        return s;
+    }
+
+    /**
+     * A unit of the 2020s styled after the 1980s in one DIN: black, a knob in a lit ring, presets moulded
+     * in clear red that glow, a flip-down cover above an orange dot-matrix display, and square keys.
+     */
+    private static Skin heritage() {
+        Skin s = new Skin(HERITAGE, "Heritage 2023", "2020s", 1, 0xFF1E1F22, 0xFF0E0F11, 0xFF050506, 0xFF050302,
+                0xFF000000, 0xFF1C1D20, 0xFF0A0A0C, 0xFFD8DCE0, Skin.LCD_DOT, 0.01f);
+        single(s);
+        s.art = "skins/" + HERITAGE;
+        s.knobDots = false;
+        s.phosphor = 0xFFFF6A1E;
+        s.keyPrint = 0xFFDDE0E4;
+        s.control(Skin.POWER, "PWR", in(0.045f, 0.10f, 0.105f, 0.34f), true)
+                .control(null, "TEL", in(0.12f, 0.10f, 0.18f, 0.34f), true)
+                .control(Skin.MENU, "MENU", in(0.20f, 0.07f, 0.26f, 0.36f))
+                .control(Skin.SOURCE, "SRC", in(0.27f, 0.07f, 0.33f, 0.36f))
+                .control(Skin.PREV, "|<<", in(0.82f, 0.07f, 0.895f, 0.40f))
+                .control(Skin.NEXT, ">>|", in(0.905f, 0.07f, 0.98f, 0.40f));
+        s.knob = in(0.02f, 0.40f, 0.17f, 0.96f);
+        s.presets = in(0.19f, 0.42f, 0.37f, 0.90f);
+        s.presetRows = 2;
+        s.lcd = in(0.39f, 0.44f, 0.80f, 0.92f);
+        s.lcdText = in(0.47f, 0.48f, 0.79f, 0.68f);
+        s.control(Skin.DISPLAY, "DISP", in(0.83f, 0.45f, 0.97f, 0.59f))
+                .control(Skin.PLAY, "PLAY", in(0.83f, 0.62f, 0.97f, 0.76f))
+                .decor("⏏", in(0.83f, 0.79f, 0.97f, 0.92f));
+        s.zone(Zones.HEADER, in(0.37f, 0.11f, 0.60f, 0.23f))
+                .zone(Zones.LCD, in(0.40f, 0.48f, 0.46f, 0.68f))
+                .zone(Zones.FACEPLATE, in(0.19f, 0.915f, 0.37f, 0.98f))
+                .zone(Zones.CORNER, in(0.03f, 0.015f, 0.19f, 0.085f))
+                .zone(Zones.VISUALIZER, in(0.40f, 0.72f, 0.79f, 0.89f));
         return s;
     }
 }

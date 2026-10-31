@@ -79,6 +79,11 @@ final class Faceplate {
             case Skins.FACTORY: f.factory(); return;
             case Skins.DETACHABLE: f.detachable(); return;
             case Skins.BLUETOOTH:
+            case Skins.CHROME:
+            case Skins.TAPE:
+            case Skins.RED:
+            case Skins.MATTE:
+            case Skins.HERITAGE:
             case Skins.EQ_STACK:
             case Skins.LEVEL:
             case Skins.TRIO:

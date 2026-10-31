@@ -393,6 +393,15 @@ def play_mark(cx, cy, size, mat, z):
     return flat("play", v, f, mat)
 
 
+def eject_mark(cx, cy, size, mat, z):
+    """Eject: a triangle over a bar, as the font has no such sign."""
+    a = size * 0.62
+    v = [(cx - a / 2, cy - a * 0.05, z), (cx + a / 2, cy - a * 0.05, z), (cx, cy + a * 0.55, z),
+         (cx - a / 2, cy - a * 0.45, z), (cx + a / 2, cy - a * 0.45, z), (cx + a / 2, cy - a * 0.25, z),
+         (cx - a / 2, cy - a * 0.25, z)]
+    return flat("eject", v, [(0, 1, 2), (3, 4, 5, 6)], mat)
+
+
 def fit(keys, round_too=True):
     """One legend size for a set of keys, the largest that fits every one, as the app does."""
     size = 1e9
@@ -431,6 +440,8 @@ def key(k, top, mat, hole, legend, size, height=0.12, gap=0.05, bevel=0.04, roun
     ly = cy + (0 if k["round"] else (y1 - y0) * face_up)
     if label in ("\u25b2", "\u25bc"):
         parts.append(tri(cx, ly, size * 0.62, label == "\u25b2", legend, z))
+    elif label == "\u23cf":
+        parts.append(eject_mark(cx, ly, size, legend, z))
     elif k["id"] == "play":
         parts.append(play_mark(cx + size * 0.2, ly, size * 0.62, legend, z))
     elif (k["id"] or "").startswith("preset") and "|" in label:

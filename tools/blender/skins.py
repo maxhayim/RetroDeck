@@ -589,9 +589,228 @@ def bluetooth():
     return lights
 
 
+# ---- single DIN, more eras ----
+
+def lip_frame(b, border, lw, mat, r):
+    """A raised lip round an opening: what's inside is cut away by the opening's own cut."""
+    x0, y0, x1, y1 = rect(b)
+    m = border + lw
+    target(rbox("lip", x0 - m, y0 - m, x1 + m, y1 + m, FACE - 0.1, FACE + 0.035, mat, r + m, bevel=lw * 0.6))
+
+
+def rim(b, m, lw, mat, z0, z1):
+    """A frame of four bars round an opening, m out from it and lw wide: stands on its own, uncut."""
+    x0, y0, x1, y1 = rect(b)
+    x0, y0, x1, y1 = x0 - m, y0 - m, x1 + m, y1 + m
+    for a in ((x0 - lw, y0 - lw, x1 + lw, y0), (x0 - lw, y1, x1 + lw, y1 + lw), (x0 - lw, y0, x0, y1), (x1, y0, x1 + lw, y1)):
+        box("rim", *a, z0, z1, mat, bevel=lw * 0.35, segments=3)
+
+
+def chrome():
+    """
+    A thick polished chrome frame round a black face ribbed in silver from end to end, big knurled
+    chrome knobs, a chrome-framed window and black keys in a chrome channel under it.
+    """
+    lights = Lights(sun=1800, fill=110, softbox=1.3)
+    chrome_ = material("chrome", (0.95, 0.95, 0.97), 0.04, metal=1.0)
+    knurled = material("chrome-knurled", (0.90, 0.91, 0.93), 0.10, metal=1.0, rings=True, bump=0.1)
+    face = material("face", (0.010, 0.010, 0.011), 0.35, 0.45)
+    rib = material("chrome-rib", (0.82, 0.83, 0.85), 0.12, metal=1.0)
+    keycap = material("keycap", (0.008, 0.008, 0.009), 0.14, 0.6, coat=0.8)
+    dark = material("knob-dark", (0.006, 0.006, 0.007), 0.20, 0.55, coat=0.6)
+    legend = legend_material("legend", srgb(0xE8EAEC))
+    dash()
+    # The frame: chrome all over, its outer edge chamfered wide; the ribbed face sits a step inside it.
+    plate_box(bx(0.004), by(0.01), bx(0.996), by(0.99), 0.035 * U, chrome_, edge=0.16)
+    gx0, gy0, gx1, gy1 = bx(0.035), by(0.095), bx(0.965), by(0.905)
+    cut_box(X(gx0), Y(gy1), X(gx1), Y(gy0), FACE, 0.07, hole, 0.012 * U, floor=face)
+    box("step", X(gx0) - 0.03, Y(gy1) - 0.03, X(gx1) + 0.03, Y(gy0) + 0.03, FACE - 0.072, FACE - 0.068, chrome_)
+    lcd, row = L["lcd"], [k["box"] for k in CONTROLS]
+    keys_box = [min(b[0] for b in row), min(b[1] for b in row), max(b[2] for b in row), max(b[3] for b in row)]
+    # Fine silver ribs from end to end, broken only by the window and the key channel.
+    n = 34
+    gaps = [(lcd[1] - 0.02, lcd[3] + 0.02, lcd[0] - 0.012, lcd[2] + 0.012),
+            (keys_box[1] - 0.02, keys_box[3] + 0.02, keys_box[0] - 0.012, keys_box[2] + 0.012)]
+    for i in range(n):
+        y = gy0 + (gy1 - gy0) * (i + 0.5) / n
+        spans = [(gx0 + 0.003, gx1 - 0.003)]
+        for t, bot, l, r in gaps:
+            if t < y < bot:
+                spans = [(gx0 + 0.003, l), (r, gx1 - 0.003)]
+        for a, b in spans:
+            box("rib", X(a), Y(y) - 0.010, X(b), Y(y) + 0.010, FACE - 0.07, FACE - 0.035, rib, bevel=0.006, segments=2)
+    # The window in a thin raised chrome frame, the keys in a chrome channel.
+    rim(lcd, 0.008 * U, 0.016 * U, chrome_, FACE - 0.07, FACE + 0.04)
+    window(lcd, 0.008 * U, 0.004 * U, material("vfd", (0.002, 0.003, 0.006), 0.3, 0.2),
+           material("surround", (0.004, 0.004, 0.005), 0.5, 0.3))
+    rim(keys_box, 0.010 * U, 0.016 * U, chrome_, FACE - 0.07, FACE + 0.04)
+    x0, y0, x1, y1 = rect(keys_box)
+    cut_box(x0 - 0.010 * U, y0 - 0.010 * U, x1 + 0.010 * U, y1 + 0.010 * U, FACE + 0.036, 0.22, hole, 0.012 * U,
+            floor=material("channel", (0.004, 0.004, 0.005), 0.5, 0.3))
+    for k in CONTROLS:
+        key(k, FACE - 0.08, keycap, hole, legend, min(fit(CONTROLS), 0.2), r=0.07, height=0.24, bevel=0.05,
+            round_bevel=0.08, cut_face=False)
+    # The knobs: knurled chrome outside, a black band, a chrome cap with a dark centre.
+    for b in (L["knob"], L["trims"][0]["box"]):
+        cx, cy, r = knob(b, FACE, hole, knurled, dark, ridges=140, height=0.42, cap_frac=0.76, r_frac=0.86)
+        cylinder("cap", cx, cy, r * 0.60, FACE + 0.40, FACE + 0.52, chrome_, bevel=r * 0.06)
+        cylinder("centre", cx, cy, r * 0.24, FACE + 0.52, FACE + 0.535, dark, bevel=r * 0.02)
+    return lights
+
+
+def tape():
+    """Black, a tape door with tone sliders beside it, a recessed LCD, presets in clear green plastic."""
+    lights = Lights(sun=2200, fill=120, softbox=0.4)
+    plastic = material("plastic", (0.020, 0.021, 0.024), 0.45, 0.45, bump=0.28, bump_scale=420)
+    keycap = material("keycap", (0.026, 0.027, 0.030), 0.34, 0.5, bump=0.05, bump_scale=1200)
+    green = material("green", srgb(0x7CE08A), 0.30, 0.45, coat=0.3)
+    satin = material("satin", (0.09, 0.095, 0.105), 0.35, metal=0.6)
+    flap = material("flap", (0.012, 0.012, 0.014), 0.25, 0.5, coat=0.5)
+    knurl = material("knurl", (0.02, 0.02, 0.022), 0.45, 0.4)
+    white = legend_material("legend", srgb(0xD0D4D8))
+    darkleg = legend_material("legend-dark", srgb(0x14301A))
+    grey = material("ink", srgb(0x9097A0), 0.6)
+    orange = material("ink-orange", srgb(0xE08A2A), 0.5)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.012 * U, plastic, edge=0.04)
+    # The display: the app lights the panel and draws its segments into the window.
+    window(L["lcd"], 0.012 * U, L["corner"] * U, material("lcd", (0.02, 0.022, 0.02), 0.5, 0.3),
+           material("surround", (0.008, 0.008, 0.009), 0.5, 0.3))
+    greens = ("SRC", "DISP")
+    for k in CONTROLS + DECOR:
+        g = k["label"] in greens or (k["id"] or "").startswith("preset")
+        key(k, FACE, green if g else keycap, hole, darkleg if g else white, min(fit([k]), 0.2), r=0.04, height=0.11)
+    tape_door(L["changer"], satin, flap)
+    # Tone sliders: a slot each with a lever in it, a scale above and the name at the end.
+    for t, (y0, y1) in (("TREB", (0.07, 0.17)), ("BASS", (0.22, 0.32))):
+        sx0, sx1, sy = bx(0.04), bx(0.145), by((y0 + y1) / 2 + 0.015)
+        cut_box(X(sx0), Y(sy) - 0.03, X(sx1), Y(sy) + 0.03, FACE, 0.15, hole, 0.03)
+        lx = X(sx0 + (sx1 - sx0) * (0.62 if t == "TREB" else 0.45))
+        box("lever", lx - 0.07, Y(sy) - 0.13, lx + 0.07, Y(sy) + 0.13, FACE - 0.05, FACE + 0.12, keycap, bevel=0.02)
+        printed("-  ·  ·  ·  ·  ·  ·  +", (sx0 + sx1) / 2, by(y0 + 0.02), 0.016 * U, grey, spacing=1.0)
+        printed(t, bx(0.15), by((y0 + y1) / 2 + 0.03), 0.016 * U, grey, "LEFT", 1.2)
+    knob(L["knob"], FACE, hole, knurl, knurl, ridges=50, height=0.36)
+    printed("AUTO REVERSE", bx(0.26), by(0.43), 0.015 * U, orange, "LEFT", 1.25)
+    printed("BI-LEVEL  ·  20 W + 20 W", bx(0.525), by(0.43), 0.015 * U, grey, "RIGHT", 1.25)
+    printed("METAL", L["changer"][2] - 0.008, L["changer"][3] - 0.012 * U / H, 0.014 * U, grey, "RIGHT", 1.25)
+    return lights, glowing(green, day=0.04, night=0.12)
+
+
+def red():
+    """Matt black, a red segment window, a knob in a red ring, round lit keys and an icon panel."""
+    lights = Lights(sun=2200, fill=120, softbox=0.45)
+    plastic = material("plastic", (0.018, 0.019, 0.021), 0.55, 0.4, bump=0.25, bump_scale=480)
+    keycap = material("keycap", (0.022, 0.023, 0.026), 0.45, 0.45, bump=0.05, bump_scale=1200)
+    rubber = material("rubber", (0.022, 0.022, 0.025), 0.7, 0.3, bump=0.3, bump_scale=600)
+    gloss = material("gloss-panel", (0.006, 0.006, 0.007), 0.08, 0.6, coat=1.0)
+    legend = legend_material("legend", srgb(0xE84034))
+    ring = legend_material("ring", srgb(0x701810))
+    grey = material("ink", srgb(0x8A9098), 0.55)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.03 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.012 * U, 0.01 * U, material("lcd", (0.006, 0.002, 0.002), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    for k in CONTROLS + DECOR:
+        x0, y0, x1, y1 = rect(k["box"])
+        key(k, FACE, rubber if k["round"] else keycap, hole, legend, min(fit([k]), 0.22),
+            r=min(0.08, (y1 - y0) / 2 - 0.05), height=0.11)
+        if k["round"]:
+            cx, cy = centre(k["box"])
+            rr = min(x1 - x0, y1 - y0) / 2
+            pts = [(cx + math.cos(a) * rr * 1.08, cy + math.sin(a) * rr * 1.08, FACE + 0.01)
+                   for a in [2 * math.pi * j / 64 for j in range(65)]]
+            tube("key-ring", pts, 0.022, ring)
+    # A glossy panel with the inputs printed on it.
+    px0, py0, px1, py1 = rect([bx(0.54), by(0.08), bx(0.835), by(0.44)])
+    rbox("panel", px0, py0, px1, py1, FACE - 0.02, FACE + 0.04, gloss, 0.012 * U, bevel=0.01)
+    for i, t in enumerate(("USB", "BT", "AUX", "SD", "MP3")):
+        text(t, X(bx(0.57 + i * 0.058)), Y(by(0.375)) + 0.016 * U * 0.36, FACE + 0.041, 0.016 * U, grey, "CENTER", 1.1)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("ring", cx, cy, kr * 1.14, FACE - 0.05, FACE + 0.05, ring, bevel=0.02)
+    knob(L["knob"], FACE + 0.05, hole, rubber, rubber, ridges=36, cap_frac=0.82, height=0.42)
+    cut_circle(X(bx(0.163)), Y(by(0.93)), 0.008 * U, FACE, 0.05, hole)
+    printed("4 × 50 W", bx(0.965), by(0.035), 0.016 * U, grey, "RIGHT", 1.25)
+    return lights
+
+
+def matte():
+    """Matt black with a CD slot, a knob in a chrome ring, a white dot-matrix window and red-printed keys."""
+    lights = Lights(sun=2000, fill=120, softbox=0.45)
+    plastic = material("plastic", (0.028, 0.029, 0.032), 0.62, 0.35, bump=0.22, bump_scale=520)
+    keycap = material("keycap", (0.030, 0.031, 0.034), 0.55, 0.4, bump=0.05, bump_scale=1200)
+    rubber = material("rubber", (0.020, 0.020, 0.023), 0.7, 0.3, bump=0.3, bump_scale=600)
+    spun = material("chrome-spun", (0.88, 0.89, 0.91), 0.12, metal=1.0, rings=True, bump=0.08)
+    satin = material("satin", (0.08, 0.085, 0.095), 0.35, metal=0.6)
+    legend = legend_material("legend", srgb(0xD8504A))
+    green = legend_material("legend-green", srgb(0x3CC060))
+    grey = material("ink", srgb(0x8A9098), 0.55)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.02 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.012 * U, 0.008 * U, material("lcd", (0.002, 0.002, 0.003), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    for k in CONTROLS + DECOR:
+        key(k, FACE, keycap, hole, green if k["id"] == "play" else legend, min(fit([k]), 0.2), r=0.05, height=0.09)
+    slot(L["slot"], satin)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("bezel", cx, cy, kr * 1.16, FACE - 0.05, FACE + 0.07, spun, bevel=0.03)
+    knob(L["knob"], FACE + 0.07, hole, rubber, rubber, ridges=40, cap_frac=0.84, height=0.40)
+    # A USB port and a headphone-size aux jack on the right.
+    ux, uy = X(bx(0.905)), Y(by(0.585))
+    cut_box(ux - 0.045 * U * 0.6, uy - 0.016 * U * 0.6, ux + 0.045 * U * 0.6, uy + 0.016 * U * 0.6, FACE, 0.2, hole, 0.004)
+    printed("USB", bx(0.905), by(0.66), 0.014 * U, grey, spacing=1.2)
+    jx, jy = X(bx(0.90)), Y(by(0.87))
+    cylinder("jack-ring", jx, jy, 0.016 * U, FACE - 0.02, FACE + 0.02, spun, bevel=0.005)
+    cut_circle(jx, jy, 0.010 * U, FACE + 0.021, 0.2, hole)
+    printed("CD  ·  BT  ·  USB", L["lcd"][2], by(0.745), 0.014 * U, grey, "RIGHT", 1.25)
+    return lights
+
+
+def heritage():
+    """Black, square keys, presets in clear red, a knob in a lit ring, a flip-down cover over the display."""
+    lights = Lights(sun=2200, fill=120, softbox=0.5)
+    plastic = material("plastic", (0.018, 0.019, 0.021), 0.45, 0.45, bump=0.22, bump_scale=480)
+    cover = material("cover", (0.020, 0.021, 0.024), 0.30, 0.5, bump=0.12, bump_scale=700)
+    keycap = material("keycap", (0.022, 0.023, 0.026), 0.32, 0.5, bump=0.05, bump_scale=1200)
+    rubber = material("rubber", (0.020, 0.020, 0.023), 0.7, 0.3, bump=0.3, bump_scale=600)
+    clear = material("clear-red", srgb(0xE8503C), 0.28, 0.45, coat=0.4)
+    white = legend_material("legend", srgb(0xDDE0E4))
+    darkleg = legend_material("legend-dark", srgb(0x3A0E08))
+    grey = material("ink", srgb(0xB4B9C0), 0.55)
+    red = material("ink-red", srgb(0xD8302A), 0.5)
+    lamp = emitter("lamp", srgb(0xFF5A3A), 0.9)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.015 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.012 * U, 0.008 * U, material("lcd", (0.003, 0.002, 0.002), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    # The flip-down cover, standing proud with a lip along its lower edge.
+    cx0, cy0, cx1, cy1 = rect([bx(0.35), by(0.07), bx(0.80), by(0.36)])
+    rbox("cover", cx0, cy0, cx1, cy1, FACE - 0.02, FACE + 0.10, cover, 0.008 * U, bevel=0.02)
+    box("cover-lip", cx0 + 0.04, cy0 - 0.02, cx1 - 0.04, cy0 + 0.05, FACE + 0.06, FACE + 0.14, cover, bevel=0.015)
+    def on_cover(t, x, y, size, mat, align):
+        return text(t, X(x), Y(y) + size * 0.36, FACE + 0.101, size, mat, align, 1.25)
+    on_cover("DOT MATRIX DISPLAY", bx(0.785), by(0.13), 0.017 * U, grey, "RIGHT")
+    on_cover("MOSFET 50 W × 4", bx(0.785), by(0.20), 0.015 * U, red, "RIGHT")
+    on_cover("MEDIA / SOURCE / AUX", bx(0.785), by(0.31), 0.015 * U, grey, "RIGHT")
+    for k in CONTROLS + DECOR:
+        p = (k["id"] or "").startswith("preset")
+        x0, y0, x1, y1 = rect(k["box"])
+        key(k, FACE, clear if p else keycap, hole, darkleg if p else white, min(fit([k]), 0.22),
+            r=min(0.06, (y1 - y0) / 2 - 0.05), height=0.11)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("ring", cx, cy, kr * 1.14, FACE - 0.05, FACE + 0.04, lamp, bevel=0.02)
+    knob(L["knob"], FACE + 0.04, hole, rubber, rubber, ridges=48, cap_frac=0.84, height=0.46)
+    return lights, glowing(clear, day=0.10, night=0.15)
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
-         "bt16": bluetooth}
+         "bt16": bluetooth, "chrome65": chrome, "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

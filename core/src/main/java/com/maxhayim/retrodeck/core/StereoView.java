@@ -880,14 +880,18 @@ public class StereoView extends View {
         return s.substring(0, Math.max(0, n)) + "…";
     }
 
-    /** Dark segments on a reflective LCD; in full screen there's no panel behind them, so they're drawn lit. */
+    /**
+     * Dark segments on a reflective LCD; in full screen, or on the screen above a single-DIN radio, there's
+     * no panel behind them, so they're drawn lit.
+     */
     private boolean reflective() {
-        return skin.lcdStyle == Skin.LCD_REFLECTIVE && !fullscreen;
+        return skin.lcdStyle == Skin.LCD_REFLECTIVE && !fullscreen && !onScreen;
     }
 
-    /** The colour the visualizer draws in: the display's ink, or a reflective one's backlight in full screen. */
+    /** The colour the visualizer draws in: the display's ink, or a reflective one's backlight off its panel. */
     private int displayInk() {
-        return skin.lcdStyle == Skin.LCD_REFLECTIVE && fullscreen ? skin.backlight(illumination) : skin.lcdInk(illumination);
+        return skin.lcdStyle == Skin.LCD_REFLECTIVE && (fullscreen || onScreen) ? skin.backlight(illumination)
+                : skin.lcdInk(illumination);
     }
 
     /** The visualizer's colour: the vehicle's own, or the display's lettering. */
@@ -1211,6 +1215,8 @@ public class StereoView extends View {
     // ---- full screen ----
 
     private boolean fullscreen, swallowTouch;
+    /** Drawing the visualizer screen above a single-DIN radio rather than on the radio's own display. */
+    private boolean onScreen;
 
     /** The visualizer over the whole screen, with the track and clock along the bottom. */
     public void setFullscreen(boolean on) {
@@ -1250,7 +1256,9 @@ public class StereoView extends View {
         if (Visualizers.ANIMATION.equals(visualizer) && animation != null) {
             drawAnimation(c, full ? new RectF(s.left, s.top, s.right, s.top + s.height() * 0.84f) : area, false);
         } else {
+            onScreen = true;
             drawVisualizer(c, area, u);
+            onScreen = false;
         }
         visualizer = was;
 

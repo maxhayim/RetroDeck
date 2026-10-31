@@ -12,6 +12,12 @@ A Japanese hi-fi car deck from the mid-1980s: a black anodised aluminium plate w
 
 A brushed-aluminium single-DIN unit with black keys, a big spun-metal volume knob, a fluorescent display and a cassette door with AUTO REVERSE printed above it. Corner screws hold the plate.
 
+## [Tape Deck 1987](tape-deck-1987/)
+
+[![Tape Deck 1987](tape-deck-1987/tv-night.jpg)](tape-deck-1987/)
+
+A late-1980s cassette deck in one DIN: black, a tape door with treble and bass sliders beside it, a green-lit LCD with dark digits, and presets in clear plastic that glow green.
+
 ## [EQ Stack 1989](eq-stack-1989/)
 
 [![EQ Stack 1989](eq-stack-1989/tv-night.jpg)](eq-stack-1989/)

@@ -8,8 +8,12 @@ One-slot radios. On a single-DIN head unit's own wide screen (about 8:3, such as
 
 <table>
   <tr>
+    <td width="50%" valign="top"><a href="1960s/chrome-1965/"><img src="1960s/chrome-1965/day-night.webp" alt="Chrome 1965"/></a><br/><b><a href="1960s/chrome-1965/">Chrome 1965</a></b><br/><sub>1960s · small segment window lit blue-white</sub></td>
     <td width="50%" valign="top"><a href="1980s/hi-fi-1984/"><img src="1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984"/></a><br/><b><a href="1980s/hi-fi-1984/">Hi-Fi 1984</a></b><br/><sub>1980s · vacuum fluorescent (lit segments behind a fine mesh)</sub></td>
+  </tr>
+  <tr>
     <td width="50%" valign="top"><a href="1980s/classic-1985/"><img src="1980s/classic-1985/day-night.webp" alt="Classic 1985"/></a><br/><b><a href="1980s/classic-1985/">Classic 1985</a></b><br/><sub>1980s · vacuum fluorescent</sub></td>
+    <td width="50%" valign="top"><a href="1980s/tape-deck-1987/"><img src="1980s/tape-deck-1987/day-night.webp" alt="Tape Deck 1987"/></a><br/><b><a href="1980s/tape-deck-1987/">Tape Deck 1987</a></b><br/><sub>1980s · reflective LCD lit green, dark digits</sub></td>
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="1990s/digital-1996/"><img src="1990s/digital-1996/day-night.webp" alt="Digital 1996"/></a><br/><b><a href="1990s/digital-1996/">Digital 1996</a></b><br/><sub>1990s · dot matrix</sub></td>
@@ -17,7 +21,11 @@ One-slot radios. On a single-DIN head unit's own wide screen (about 8:3, such as
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="2010s/bluetooth-2016/"><img src="2010s/bluetooth-2016/day-night.webp" alt="Bluetooth 2016"/></a><br/><b><a href="2010s/bluetooth-2016/">Bluetooth 2016</a></b><br/><sub>2010s · segment display lit blue</sub></td>
-    <td width="50%"></td>
+    <td width="50%" valign="top"><a href="2010s/red-line-2019/"><img src="2010s/red-line-2019/day-night.webp" alt="Red Line 2019"/></a><br/><b><a href="2010s/red-line-2019/">Red Line 2019</a></b><br/><sub>2010s · segment display lit red</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><a href="2020s/matte-cd-2020/"><img src="2020s/matte-cd-2020/day-night.webp" alt="Matte CD 2020"/></a><br/><b><a href="2020s/matte-cd-2020/">Matte CD 2020</a></b><br/><sub>2020s · dot matrix lit white</sub></td>
+    <td width="50%" valign="top"><a href="2020s/heritage-2023/"><img src="2020s/heritage-2023/day-night.webp" alt="Heritage 2023"/></a><br/><b><a href="2020s/heritage-2023/">Heritage 2023</a></b><br/><sub>2020s · dot matrix lit orange</sub></td>
   </tr>
 </table>
 
@@ -44,4 +52,4 @@ Two-slot units: stacks of units and screens that fill the whole display.
   </tr>
 </table>
 
-The pages are also listed by era: [the 1980s](1980s/), [the 1990s](1990s/), [the 2000s](2000s/), [the 2010s](2010s/) and [the 2020s](2020s/).
+The pages are also listed by era: [the 1960s](1960s/), [the 1980s](1980s/), [the 1990s](1990s/), [the 2000s](2000s/), [the 2010s](2010s/) and [the 2020s](2020s/).

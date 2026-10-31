@@ -33,12 +33,23 @@
 
 <table>
   <tr>
+    <td width="50%"><img src="themes/1960s/chrome-1965/day-night.webp" alt="Chrome 1965, playing, fading between day and night"/><br/><sub>Chrome 1965: a 1960s-style radio with a thick chrome frame, a black face ribbed in silver, big knurled chrome knobs and a window lit blue-white</sub></td>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984, playing, fading between day and night"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/1980s/tape-deck-1987/day-night.webp" alt="Tape Deck 1987, playing, fading between day and night"/><br/><sub>Tape Deck 1987: a cassette deck with a green-lit LCD, tone sliders and clear presets that glow green at night</sub></td>
     <td width="50%"><img src="themes/1990s/digital-1996/day-night.webp" alt="Digital 1996, playing, fading between day and night"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/detachable-1998/day-night.webp" alt="Detachable 1998, playing, fading between day and night"/><br/><sub>Detachable 1998: curved graphite with chrome trim, a big encoder and bars that shade into the accent colour</sub></td>
     <td width="50%"><img src="themes/2010s/bluetooth-2016/day-night.webp" alt="Bluetooth 2016, playing, fading between day and night"/><br/><sub>Bluetooth 2016: gloss black, a big knob in a lit ring and keys edged with light strips that glow in the dash colour at night</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2010s/red-line-2019/day-night.webp" alt="Red Line 2019, playing, fading between day and night"/><br/><sub>Red Line 2019: matt black with a red segment display, a knob in a red ring and keys that light red at night</sub></td>
+    <td width="50%"><img src="themes/2020s/matte-cd-2020/day-night.webp" alt="Matte CD 2020, playing, fading between day and night"/><br/><sub>Matte CD 2020: matt black with a CD slot, a knob in a chrome ring and a white dot-matrix display</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2020s/heritage-2023/day-night.webp" alt="Heritage 2023, playing, fading between day and night"/><br/><sub>Heritage 2023: a current unit styled after the 1980s, with clear red presets that glow and an orange dot-matrix display</sub></td>
   </tr>
 </table>
 
@@ -92,14 +103,19 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Thirteen skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+  <li><strong>Eighteen skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
+      <li>Chrome 1965: a chrome frame round a ribbed black grille, two chrome knobs, a small blue-white display and chiclet keys, in the style of the 1960s</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
+      <li>Tape Deck 1987: a black cassette deck with tone sliders, a green-lit LCD with dark digits and presets that glow green</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
       <li>Bluetooth 2016: gloss black, a big knob in a lit ring, keys edged with light strips and a blue segment display</li>
+      <li>Red Line 2019: matt black, a red segment display, a knob in a red ring and keys with red legends</li>
+      <li>Matte CD 2020: matt black, a CD slot, a knob in a chrome ring, a white dot-matrix display and red-printed keys</li>
+      <li>Heritage 2023: styled after the 1980s, a knob in a ring lit red, presets in clear red, and a flip-down cover over an orange dot-matrix display</li>
     </ul>
     Double DIN, filling the screen:
     <ul>
