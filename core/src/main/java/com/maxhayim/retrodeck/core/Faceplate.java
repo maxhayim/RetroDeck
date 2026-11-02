@@ -80,6 +80,7 @@ final class Faceplate {
             case Skins.DETACHABLE: f.detachable(); return;
             case Skins.BLUETOOTH:
             case Skins.CHROME:
+            case Skins.CHROME_MODERN:
             case Skins.TAPE:
             case Skins.RED:
             case Skins.MATTE:

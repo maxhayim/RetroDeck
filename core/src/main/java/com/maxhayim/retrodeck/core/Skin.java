@@ -99,6 +99,11 @@ public final class Skin {
      */
     public boolean segmentFont;
     /**
+     * A radio from before visualizers: no bars on its display or on the screen above it, whatever the
+     * visualizer setting. Full screen (DISP) still shows them, as it was asked for.
+     */
+    public boolean noVisualizer;
+    /**
      * An asset folder of rendered faceplates (tools/blender), or null to draw one: day and night, and
      * the same with every key pressed in. Legends are part of the pictures.
      */

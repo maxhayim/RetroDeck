@@ -606,10 +606,11 @@ def rim(b, m, lw, mat, z0, z1):
         box("rim", *a, z0, z1, mat, bevel=lw * 0.35, segments=3)
 
 
-def chrome():
+def chrome(modern=False):
     """
     A thick polished chrome frame round a black face ribbed in silver from end to end, big knurled
-    chrome knobs, a chrome-framed window and black keys in a chrome channel under it.
+    chrome knobs, a chrome-framed window and keys in a chrome channel under it: a bank of chrome piano
+    keys stamped in black, as on a 1950s radio, or black chiclets on the one made again today.
     """
     lights = Lights(sun=1800, fill=110, softbox=1.3)
     chrome_ = material("chrome", (0.95, 0.95, 0.97), 0.04, metal=1.0)
@@ -647,9 +648,34 @@ def chrome():
     x0, y0, x1, y1 = rect(keys_box)
     cut_box(x0 - 0.010 * U, y0 - 0.010 * U, x1 + 0.010 * U, y1 + 0.010 * U, FACE + 0.036, 0.22, hole, 0.012 * U,
             floor=material("channel", (0.004, 0.004, 0.005), 0.5, 0.3))
-    for k in CONTROLS:
-        key(k, FACE - 0.08, keycap, hole, legend, min(fit(CONTROLS), 0.2), r=0.07, height=0.24, bevel=0.05,
-            round_bevel=0.08, cut_face=False)
+    if modern:
+        for k in CONTROLS:
+            key(k, FACE - 0.08, keycap, hole, legend, min(fit(CONTROLS), 0.2), r=0.07, height=0.24, bevel=0.05,
+                round_bevel=0.08, cut_face=False)
+    else:
+        # 1950s push-buttons: rounded chrome caps close together, fluted top and bottom, the name
+        # stamped in black on a smooth band across the middle.
+        piano = material("chrome-key", (0.94, 0.94, 0.96), 0.05, metal=1.0)
+        groove = material("flute", (0.03, 0.03, 0.035), 0.3, metal=1.0)
+        ink = legend_material("stamp", srgb(0x111214))
+        size = min(fit(CONTROLS), 0.18)
+        for k in CONTROLS:
+            x0, y0, x1, y1 = rect(k["box"])
+            w, h, g = x1 - x0, y1 - y0, 0.010
+            cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+            top = FACE + 0.30
+            parts = [rbox("key", x0 + g, y0 + g, x1 - g, y1 - g, FACE - 0.28, top, piano, w * 0.12, bevel=w * 0.14,
+                          segments=10)]
+            band = h * 0.17
+            for i in range(9):
+                fx = x0 + w * (0.20 + 0.60 * i / 8)
+                for fy0, fy1 in ((y0 + h * 0.18, cy - band), (cy + band, y1 - h * 0.18)):
+                    parts.append(box("flute", fx - w * 0.012, fy0, fx + w * 0.012, fy1, top - 0.01, top + 0.004, groove))
+            if k["id"] == "play":
+                parts.append(play_mark(cx + size * 0.2, cy, size * 0.62, ink, top + 0.005))
+            else:
+                parts.append(text(k["label"], cx, cy, top + 0.005, size, ink, face="BarlowSemiCondensed-SemiBold"))
+            rd.KEYS.append(parts)
     # The knobs: knurled chrome outside, a black band, a chrome cap with a dark centre.
     for b in (L["knob"], L["trims"][0]["box"]):
         cx, cy, r = knob(b, FACE, hole, knurled, dark, ridges=140, height=0.42, cap_frac=0.76, r_frac=0.86)
@@ -810,7 +836,7 @@ def heritage():
 
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
-         "bt16": bluetooth, "chrome65": chrome, "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage}
+         "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

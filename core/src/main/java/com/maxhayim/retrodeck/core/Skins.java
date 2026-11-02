@@ -20,6 +20,7 @@ public final class Skins {
     public static final String SPECTRUM = "spectrum97";
     public static final String MULTI = "multi2000";
     public static final String CHROME = "chrome65";
+    public static final String CHROME_MODERN = "chrome65m";
     public static final String TAPE = "tape87";
     public static final String RED = "red19";
     public static final String MATTE = "cd20";
@@ -33,7 +34,8 @@ public final class Skins {
         if (all == null) {
             // Single DIN, then double DIN, each by year: the order Settings lists them in.
             all = new ArrayList<>();
-            all.add(chrome());
+            all.add(chrome(false));
+            all.add(chrome(true));
             all.add(hifi());
             all.add(classic());
             all.add(tape());
@@ -96,7 +98,8 @@ public final class Skins {
             List<Skin> built = new ArrayList<>();
             face = WIDE_BODY;
             try {
-                built.add(chrome());
+                built.add(chrome(false));
+                built.add(chrome(true));
                 built.add(hifi());
                 built.add(classic());
                 built.add(tape());
@@ -650,32 +653,46 @@ public final class Skins {
      * A chrome-framed radio in the style of the 1960s, as made again for classic cars: a ribbed black
      * grille between two chrome knobs, a small blue-white segment display and a row of chiclet keys.
      */
-    private static Skin chrome() {
-        Skin s = new Skin(CHROME, "Chrome 1965", "1960s", 1, 0xFF2C2E32, 0xFF141518, 0xFF060607, 0xFF03050A,
+    /**
+     * A 1960s radio: fluted chrome push-buttons, no visualizer, its track text centred in the window. The modern
+     * one, made again for classic cars today, has black keys and shows bars under the text.
+     */
+    private static Skin chrome(boolean modern) {
+        Skin s = new Skin(modern ? CHROME_MODERN : CHROME, modern ? "Chrome 1965 Modern" : "Chrome 1965", "1960s", 1,
+                0xFF2C2E32, 0xFF141518, 0xFF060607, 0xFF03050A,
                 0xFF000000, 0xFF101113, 0xFF050506, 0xFFE6E8EB, Skin.LCD_SEGMENT, 0.01f);
         single(s);
-        s.art = "skins/" + CHROME;
+        s.art = "skins/" + s.id;
         s.segmentFont = true;
         s.knobDots = false;
         s.phosphor = 0xFFD6E4FF;
-        s.keyPrint = 0xFFE8EAEC;
-        // Big chrome knobs set in from the ends, the window and keys between them.
-        s.knob = in(0.14f, 0.24f, 0.29f, 0.83f);
+        // Fluted chrome push-buttons stamped in black on the 1960s one, black keys on the modern one.
+        s.keyPrint = modern ? 0xFFE8EAEC : 0xFF111214;
+        s.noVisualizer = !modern;
+        // Big chrome knobs set in from the ends, the window and keys centred between them.
+        s.knob = in(0.10f, 0.24f, 0.25f, 0.83f);
         // The tuning knob on the right: only part of the look.
-        s.trim("TUNE|", in(0.79f, 0.24f, 0.94f, 0.83f));
-        s.lcd = in(0.31f, 0.17f, 0.77f, 0.51f);
-        s.lcdText = in(0.39f, 0.20f, 0.76f, 0.37f);
+        s.trim("TUNE|", in(0.75f, 0.24f, 0.90f, 0.83f));
+        s.lcd = in(0.27f, 0.17f, 0.73f, 0.51f);
         String[] ids = {Skin.POWER, Skin.SOURCE, Skin.PREV, Skin.PLAY, Skin.NEXT, Skin.DISPLAY, Skin.MENU};
         String[] labels = {"PWR", "SRC", "|<<", "PLAY", ">>|", "DISP", "MENU"};
         for (int i = 0; i < ids.length; i++) {
-            float l = 0.315f + i * 0.0643f;
+            float l = 0.2785f + i * 0.0643f;
             s.control(ids[i], labels[i], in(l, 0.61f, l + 0.0573f, 0.81f));
         }
-        s.zone(Zones.HEADER, in(0.40f, 0.03f, 0.68f, 0.14f))
-                .zone(Zones.LCD, in(0.32f, 0.20f, 0.38f, 0.37f))
-                .zone(Zones.FACEPLATE, in(0.12f, 0.86f, 0.31f, 0.95f))
-                .zone(Zones.CORNER, in(0.77f, 0.86f, 0.96f, 0.95f))
-                .zone(Zones.VISUALIZER, in(0.32f, 0.40f, 0.76f, 0.49f));
+        if (modern) {
+            s.lcdText = in(0.35f, 0.20f, 0.71f, 0.37f);
+            s.zone(Zones.LCD, in(0.28f, 0.20f, 0.34f, 0.37f))
+                    .zone(Zones.VISUALIZER, in(0.29f, 0.40f, 0.71f, 0.49f));
+        } else {
+            // Text across the whole window; the logo spots under it.
+            s.lcdText = in(0.29f, 0.21f, 0.71f, 0.44f);
+            s.zone(Zones.LCD, in(0.29f, 0.45f, 0.40f, 0.50f))
+                    .zone(Zones.VISUALIZER, in(0.41f, 0.45f, 0.71f, 0.50f));
+        }
+        s.zone(Zones.HEADER, in(0.36f, 0.03f, 0.64f, 0.14f))
+                .zone(Zones.FACEPLATE, in(0.08f, 0.86f, 0.27f, 0.95f))
+                .zone(Zones.CORNER, in(0.73f, 0.86f, 0.92f, 0.95f));
         return s;
     }
 

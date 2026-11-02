@@ -520,7 +520,7 @@ public class StereoView extends View {
         // A whole-display animation goes behind everything else on it. A stack with a window of its
         // own for the visualizer shows it there instead.
         boolean fullAnimation = Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null
-                && skin.eq == null;
+                && skin.eq == null && !skin.noVisualizer;
         if (fullAnimation) {
             levels.read(bands, now, state.playing);
             drawAnimation(c, lcd, true);
@@ -529,7 +529,7 @@ public class StereoView extends View {
         Box vz = skin.zone(Zones.VISUALIZER);
         if (vz != null && skin.eq == null) {
             drawOverlay(c, Zones.VISUALIZER, false);
-            if (!fullAnimation) {
+            if (!fullAnimation && !skin.noVisualizer) {
                 levels.read(bands, now, state.playing);
                 drawVisualizer(c, px(vz), u);
             }
@@ -798,6 +798,13 @@ public class StereoView extends View {
         segmentCells(c, state.artistLine(SystemClock.uptimeMillis()), t.left, t.top + h * 0.93f, t.width(), ink, h);
     }
 
+    /** n blank segment cells. */
+    private static String blanks(int n) {
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < n; i++) b.append('!');
+        return b.toString();
+    }
+
     /** A full row of character cells, unlit ones included, with the text lit from the left. */
     private void segmentCells(Canvas c, String s, float x, float y, float width, int ink, float h) {
         int cells = Math.max(1, (int) (width / text.measureText("~")));
@@ -807,6 +814,8 @@ public class StereoView extends View {
         c.drawText(all.toString(), x, y, text);
         String lit = segments(s, true);
         if (lit.length() > cells) lit = lit.substring(0, cells);
+        // A radio from before visualizers centres its text in the window, with nothing under it.
+        if (skin.noVisualizer) lit = blanks((cells - lit.length()) / 2) + lit;
         segmentGlow(true, ink, h);
         c.drawText(lit, x, y, text);
         text.clearShadowLayer();
@@ -1253,6 +1262,7 @@ public class StereoView extends View {
                 s.top + s.height() * (full ? 0.80f : 0.74f));
         String was = visualizer;
         if (full && Visualizers.OFF.equals(visualizer)) visualizer = Visualizers.BARS;
+        else if (!full && skin.noVisualizer) visualizer = Visualizers.OFF;
         if (Visualizers.ANIMATION.equals(visualizer) && animation != null) {
             drawAnimation(c, full ? new RectF(s.left, s.top, s.right, s.top + s.height() * 0.84f) : area, false);
         } else {
@@ -1266,8 +1276,27 @@ public class StereoView extends View {
         lcdText(skin.lcdStyle);
         boolean modern = skin.lcdStyle == Skin.LCD_MODERN;
         int ink = skin.lcdStyle == Skin.LCD_REFLECTIVE ? skin.backlight(illumination) : skin.lcdInk(illumination);
-        float y = s.top + s.height() * (full ? 0.93f : 0.92f);
         float x0 = s.left + s.width() * 0.05f, x1 = s.right - s.width() * 0.05f;
+        if (!full && skin.noVisualizer) {
+            // Nothing to show above a radio from before visualizers but the clock, and the song under it.
+            String clk = clock.format(new Date());
+            text.setColor(ink);
+            text.setTextAlign(Paint.Align.CENTER);
+            text.setTextSize(s.height() * 0.36f);
+            spacing(text, modern ? 0.02f : 0.06f);
+            c.drawText(clk, s.centerX(), s.top + s.height() * 0.58f, text);
+            String line = state.title;
+            String second = state.artistLine(now);
+            if (second != null && !second.isEmpty()) line += "  ·  " + second;
+            if (!modern) line = line.toUpperCase(Locale.US);
+            text.setTextSize(s.height() * 0.11f);
+            spacing(text, modern ? 0.02f : 0.08f);
+            c.drawText(fit(line, x1 - x0), s.centerX(), s.top + s.height() * 0.84f, text);
+            text.setTextAlign(Paint.Align.LEFT);
+            c.restoreToCount(save);
+            return;
+        }
+        float y = s.top + s.height() * (full ? 0.93f : 0.92f);
         text.setTextSize(s.height() * (full ? 0.055f : 0.11f));
         spacing(text, modern ? 0.02f : 0.08f);
         text.setColor(ink);
