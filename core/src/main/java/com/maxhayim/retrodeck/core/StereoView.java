@@ -100,6 +100,7 @@ public class StereoView extends View {
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
     private final Path path = new Path();
+    private final Path window = new Path();
     private final SimpleDateFormat clock = new SimpleDateFormat("H:mm", Locale.US);
 
     private String pressed;
@@ -513,7 +514,7 @@ public class StereoView extends View {
     private void drawLcd(Canvas c, float u, long now) {
         RectF lcd = px(skin.lcd);
         int save = c.save();
-        c.clipRect(lcd);
+        clipWindow(c, lcd);
         if (skin.lcdStyle == Skin.LCD_REFLECTIVE) drawPanel(c, lcd, u);
         if (skin.lcdGlass != 0) drawGlass(c, lcd, u);
 
@@ -534,6 +535,11 @@ public class StereoView extends View {
                 drawVisualizer(c, px(vz), u);
             }
         }
+        if (skin.dialBars) {
+            // The levels are read here, for the ring round the track, and the visualizer's dial uses them too.
+            levels.read(bands, now, state.playing);
+            if (Visualizers.BARS.equals(visualizer)) drawSpokes(c, lcd, false);
+        }
         drawOverlay(c, Zones.LCD, false);
         if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
         else drawTrackText(c, px(skin.lcdText), u);
@@ -545,14 +551,48 @@ public class StereoView extends View {
     private void drawEq(Canvas c, float u, long now) {
         RectF eq = px(skin.eq);
         int save = c.save();
-        c.clipRect(eq);
+        clipWindow(c, eq);
         if (skin.lcdGlass != 0) drawGlass(c, eq, u);
         drawOverlay(c, Zones.VISUALIZER, false);
-        levels.read(bands, now, state.playing);
+        if (!skin.dialBars) levels.read(bands, now, state.playing);
         if (Visualizers.ANIMATION.equals(visualizer) && animationFull && animation != null) drawAnimation(c, eq, true);
         else drawVisualizer(c, px(skin.zone(Zones.VISUALIZER)), u);
+        if (skin.dialBars) drawDialHub(c, px(skin.zone(Zones.VISUALIZER)));
         finish(c, eq, u, true);
         c.restoreToCount(save);
+    }
+
+    /** Clips to a display window: its box, or the circle in it on a skin with round windows. */
+    private void clipWindow(Canvas c, RectF r) {
+        if (!skin.roundWindows) {
+            c.clipRect(r);
+            return;
+        }
+        window.reset();
+        window.addOval(r, Path.Direction.CW);
+        c.clipPath(window);
+    }
+
+    /** The volume over the hub of a dial, as twin-dial units showed it, VOL beside it and its unlit segments behind. */
+    private void drawDialHub(Canvas c, RectF v) {
+        if (!loadSegmentFonts()) return;
+        int ink = skin.lcdInk(illumination);
+        float r = Math.min(v.width(), v.height()) / 2, y = v.centerY() - r * 0.24f;
+        text.reset();
+        spacing(text, 0f);
+        text.setAntiAlias(true);
+        text.setTypeface(seg7);
+        text.setTextSize(r * 0.24f);
+        text.setTextAlign(Paint.Align.CENTER);
+        segmentLine(c, two(state.volume), v.centerX(), y, ink, r * 0.5f, '8');
+        text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        text.setTextSize(r * 0.085f);
+        spacing(text, 0.06f);
+        text.setTextAlign(Paint.Align.RIGHT);
+        segmentGlow(true, ink, r * 0.5f);
+        c.drawText("VOL", v.centerX() - r * 0.23f, y - r * 0.09f, text);
+        text.clearShadowLayer();
+        text.setTextAlign(Paint.Align.LEFT);
     }
 
     /** What lies over a display: its mesh or dot grid, smoke by day behind tinted glass, and the front glass. */
@@ -758,20 +798,6 @@ public class StereoView extends View {
         text.setAntiAlias(true);
         text.setTextAlign(Paint.Align.LEFT);
 
-        // Indicators, printed on the glass like ST and FM.
-        text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
-        text.setTextSize(h * 0.14f);
-        spacing(text, 0.06f);
-        float y1 = t.top + h * 0.20f, x = t.left;
-        String[] names = {"ST", state.source, "PLAY", "RPT"};
-        boolean[] lit = {state.playing, true, state.playing, false};
-        for (int i = 0; i < names.length; i++) {
-            segmentGlow(lit[i], ink, h);
-            c.drawText(names[i], x, y1, text);
-            text.clearShadowLayer();
-            x += text.measureText(names[i]) + h * 0.16f;
-        }
-
         // Track and time on the right, in 7-segment digits; the volume while it changes.
         long now = SystemClock.uptimeMillis();
         if (state.volume != lastVolume) {
@@ -781,12 +807,29 @@ public class StereoView extends View {
         boolean volume = now - volumeChangedAt < VOLUME_SHOWN_MS;
         String right = volume ? "VOL " + two(state.volume)
                 : (state.track > 0 ? two(state.track) + " " : "") + (state.durationMs > 0 ? time(state.positionMs) : clock.format(new Date()));
+        float y1 = t.top + h * 0.20f, x = t.left;
         text.setTypeface(volume ? seg14 : seg7);
         text.setTextSize(h * 0.19f);
         spacing(text, 0f);
         text.setTextAlign(Paint.Align.RIGHT);
-        segmentLine(c, segments(right, volume), t.right, y1 + h * 0.02f, ink, h, volume ? '~' : '8');
+        right = segments(right, volume);
+        float rightW = text.measureText(right);
+        segmentLine(c, right, t.right, y1 + h * 0.02f, ink, h, volume ? '~' : '8');
         text.setTextAlign(Paint.Align.LEFT);
+
+        // Indicators, printed on the glass like ST and FM, as many as fit before the time.
+        text.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        text.setTextSize(h * 0.14f);
+        spacing(text, 0.06f);
+        String[] names = {"ST", state.source, "PLAY", "RPT"};
+        boolean[] lit = {state.playing, true, state.playing, false};
+        for (int i = 0; i < names.length; i++) {
+            if (x + text.measureText(names[i]) > t.right - rightW - h * 0.16f) break;
+            segmentGlow(lit[i], ink, h);
+            c.drawText(names[i], x, y1, text);
+            text.clearShadowLayer();
+            x += text.measureText(names[i]) + h * 0.16f;
+        }
 
         // Title and artist in fixed 14-segment cells.
         text.setTypeface(seg14);
@@ -922,6 +965,8 @@ public class StereoView extends View {
         int n = bands.length;
         if (Visualizers.BARS.equals(visualizer) && skin.arcBars && !modern) {
             drawArcBars(c, v, u);
+        } else if (Visualizers.BARS.equals(visualizer) && dial()) {
+            drawSpokes(c, v, true);
         } else if (Visualizers.BARS.equals(visualizer)) {
             float gap = v.width() * 0.012f;
             float bw = (v.width() - gap * (n - 1)) / n;
@@ -1001,6 +1046,49 @@ public class StereoView extends View {
         if (visualizerColor == 0 && skin.peakInk != 0) return skin.peakInk;
         // One-colour displays have no second colour for the peaks.
         return (reflective || skin.phosphor != 0) && visualizerColor == 0 ? ink : accent;
+    }
+
+    /** Bars round a gauge in a round window; full screen has no dial to fill, and shows them straight. */
+    private boolean dial() {
+        return skin.dialBars && !fullscreen;
+    }
+
+    /**
+     * The bands as fine spokes in a ring round the edge of a dial, a 270 degree gauge from the bass at
+     * the lower left: each band six spokes, lit out from the ring's inside as far as its level, the
+     * unlit rest faint. The visualizer's own dial shows the peaks; the ring round the track shows the
+     * same levels without them.
+     */
+    private void drawSpokes(Canvas c, RectF v, boolean visualizer) {
+        int n = bands.length, k = 6;
+        int ink = visualizerInk();
+        float outer = Math.min(v.width(), v.height()) / 2 * 0.98f, inner = outer * 0.72f;
+        float cx = v.centerX(), cy = v.centerY();
+        double step = Math.toRadians(270.0 / (n * k));
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.BUTT);
+        paint.setStrokeWidth((float) (inner * step * 0.55));
+        for (int i = 0; i < n; i++) {
+            float lv = bands[i];
+            if (visualizer) peaks[i] = Math.max(lv, peaks[i] - 0.012f);
+            float lit = inner + (outer - inner) * lv, pk = inner + (outer - inner) * peaks[i];
+            for (int j = 0; j < k; j++) {
+                double a = Math.toRadians(135) + (i * k + j + 0.5) * step;
+                float dx = (float) Math.cos(a), dy = (float) Math.sin(a);
+                paint.setColor(Illumination.withAlpha(ink, UNLIT));
+                c.drawLine(cx + dx * inner, cy + dy * inner, cx + dx * outer, cy + dy * outer, paint);
+                if (lv > 0.01f) {
+                    paint.setColor(bright(ink));
+                    c.drawLine(cx + dx * inner, cy + dy * inner, cx + dx * lit, cy + dy * lit, paint);
+                }
+                if (visualizer && pk > lit + 2) {
+                    paint.setColor(peakInk(ink, false));
+                    float t = (outer - inner) * 0.06f;
+                    c.drawLine(cx + dx * Math.max(lit, pk - t), cy + dy * Math.max(lit, pk - t), cx + dx * pk, cy + dy * pk, paint);
+                }
+            }
+        }
+        paint.setStyle(Paint.Style.FILL);
     }
 
     /**

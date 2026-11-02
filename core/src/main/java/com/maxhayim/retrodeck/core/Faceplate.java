@@ -89,7 +89,8 @@ final class Faceplate {
             case Skins.LEVEL:
             case Skins.TRIO:
             case Skins.SPECTRUM:
-            case Skins.MULTI: f.plain(); return;
+            case Skins.MULTI:
+            case Skins.TWIN: f.plain(); return;
             default: break;
         }
         switch (skin.lcdStyle) {
@@ -373,12 +374,18 @@ final class Faceplate {
             c.restore();
             bevel(f, fr, u * 0.003f, 0x60FFFFFF, 0x90000000);
         }
-        window(px(skin.lcd), u * 0.012f, skin.corner * u, 0xFF040506, 0xFF0A0D10);
-        if (skin.eq != null) window(px(skin.eq), u * 0.012f, skin.corner * u, 0xFF040506, 0xFF0A0D10);
+        window(px(skin.lcd), u * 0.012f, windowCorner(skin.lcd), 0xFF040506, 0xFF0A0D10);
+        if (skin.eq != null) window(px(skin.eq), u * 0.012f, windowCorner(skin.eq), 0xFF040506, 0xFF0A0D10);
         if (skin.slot != null) slot(px(skin.slot), false);
         if (skin.changer != null) tapeDoor(px(skin.changer));
         keys(skin.corner * u, KEY_BLACK);
         if (skin.knob != null) knob(px(skin.knob), true, true);
+    }
+
+    /** A window's corner radius: the skin's, or round. */
+    private float windowCorner(Box b) {
+        RectF r = px(b);
+        return skin.roundWindows ? Math.min(r.width(), r.height()) / 2 : skin.corner * u;
     }
 
     // ---- parts ----

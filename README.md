@@ -104,7 +104,7 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Nineteen skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+  <li><strong>Twenty skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
@@ -128,6 +128,7 @@
       <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with a strip display numbering the presets and a reflective LCD, olive grey by day; at night the displays and legends glow lime green</li>
       <li>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser, white bars under a green line and blue above</li>
       <li>Multi Control 2000: nearly all display, a big blue fluorescent window whose bars fan round a half circle</li>
+      <li>Twin Dial 2001: two round green fluorescent dials in a wide silver frame, each ringed with fine spokes that follow the music, the volume on the left and the track on the right</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>

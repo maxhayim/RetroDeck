@@ -19,6 +19,7 @@ public final class Skins {
     public static final String TRIO = "trio93";
     public static final String SPECTRUM = "spectrum97";
     public static final String MULTI = "multi2000";
+    public static final String TWIN = "twin01";
     public static final String CHROME = "chrome65";
     public static final String CHROME_MODERN = "chrome65m";
     public static final String TAPE = "tape87";
@@ -52,6 +53,7 @@ public final class Skins {
             all.add(factory94());
             all.add(spectrum());
             all.add(multi());
+            all.add(twin());
             all.add(modern());
         }
         return all;
@@ -650,9 +652,50 @@ public final class Skins {
     }
 
     /**
-     * A chrome-framed radio in the style of the 1960s, as made again for classic cars: a ribbed black
-     * grille between two chrome knobs, a small blue-white segment display and a row of chiclet keys.
+     * A double-DIN unit from around 2001 with two round green fluorescent dials in a wide silver frame,
+     * each ringed with fine spokes that follow the music: the volume and printed hub on the left, the
+     * track on the right. A VOL rocker between them, curved MODE and SOURCE keys and a bar of keys
+     * under them, and a small round key in each corner.
      */
+    private static Skin twin() {
+        Skin s = new Skin(TWIN, "Twin Dial 2001", "2000s", 2, 0xFF1A1B1E, 0xFF0A0A0C, 0xFF050506, 0xFF020604,
+                0xFF000000, 0xFFB4B8BE, 0xFF5E6268, 0xFFE0502A, Skin.LCD_SEGMENT, 0.012f);
+        s.art = "skins/" + TWIN;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.roundWindows = true;
+        s.dialBars = true;
+        s.barSegs = 8;
+        s.phosphor = 0xFF5CFF52;
+        s.peakInk = 0xFFD8FFB0;
+        // Red print on the silver keys, blue on the black corner keys; at night they light red.
+        s.keyPrint = 0xFFE0502A;
+        s.keyLight = 0xFFFF5A36;
+        // The dials are circles on a 16:9 screen, 5.4 of its 16 units across, their centres 7.4 apart.
+        s.eq = new Box(0.10f, 0.17778f, 0.4375f, 0.77778f);
+        s.lcd = new Box(0.5625f, 0.17778f, 0.90f, 0.77778f);
+        s.lcdText = new Box(0.625f, 0.38889f, 0.8375f, 0.55556f);
+        s.control(Skin.VOL_UP, "+", 0.475f, 0.36667f, 0.525f, 0.49444f)
+                .control(Skin.VOL_DOWN, "\u2212", 0.475f, 0.51667f, 0.525f, 0.64444f)
+                .control(Skin.MENU, "MODE", 0.440625f, 0.70556f, 0.559375f, 0.76889f)
+                .control(Skin.SOURCE, "SOURCE", 0.39375f, 0.78f, 0.60625f, 0.83f)
+                .decor("\u2212", 0.29375f, 0.86444f, 0.39375f, 0.93667f)
+                .decor("+", 0.396875f, 0.86444f, 0.496875f, 0.93667f)
+                .control(Skin.PREV, "|<<", 0.503125f, 0.86444f, 0.56625f, 0.93667f)
+                .control(Skin.PLAY, "PLAY", 0.57f, 0.86444f, 0.63625f, 0.93667f)
+                .control(Skin.NEXT, ">>|", 0.64f, 0.86444f, 0.70625f, 0.93667f)
+                .control(null, "ANGLE", new Box(0.021875f, 0.05f, 0.071875f, 0.13889f), true)
+                .control(null, "OPEN", new Box(0.928125f, 0.05f, 0.978125f, 0.13889f), true)
+                .control(Skin.DISPLAY, "DSPL", new Box(0.021875f, 0.86111f, 0.071875f, 0.95f), true)
+                .control(Skin.POWER, "OFF", new Box(0.928125f, 0.86111f, 0.978125f, 0.95f), true);
+        s.zone(Zones.HEADER, 0.4375f, 0.11667f, 0.5625f, 0.20f)
+                .zone(Zones.LCD, 0.69375f, 0.27778f, 0.76875f, 0.36111f)
+                .zone(Zones.FACEPLATE, 0.0875f, 0.93556f, 0.275f, 0.98667f)
+                .zone(Zones.CORNER, 0.725f, 0.93556f, 0.9125f, 0.98667f)
+                .zone(Zones.VISUALIZER, 0.10f, 0.17778f, 0.4375f, 0.77778f);
+        return s;
+    }
+
     /**
      * A 1960s radio: fluted chrome push-buttons, no visualizer, its track text centred in the window. The modern
      * one, made again for classic cars today, has black keys and shows bars under the text.

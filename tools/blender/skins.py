@@ -834,9 +834,165 @@ def heritage():
     return lights, glowing(clear, day=0.10, night=0.15)
 
 
+def twin():
+    """
+    Black, nearly filled by a satin silver frame: a wide band round each of two round green dials, a
+    polished ring and a black collar ticked in grey inside it, the dials' fixed graphics printed in
+    green on the glass. Between the dials a recessed panel holds a slim VOL rocker under a red lamp;
+    under them, curved MODE and SOURCE keys and a bar of silver keys; a small black key in each corner.
+    """
+    lights = Lights(sun=2000, fill=110, softbox=0.9)
+    plastic = material("plastic", (0.014, 0.015, 0.017), 0.40, 0.45, bump=0.22, bump_scale=480)
+    silver = material("silver", (0.62, 0.63, 0.65), 0.30, metal=1.0)
+    polished = material("chrome", (0.90, 0.91, 0.93), 0.08, metal=1.0)
+    recess = material("recess", (0.30, 0.31, 0.33), 0.38, metal=1.0)
+    keycap = material("keycap-silver", (0.55, 0.56, 0.58), 0.32, metal=0.9)
+    black = material("keycap", (0.010, 0.010, 0.012), 0.18, 0.55, coat=0.6)
+    collar = material("collar", (0.012, 0.012, 0.014), 0.45, 0.35)
+    grey = material("tick", (0.16, 0.16, 0.17), 0.5)
+    vfd = material("vfd", (0.002, 0.004, 0.003), 0.25, 0.25)
+    legend = legend_material("legend", srgb(0xE0502A))
+    blue = legend_material("legend-blue", srgb(0x5AA0FF))
+    green = emitter("print", srgb(0x48F040), 0.55)
+    lamp = emitter("lamp", srgb(0xFF3020), 2.5)
+    dash()
+    plate_box(0.004, 0.007, 0.996, 0.993, 0.02 * U, plastic, edge=0.05)
+    (lx, ly), (rx, ry) = centre(L["eq"]), centre(L["lcd"])
+    R = (rect(L["lcd"])[2] - rect(L["lcd"])[0]) / 2
+    base = FACE + 0.10
+
+    def ring(cx, cy, r, z, a0=0.0, a1=360.0, n=144):
+        return [(cx + math.cos(math.radians(a0 + (a1 - a0) * i / n)) * r,
+                 cy + math.sin(math.radians(a0 + (a1 - a0) * i / n)) * r, z) for i in range(n + 1)]
+
+    # The frame: a stadium round both dials, its edge rounded over.
+    rb = R * 1.44
+    out = [(rx + math.cos(math.radians(-90 + 180 * i / 64)) * rb, ry + math.sin(math.radians(-90 + 180 * i / 64)) * rb)
+           for i in range(65)]
+    out += [(lx + math.cos(math.radians(90 + 180 * i / 64)) * rb, ly + math.sin(math.radians(90 + 180 * i / 64)) * rb)
+            for i in range(65)]
+    bez = target(prism("bezel", out, FACE - 0.1, base, silver))
+    m = bez.modifiers.new("bevel", "BEVEL")
+    m.width = 0.16
+    m.segments = 6
+    m.limit_method = "ANGLE"
+    # Each dial: a polished ring, a black collar ticked in grey, the glass set in it.
+    rc = R * 1.13
+    glass_z = FACE - 0.04
+    for cx, cy in ((lx, ly), (rx, ry)):
+        cut_circle(cx, cy, rc, base, 0.30, hole)
+        cylinder("collar", cx, cy, rc + 0.02, FACE - 0.12, glass_z - 0.012, collar)
+        cylinder("glass", cx, cy, R + 0.02, glass_z - 0.012, glass_z, vfd)
+        tube("rim", ring(cx, cy, rc + 0.08, base + 0.01), 0.10, polished)
+        for i in range(120):
+            a = 2 * math.pi * i / 120
+            r0, r1 = R + 0.05, R + (0.24 if i % 10 == 0 else 0.15)
+            c_, s_, w = math.cos(a), math.sin(a), 0.012
+            flat("tick", [(cx + c_ * r0 + s_ * w, cy + s_ * r0 - c_ * w, glass_z - 0.011),
+                          (cx + c_ * r1 + s_ * w, cy + s_ * r1 - c_ * w, glass_z - 0.011),
+                          (cx + c_ * r1 - s_ * w, cy + s_ * r1 + c_ * w, glass_z - 0.011),
+                          (cx + c_ * r0 - s_ * w, cy + s_ * r0 + c_ * w, glass_z - 0.011)], [(0, 1, 2, 3)], grey)
+    # The dials' fixed graphics, printed on the glass and lit green: the app draws the spokes round
+    # the edge, the volume and the track. Screen angles: 90 is straight down.
+    z = glass_z + 0.001
+    g = 0.026
+
+    def arc(cx, cy, r, a0, a1, width=g):
+        tube("arc", ring(cx, cy, r, z, -a1, -a0, 48), width, green)
+
+    def word(t, cx, cy, dx, dy, size):
+        text(t, cx + dx, cy - dy, z, size, green, spacing=1.15, face="BarlowSemiCondensed-SemiBold")
+
+    # Left: dB beside the volume, a hub of rings with POS and DSO either side, FRONT, REAR and SUB
+    # under it, an arc along the foot between LOW and HIGH.
+    word("dB", lx, ly, 0.78, -0.62, 0.17)
+    for r in (0.62, 0.40):
+        tube("hub", ring(lx, ly - 0.1, r, z, n=72), g, green)
+    cylinder("hub", lx, ly - 0.1, 0.16, z - 0.001, z, green)
+    for t, dx in (("POS", -1.18), ("DSO", 1.18)):
+        word(t, lx, ly, dx, -0.05, 0.19)
+        x0 = lx + dx - 0.36
+        tube("box", [(x0, ly + 0.24, z), (x0 + 0.72, ly + 0.24, z), (x0 + 0.72, ly - 0.16, z), (x0, ly - 0.16, z),
+                     (x0, ly + 0.24, z)], g * 0.8, green)
+    word("FRONT", lx, ly, -0.95, 0.72, 0.15)
+    word("REAR", lx, ly, 0.95, 0.72, 0.15)
+    word("SUB", lx, ly, 0, 1.02, 0.15)
+    arc(lx, ly, 1.55, 55, 125, 0.05)
+    word("LOW", lx, ly, -1.25, 1.62, 0.13)
+    word("HIGH", lx, ly, 1.25, 1.62, 0.13)
+    # Right: three disc rings joined along a curve, DISC and TRACK, and a wide arc under them.
+    for i, dx in enumerate((-0.62, 0, 0.62)):
+        tube("disc", ring(rx + dx, ry - 1.12 - (0.08 if i == 1 else 0), 0.21, z, n=48), g, green)
+    word("TRACK", rx, ry, 0, 0.86, 0.12)
+    word("DISC", rx, ry, -1.25, 0.95, 0.13)
+    word("BANK", rx, ry, 1.25, 0.95, 0.13)
+    arc(rx, ry, 1.62, 48, 132, 0.055)
+    # The recessed panel between the dials, its red lamp, and the VOL rocker in it.
+    up = next(k for k in CONTROLS if k["id"] == "vol_up")["box"]
+    down = next(k for k in CONTROLS if k["id"] == "vol_down")["box"]
+    px0, py0, px1, py1 = rect([up[0] - 0.012, up[1] - 0.045, up[2] + 0.012, down[3] + 0.02])
+    cut_box(px0, py0, px1, py1, base, 0.12, hole, 0.14, floor=recess)
+    cylinder("lamp", (px0 + px1) / 2, py1 - 0.17, 0.05, base - 0.12, base - 0.06, lamp)
+    x0, y0, x1, y1 = rect([up[0], up[1], up[2], down[3]])
+    cx = (x0 + x1) / 2
+    top = base + 0.14
+    parts = [rbox("key", x0 + 0.05, y0 + 0.04, x1 - 0.05, y1 - 0.04, base - 0.1, top, keycap, 0.26, bevel=0.06,
+                  segments=4)]
+    for t, by_ in (("+", Y(up[1]) - 0.38), ("VOL", (y0 + y1) / 2), ("\u2212", Y(down[3]) + 0.38)):
+        parts.append(text(t, cx, by_, top + 0.001, 0.30 if len(t) == 1 else 0.17, legend, spacing=1.1,
+                          face="BarlowSemiCondensed-SemiBold"))
+    rd.KEYS.append(parts)
+
+    # MODE and SOURCE: curved keys whose ends follow the rings round the dials.
+    size = fit([k for k in CONTROLS if k["id"] in ("menu", "source")])
+    for k in CONTROLS:
+        if k["id"] not in ("menu", "source"):
+            continue
+        b = k["box"]
+        lim = (X(b[2]) - X(b[0])) / 2
+        pts = []
+        for i in range(13):
+            wy = Y(b[1]) - (Y(b[1]) - Y(b[3])) * i / 12
+            d = max(0.0, (R * 1.38) ** 2 - (wy - ly) ** 2)
+            half = min(lim, max(0.3, (rx - lx) / 2 - math.sqrt(d)))
+            pts.append((wy, half))
+        mid = (lx + rx) / 2
+        outline = [(mid - h, wy) for wy, h in pts[::-1]] + [(mid + h, wy) for wy, h in pts]
+        cap = prism("key", outline, base - 0.15, base + 0.12, keycap, bevel=0.05)
+        cy_ = (Y(b[1]) + Y(b[3])) / 2
+        rd.KEYS.append([cap, text(k["label"], mid, cy_, base + 0.121, size, legend, spacing=1.15,
+                                  face="BarlowSemiCondensed-SemiBold")])
+    # The bar under them, DISC on its left half and the track keys on its right.
+    bar = [k for k in CONTROLS + DECOR if not k["round"] and k["id"] not in ("vol_up", "vol_down", "menu", "source")]
+    b = [min(k["box"][0] for k in bar), min(k["box"][1] for k in bar), max(k["box"][2] for k in bar),
+         max(k["box"][3] for k in bar)]
+    x0, y0, x1, y1 = rect(b)
+    target(rbox("bar", x0 - 0.10, y0 - 0.08, x1 + 0.10, y1 + 0.20, FACE - 0.1, base + 0.14, silver, 0.20, bevel=0.06))
+    size = min(fit([k for k in bar if k["id"] in ("prev", "next")]), 0.24)
+    for k in bar:
+        key(k, base + 0.14, keycap, hole, legend, size * (1.3 if k["id"] is None else 1.0), r=0.05, height=0.06,
+            bevel=0.03, gap=0.03, face_up=-0.12)
+    disc = [k["box"] for k in DECOR if not k["round"]]
+    track = [k["box"] for k in CONTROLS if k["id"] in ("prev", "play", "next")]
+    for t, bb in (("DISC", disc), ("AMS", track)):
+        text(t, X((bb[0][0] + bb[-1][2]) / 2), y1 + 0.10, base + 0.141, 0.13, legend, spacing=1.3,
+             face="BarlowSemiCondensed-SemiBold")
+    # The corner keys: small, round, black, lettered in blue.
+    corners = [k for k in CONTROLS + DECOR if k["round"]]
+    size = fit(corners) * 0.85
+    for k in corners:
+        x0, y0, x1, y1 = rect(k["box"])
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        r = min(x1 - x0, y1 - y0) / 2 * 0.72
+        cut_circle(cx, cy, r + 0.04, FACE, 0.2, hole)
+        rd.KEYS.append([cylinder("key", cx, cy, r, FACE - 0.18, FACE + 0.10, black, bevel=0.05),
+                        text(k["label"], cx, cy, FACE + 0.101, size, blue, face="BarlowSemiCondensed-SemiBold")])
+    return lights
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
-         "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage}
+         "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
+         "twin01": twin}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

@@ -87,6 +87,14 @@ public final class Skin {
     /** Bars fanned out round a half circle from the bass on the left, as on big fluorescent displays around 2000. */
     public boolean arcBars;
     /**
+     * Round dials ringed with fine spokes, as on twin-dial units around 2001: the bars round a 270 degree
+     * gauge in the visualizer, bass at the lower left, the volume over its hub, and the same ring round
+     * the track on the main display.
+     */
+    public boolean dialBars;
+    /** Round display windows: each is the circle, or on a screen not 16:9 the oval, that its box holds. */
+    public boolean roundWindows;
+    /**
      * A second display window for the visualizer alone, like a graphic equaliser or spectrum analyser
      * stacked with the radio, or null. The visualizer zone sits in it instead of the main display.
      */

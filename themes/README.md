@@ -51,6 +51,9 @@ Two-slot units: stacks of units and screens that fill the whole display.
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="2000s/multi-control-2000/"><img src="2000s/multi-control-2000/day-night.webp" alt="Multi Control 2000"/></a><br/><b><a href="2000s/multi-control-2000/">Multi Control 2000</a></b><br/><sub>2000s · big blue fluorescent window, bars fanned round a half circle</sub></td>
+    <td width="50%" valign="top"><a href="2000s/twin-dial-2001/"><img src="2000s/twin-dial-2001/render-night.jpg" alt="Twin Dial 2001 (render)"/></a><br/><b><a href="2000s/twin-dial-2001/">Twin Dial 2001</a></b><br/><sub>2000s · two round green dials ringed with spokes, in a silver frame (render)</sub></td>
+  </tr>
+  <tr>
     <td width="50%" valign="top"><a href="2020s/modern-glass/"><img src="2020s/modern-glass/day-night.webp" alt="Modern Glass"/></a><br/><b><a href="2020s/modern-glass/">Modern Glass</a></b><br/><sub>2020s · modern screen</sub></td>
   </tr>
 </table>
