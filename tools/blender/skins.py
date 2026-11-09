@@ -989,10 +989,275 @@ def twin():
                         text(k["label"], cx, cy, FACE + 0.101, size, blue, face="BarlowSemiCondensed-SemiBold")])
     return lights
 
+
+# ---- more units from photos ----
+
+def usb_port(cx, cy, w, h, metal):
+    """A USB-A socket: a metal shell round a dark opening with the contact tongue in it."""
+    cut_box(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2, FACE + 0.031, 0.3, hole, 0.01)
+    target(rbox("shell", cx - w / 2 - 0.02, cy - h / 2 - 0.02, cx + w / 2 + 0.02, cy + h / 2 + 0.02, FACE - 0.05,
+                FACE + 0.03, metal, 0.02, bevel=0.008))
+    box("tongue", cx - w * 0.38, cy - h * 0.05, cx + w * 0.38, cy + h * 0.28, FACE - 0.25, FACE - 0.06,
+        material("tongue", (0.02, 0.02, 0.022), 0.5, 0.3))
+
+
+def jack(cx, cy, r, metal):
+    """A 3.5 mm aux jack: a metal ring round a dark hole."""
+    cylinder("jack-ring", cx, cy, r * 1.6, FACE - 0.02, FACE + 0.02, metal, bevel=0.005)
+    cut_circle(cx, cy, r, FACE + 0.021, 0.2, hole)
+
+
+def menu_mark(cx, cy, size, mat, z):
+    """Three bars: a menu key's sign."""
+    w, t = size * 0.75, size * 0.11
+    v, f = [], []
+    for dy in (-size * 0.28, 0, size * 0.28):
+        i = len(v)
+        v += [(cx - w / 2, cy + dy - t / 2, z), (cx + w / 2, cy + dy - t / 2, z), (cx + w / 2, cy + dy + t / 2, z),
+              (cx - w / 2, cy + dy + t / 2, z)]
+        f.append((i, i + 1, i + 2, i + 3))
+    return flat("menu", v, f, mat)
+
+
+def chevrons(cx, cy, size, left, mat, z):
+    """Two chevrons, the font having no such sign: << or >>."""
+    t, h = size * 0.10, size * 0.32
+    v, f = [], []
+    for dx in (-size * 0.2, size * 0.2):
+        tip = cx + dx + (-h / 2 if left else h / 2)
+        back = cx + dx + (h / 2 if left else -h / 2)
+        for sy in (1, -1):
+            i = len(v)
+            v += [(back, cy + sy * h, z), (back + (t if left else -t) * 1.4, cy + sy * h, z),
+                  (tip + (t if left else -t) * 1.4, cy, z), (tip, cy, z)]
+            f.append((i, i + 1, i + 2, i + 3) if (sy > 0) == left else (i + 3, i + 2, i + 1, i))
+    return flat("chevrons", v, f, mat)
+
+
+def lit_ring(cx, cy, r, mat, z=FACE + 0.01, width=0.022):
+    pts = [(cx + math.cos(a) * r, cy + math.sin(a) * r, z) for a in [2 * math.pi * j / 72 for j in range(73)]]
+    return tube("key-ring", pts, width, mat)
+
+
+def amber():
+    """
+    Matt black: a red segment window, ports for a card, USB, aux and USB-C on a gloss panel beside it,
+    a knob in a ring lit orange, round keys ringed in orange, and rows of keys whose legends glow orange.
+    """
+    lights = Lights(sun=2200, fill=120, softbox=0.45)
+    plastic = material("plastic", (0.014, 0.015, 0.017), 0.55, 0.4, bump=0.25, bump_scale=480)
+    keycap = material("keycap", (0.020, 0.021, 0.024), 0.42, 0.45, bump=0.05, bump_scale=1200)
+    rubber = material("rubber", (0.020, 0.020, 0.023), 0.7, 0.3, bump=0.3, bump_scale=600)
+    gloss = material("gloss-panel", (0.005, 0.005, 0.006), 0.08, 0.6, coat=1.0)
+    steel = material("steel", (0.72, 0.73, 0.75), 0.22, metal=1.0)
+    legend = legend_material("legend", srgb(0xF0802E))
+    ring = legend_material("ring", srgb(0x8A3A10))
+    grey = material("ink", srgb(0x7A8088), 0.55)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.03 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.012 * U, 0.008 * U, material("lcd", (0.006, 0.002, 0.002), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    for k in CONTROLS + DECOR:
+        x0, y0, x1, y1 = rect(k["box"])
+        key(k, FACE, rubber if k["round"] else keycap, hole, legend, min(fit([k]), 0.2),
+            r=min(0.07, (y1 - y0) / 2 - 0.05), height=0.11)
+        if k["round"]:
+            cx, cy = centre(k["box"])
+            lit_ring(cx, cy, min(x1 - x0, y1 - y0) / 2 * 1.08, ring)
+    # The gloss panel: a card slot along its top, then USB, aux and USB-C.
+    px0, py0, px1, py1 = rect([bx(0.582), by(0.19), bx(0.866), by(0.47)])
+    target(rbox("panel", px0, py0, px1, py1, FACE - 0.02, FACE + 0.03, gloss, 0.012 * U, bevel=0.01))
+    sx0, sy, sx1 = X(bx(0.60)), Y(by(0.245)), X(bx(0.85))
+    cut_box(sx0, sy - 0.025, sx1, sy + 0.025, FACE + 0.031, 0.2, hole, 0.02)
+    usb_port(X(bx(0.635)), Y(by(0.36)), 0.66, 0.24, steel)
+    jack(X(bx(0.715)), Y(by(0.36)), 0.07, steel)
+    cx = X(bx(0.80))
+    cut_box(cx - 0.22, Y(by(0.36)) - 0.08, cx + 0.22, Y(by(0.36)) + 0.08, FACE + 0.031, 0.3, hole, 0.075)
+    target(rbox("usbc", cx - 0.25, Y(by(0.36)) - 0.11, cx + 0.25, Y(by(0.36)) + 0.11, FACE - 0.05, FACE + 0.03, steel,
+                0.1, bevel=0.008))
+    for t, x in (("USB", 0.635), ("AUX", 0.715), ("TYPE-C", 0.80)):
+        text(t, X(bx(x)), Y(by(0.445)), FACE + 0.031, 0.014 * U, grey, "CENTER", 1.15)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("ring", cx, cy, kr * 1.13, FACE - 0.05, FACE + 0.05, ring, bevel=0.02)
+    knob(L["knob"], FACE + 0.05, hole, rubber, rubber, ridges=40, cap_frac=0.84, height=0.44)
+    cut_circle(X(bx(0.305)), Y(by(0.86)), 0.008 * U, FACE, 0.05, hole)
+    printed("MX-21", bx(0.305), by(0.585), 0.020 * U, grey, "CENTER", 1.3)
+    printed("4 × 50 W", bx(0.965), by(0.10), 0.015 * U, grey, "RIGHT", 1.25)
+    return lights
+
+
+def dab():
+    """
+    Black, after the radios of the 1980s: split tone keys either side of an open cover over a card
+    slot, USB and aux, a knob in a ring lit amber, a four-way pad, an amber dot-matrix window with a
+    stripe under it, and a block of square keys, every legend amber.
+    """
+    lights = Lights(sun=2200, fill=120, softbox=0.45)
+    plastic = material("plastic", (0.016, 0.017, 0.019), 0.50, 0.42, bump=0.22, bump_scale=480)
+    keycap = material("keycap", (0.022, 0.023, 0.026), 0.40, 0.45, bump=0.05, bump_scale=1200)
+    rubber = material("rubber", (0.020, 0.020, 0.023), 0.7, 0.3, bump=0.3, bump_scale=600)
+    tray = material("tray", (0.010, 0.010, 0.011), 0.35, 0.5)
+    steel = material("steel", (0.72, 0.73, 0.75), 0.22, metal=1.0)
+    legend = legend_material("legend", srgb(0xF0A040))
+    ring = legend_material("ring", srgb(0x8A5A12))
+    grey = material("ink", srgb(0x9AA0A8), 0.55)
+    stripe = material("stripe", srgb(0xD87A1E), 0.4)
+    dash()
+    plate_box(bx(0.006), by(0.012), bx(0.994), by(0.988), 0.012 * U, plastic, edge=0.05)
+    window(L["lcd"], 0.010 * U, 0.006 * U, material("lcd", (0.003, 0.002, 0.001), 0.15, 0.5, coat=0.6),
+           material("surround", (0.004, 0.004, 0.005), 0.4, 0.3))
+    # The pad's raised surround, and the top row's.
+    for b in ([bx(0.203), by(0.405), bx(0.364), by(0.935)], [bx(0.030), by(0.08), bx(0.367), by(0.39)],
+              [bx(0.743), by(0.08), bx(0.973), by(0.39)]):
+        x0, y0, x1, y1 = rect(b)
+        target(rbox("surround", x0, y0, x1, y1, FACE - 0.05, FACE + 0.04, plastic, 0.012 * U, bevel=0.02))
+    for k in CONTROLS + DECOR:
+        x0, y0, x1, y1 = rect(k["box"])
+        top = FACE + 0.04 if (k["box"][1] < by(0.40) and (k["box"][2] < bx(0.37) or k["box"][0] > bx(0.74))) \
+            or bx(0.20) < k["box"][0] < bx(0.36) else FACE
+        lab = k["label"]
+        parts = key(dict(k, label="" if lab == "≡" else lab), top, rubber if k["round"] else keycap, hole, legend,
+                    min(fit([k]), 0.17), r=min(0.05, (y1 - y0) / 2 - 0.04), height=0.10, gap=0.035)
+        if lab == "≡":
+            parts.append(menu_mark((x0 + x1) / 2, (y0 + y1) / 2 + (y1 - y0) * 0.04, 0.30, legend, top + 0.101))
+        elif lab in ("\u00ab", "\u00bb"):
+            parts.append(chevrons((x0 + x1) / 2, (y0 + y1) / 2, 0.42, lab == "\u00ab", legend, top + 0.101))
+    # The open cover: a recessed tray with a card slot, a USB port and an aux jack.
+    cx0, cy0, cx1, cy1 = rect([bx(0.378), by(0.09), bx(0.735), by(0.38)])
+    target(rbox("cover", cx0, cy0, cx1, cy1, FACE - 0.05, FACE + 0.06, plastic, 0.01 * U, bevel=0.02))
+    cut_box(cx0 + 0.10, cy0 + 0.10, cx1 - 0.10, cy1 - 0.16, FACE + 0.061, 0.16, hole, 0.03, floor=tray)
+    box("cover-lip", cx0 + 0.3, cy1 - 0.12, cx1 - 0.3, cy1 - 0.02, FACE + 0.05, FACE + 0.10, plastic, bevel=0.015)
+    floor = FACE + 0.061 - 0.16
+    ty = (cy0 + cy1) / 2 - 0.03
+    sx = X(bx(0.44))
+    rbox("card", sx - 0.36, ty - 0.035, sx + 0.36, ty + 0.035, floor, floor + 0.02, hole, 0.02)
+    box("card-lip", sx - 0.40, ty - 0.10, sx + 0.40, ty - 0.06, floor, floor + 0.03, steel)
+    ux = X(bx(0.555))
+    rbox("usb-shell", ux - 0.36, ty - 0.14, ux + 0.36, ty + 0.14, floor, floor + 0.05, steel, 0.02, bevel=0.008)
+    box("usb-hole", ux - 0.32, ty - 0.10, ux + 0.32, ty + 0.10, floor + 0.05, floor + 0.052, hole)
+    box("usb-tongue", ux - 0.27, ty - 0.01, ux + 0.27, ty + 0.07, floor + 0.052, floor + 0.06,
+        material("tongue", (0.02, 0.02, 0.022), 0.5, 0.3))
+    jx = X(bx(0.675))
+    cylinder("jack-ring", jx, ty, 0.12, floor, floor + 0.04, steel, bevel=0.005)
+    cylinder("jack-hole", jx, ty, 0.07, floor + 0.04, floor + 0.042, hole)
+    # Under the window, its stripe; the knob and its lit ring.
+    sx0, sy0, sx1, sy1 = rect([bx(0.40), by(0.885), bx(0.69), by(0.897)])
+    box("stripe", sx0, sy0, sx1, sy1, FACE, FACE + 0.004, stripe)
+    printed("DIGITAL RADIO  ·  BT  ·  USB", bx(0.69), by(0.865), 0.016 * U, grey, "RIGHT", 1.25)
+    cx, cy = centre(L["knob"])
+    x0, y0, x1, y1 = rect(L["knob"])
+    kr = min(x1 - x0, y1 - y0) / 2 * 0.80
+    cylinder("ring", cx, cy, kr * 1.15, FACE - 0.05, FACE + 0.05, ring, bevel=0.02)
+    knob(L["knob"], FACE + 0.05, hole, rubber, rubber, ridges=48, cap_frac=0.86, height=0.44)
+    printed("SEL  \u00b7  STBY", bx(0.10), by(0.465), 0.020 * U, grey, "CENTER", 1.2)
+    # Screw holes at the ends, where the frame goes.
+    for fx in (0.016, 0.984):
+        for fy in (0.24, 0.78):
+            cut_circle(X(bx(fx)), Y(by(fy)), 0.008 * U, FACE, 0.05, hole)
+    return lights
+
+
+def rainbow():
+    """
+    Satin silver: a CD changer's slot across the top, a wide black window whose analyser runs through
+    the rainbow, printed with its bands, a round blue key and the volume down the left, the presets down
+    the right and a row of silver keys along the foot.
+    """
+    lights = Lights(sun=1800, fill=100, softbox=0.75)
+    silver = material("silver", (0.58, 0.60, 0.63), 0.30, metal=0.85, aniso=0.4, brushed=True, bump=0.06)
+    edge = material("edge", (0.82, 0.83, 0.85), 0.18, metal=1.0)
+    band = material("band", (0.42, 0.43, 0.46), 0.26, metal=0.9, aniso=0.3, brushed=True)
+    keycap = material("keycap", (0.62, 0.63, 0.66), 0.28, metal=0.8, aniso=0.3, brushed=True)
+    blue = material("clear-blue", srgb(0x2E6CFF), 0.2, 0.5, coat=0.8)
+    ink = material("ink", srgb(0x2A2C30), 0.6)
+    white = material("ink-white", srgb(0xD8DCE2), 0.5)
+    legend = legend_material("legend", srgb(0x24262A))
+    dash()
+    plate_box(0.004, 0.007, 0.996, 0.993, 0.025 * U, silver, edge=0.05, edge_mat=edge)
+    # The changer's band across the top, its slot in it.
+    x0, y0, x1, y1 = rect([0.17, 0.035, 0.975, 0.265])
+    target(rbox("band", x0, y0, x1, y1, FACE - 0.02, FACE + 0.04, band, 0.015 * U, bevel=0.015))
+    slot(L["slot"], edge)
+    text("IN-DASH 6-DISC CD CHANGER", X(0.86), Y(0.20) + 0.12, FACE + 0.041, 0.016 * U, ink, "RIGHT", 1.3)
+    glass = material("vfd", (0.002, 0.003, 0.006), 0.25, 0.25)
+    surround = material("surround", (0.006, 0.006, 0.007), 0.5, 0.3)
+    window(L["lcd"], 0.008 * U, L["corner"] * U, glass, surround)
+    vz = L["zones"]["visualizer"]
+    bands_print(vz, L["lcd"][3] - 0.012, 0.014 * U, white)
+    for k in CONTROLS + DECOR:
+        if k["id"] == "power":
+            cx, cy = centre(k["box"])
+            x0, y0, x1, y1 = rect(k["box"])
+            r = min(x1 - x0, y1 - y0) / 2
+            cut_circle(cx, cy, r, FACE, 0.2, hole)
+            cylinder("bezel", cx, cy, r * 1.12, FACE - 0.03, FACE + 0.05, edge, bevel=0.02)
+            key(k, FACE + 0.05, blue, hole, legend_material("legend-pwr", srgb(0xE8EEFF)), 0.17, height=0.12,
+                round_bevel=0.10, cut_face=False)
+        else:
+            key(k, FACE, keycap, hole, legend, min(fit([k]), 0.22), r=0.05, height=0.10, edge=edge)
+    printed("VOL", 0.085, 0.505, 0.016 * U, ink, "CENTER", 1.3)
+    printed("CD · MP3 · TUNER", 0.03, 0.80, 0.015 * U, ink, "LEFT", 1.2)
+    printed("4 × 50 W", 0.97, 0.835, 0.015 * U, ink, "RIGHT", 1.3)
+    return lights, glowing(blue, day=0.15, night=0.6)
+
+
+def matrix():
+    """
+    Dark chrome, nearly all window: a big blue dot-matrix display behind navy glass, a black strip of
+    slim silver keys under it, two big polished knobs, the volume and a multi-control, and a small round
+    chrome key at each end.
+    """
+    lights = Lights(sun=1900, fill=110, softbox=0.8)
+    frame = material("dark-chrome", (0.20, 0.21, 0.23), 0.16, metal=1.0, aniso=0.3, brushed=True, bump=0.04)
+    edge = material("edge", (0.70, 0.71, 0.74), 0.12, metal=1.0)
+    strip = material("strip", (0.008, 0.008, 0.009), 0.25, 0.5, coat=0.5)
+    keycap = material("keycap", (0.55, 0.56, 0.59), 0.24, metal=0.9, aniso=0.3, brushed=True)
+    chrome = material("chrome", (0.90, 0.91, 0.93), 0.06, metal=1.0)
+    spun = material("chrome-spun", (0.86, 0.87, 0.89), 0.12, metal=1.0, rings=True, bump=0.08)
+    knurl = material("knurl", (0.70, 0.71, 0.73), 0.2, metal=1.0)
+    legend = legend_material("legend", srgb(0x1A1C20))
+    white = material("ink-white", srgb(0xC8CCD2), 0.5)
+    dash()
+    plate_box(0.004, 0.007, 0.996, 0.993, 0.03 * U, frame, edge=0.06, edge_mat=edge)
+    # A black band round the window, carrying the strip of keys under it.
+    x0, y0, x1, y1 = rect([0.095, 0.035, 0.905, 0.735])
+    target(rbox("band", x0, y0, x1, y1, FACE - 0.02, FACE + 0.03, strip, 0.02 * U, bevel=0.02))
+    glass = material("navy-glass", (0.002, 0.004, 0.012), 0.3, 0.2)
+    surround = material("surround", (0.004, 0.004, 0.005), 0.5, 0.3)
+    window(L["lcd"], 0.006 * U, L["corner"] * U, glass, surround)
+    for k in CONTROLS + DECOR:
+        if k["round"]:
+            cx, cy = centre(k["box"])
+            x0, y0, x1, y1 = rect(k["box"])
+            r = min(x1 - x0, y1 - y0) / 2
+            cut_circle(cx, cy, r * 1.06, FACE, 0.2, hole)
+            parts = [cylinder("key", cx, cy, r * 0.94, FACE - 0.15, FACE + 0.14, chrome, bevel=r * 0.18)]
+            parts.append(text(k["label"], cx, cy, FACE + 0.141, 0.15, legend, face="BarlowSemiCondensed-SemiBold"))
+            rd.KEYS.append(parts)
+        else:
+            key(k, FACE + 0.03, keycap, hole, legend, min(fit([k]), 0.21), r=0.04, height=0.08, gap=0.03,
+                edge=edge)
+    # The two big knobs: polished caps in knurled chrome skirts.
+    for b in [L["knob"]] + [t["box"] for t in L["trims"]]:
+        cx, cy = centre(b)
+        x0, y0, x1, y1 = rect(b)
+        r = min(x1 - x0, y1 - y0) / 2 * 0.80
+        cylinder("bezel", cx, cy, r * 1.12, FACE - 0.05, FACE + 0.04, edge, bevel=0.02)
+        knob(b, FACE + 0.04, hole, knurl, spun, ridges=90, cap_frac=0.80, height=0.40)
+        cylinder("cap-ring", cx, cy, r * 0.84, FACE + 0.40, FACE + 0.43, chrome, bevel=0.01)
+    printed("WMA", 0.055, 0.785, 0.016 * U, white, "CENTER", 1.25)
+    printed("MP3", 0.055, 0.83, 0.016 * U, white, "CENTER", 1.25)
+    printed("AUTO", 0.93, 0.785, 0.016 * U, white, "CENTER", 1.25)
+    printed("TA/EQ", 0.93, 0.83, 0.016 * U, white, "CENTER", 1.25)
+    return lights
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
-         "twin01": twin}
+         "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

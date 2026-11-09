@@ -84,13 +84,17 @@ final class Faceplate {
             case Skins.TAPE:
             case Skins.RED:
             case Skins.MATTE:
+            case Skins.AMBER:
+            case Skins.DAB:
             case Skins.HERITAGE:
             case Skins.EQ_STACK:
             case Skins.LEVEL:
             case Skins.TRIO:
             case Skins.SPECTRUM:
             case Skins.MULTI:
-            case Skins.TWIN: f.plain(); return;
+            case Skins.TWIN:
+            case Skins.RAINBOW:
+            case Skins.MATRIX: f.plain(); return;
             default: break;
         }
         switch (skin.lcdStyle) {

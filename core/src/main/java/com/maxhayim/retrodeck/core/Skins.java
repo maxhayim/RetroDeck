@@ -20,11 +20,15 @@ public final class Skins {
     public static final String SPECTRUM = "spectrum97";
     public static final String MULTI = "multi2000";
     public static final String TWIN = "twin01";
+    public static final String RAINBOW = "rainbow02";
+    public static final String MATRIX = "matrix04";
     public static final String CHROME = "chrome65";
     public static final String CHROME_MODERN = "chrome65m";
     public static final String TAPE = "tape87";
     public static final String RED = "red19";
     public static final String MATTE = "cd20";
+    public static final String AMBER = "amber21";
+    public static final String DAB = "dab22";
     public static final String HERITAGE = "heritage23";
 
     private static List<Skin> all;
@@ -37,15 +41,17 @@ public final class Skins {
             all = new ArrayList<>();
             all.add(chrome(false));
             all.add(chrome(true));
+            all.add(amber());
+            all.add(heritage());
             all.add(hifi());
             all.add(classic());
+            all.add(dab());
             all.add(tape());
+            all.add(matte());
             all.add(digital());
             all.add(detachable());
             all.add(bluetooth());
             all.add(red());
-            all.add(matte());
-            all.add(heritage());
             all.add(eqStack());
             all.add(factory());
             all.add(level());
@@ -54,6 +60,8 @@ public final class Skins {
             all.add(spectrum());
             all.add(multi());
             all.add(twin());
+            all.add(rainbow());
+            all.add(matrix());
             all.add(modern());
         }
         return all;
@@ -102,15 +110,17 @@ public final class Skins {
             try {
                 built.add(chrome(false));
                 built.add(chrome(true));
+                built.add(amber());
+                built.add(heritage());
                 built.add(hifi());
                 built.add(classic());
+                built.add(dab());
                 built.add(tape());
+                built.add(matte());
                 built.add(digital());
                 built.add(detachable());
                 built.add(bluetooth());
                 built.add(red());
-                built.add(matte());
-                built.add(heritage());
             } finally {
                 face = SINGLE_BODY;
             }
@@ -697,6 +707,84 @@ public final class Skins {
     }
 
     /**
+     * A silver double-DIN unit from around 2002 with an in-dash CD changer: a slot across the top, a wide
+     * display whose bars run through the colours of the rainbow from the bass to the treble, a round
+     * blue-lit key and the volume down the left, the presets down the right and a row of keys along the
+     * foot.
+     */
+    private static Skin rainbow() {
+        Skin s = new Skin(RAINBOW, "Rainbow 2002", "2000s", 2, 0xFFB8BCC2, 0xFF8C9097, 0xFF0A0A0B, 0xFF02030A,
+                0xFF000000, 0xFF9A9EA5, 0xFF5A5E64, 0xFF2A2C30, Skin.LCD_DOT, 0.012f);
+        s.art = "skins/" + RAINBOW;
+        s.knobDots = false;
+        s.phosphor = 0xFFA8E8FF;
+        s.barSegs = 12;
+        s.bandInks = new int[]{0xFF7CFF3A, 0xFFB8FF2E, 0xFFE8F030, 0xFFFFC832, 0xFF4CFFB0, 0xFF2EF0E0, 0xFF2ED2FF,
+                0xFF2EA8FF, 0xFF3C7CFF, 0xFF5A5CFF, 0xFF7C4CFF, 0xFFA04CFF, 0xFFC84CF0, 0xFFE84CD8, 0xFFFF4CB0, 0xFFFF5A82};
+        s.peakInk = 0xFFF4F8FF;
+        // Dark print on the silver keys by day; at night they light ice blue.
+        s.keyPrint = 0xFF2A2C30;
+        s.keyLight = 0xFF8CD8FF;
+        s.slot = new Box(0.20f, 0.095f, 0.86f, 0.145f);
+        s.lcd = new Box(0.19f, 0.28f, 0.89f, 0.80f);
+        s.lcdText = new Box(0.32f, 0.31f, 0.86f, 0.44f);
+        s.control(null, "OPEN", new Box(0.03f, 0.05f, 0.14f, 0.13f))
+                .control(null, "TILT", new Box(0.03f, 0.16f, 0.14f, 0.24f))
+                .control(Skin.POWER, "PWR", new Box(0.05f, 0.33f, 0.12f, 0.455f), true)
+                .control(Skin.VOL_UP, "\u25b2", new Box(0.04f, 0.52f, 0.13f, 0.62f))
+                .control(Skin.VOL_DOWN, "\u25bc", new Box(0.04f, 0.64f, 0.13f, 0.74f));
+        s.presets = new Box(0.905f, 0.28f, 0.975f, 0.80f);
+        s.presetRows = 6;
+        String[] ids = {Skin.SOURCE, Skin.MENU, null, Skin.PREV, Skin.PLAY, Skin.NEXT, Skin.DISPLAY, null};
+        String[] labels = {"SOURCE", "MODE", "BAND", "|<<", "PLAY", ">>|", "DISP", "AUDIO"};
+        for (int i = 0; i < ids.length; i++) {
+            float l = 0.03f + i * 0.119f;
+            s.control(ids[i], labels[i], new Box(l, 0.85f, l + 0.107f, 0.93f));
+        }
+        s.zone(Zones.HEADER, 0.66f, 0.17f, 0.89f, 0.255f)
+                .zone(Zones.LCD, 0.21f, 0.31f, 0.30f, 0.44f)
+                .zone(Zones.FACEPLATE, 0.03f, 0.77f, 0.14f, 0.83f)
+                .zone(Zones.CORNER, 0.03f, 0.94f, 0.30f, 0.99f)
+                .zone(Zones.VISUALIZER, 0.21f, 0.47f, 0.87f, 0.77f);
+        return s;
+    }
+
+    /**
+     * A double-DIN unit from around 2004 in dark chrome, nearly all display: a big blue dot-matrix window,
+     * a row of slim keys under it, and two big chrome knobs, the volume and a multi-control, between
+     * small round chrome keys.
+     */
+    private static Skin matrix() {
+        Skin s = new Skin(MATRIX, "Blue Matrix 2004", "2000s", 2, 0xFF4A4D52, 0xFF2A2C30, 0xFF050506, 0xFF020818,
+                0xFF000000, 0xFF8E9298, 0xFF4A4D52, 0xFFC8CCD2, Skin.LCD_DOT, 0.012f);
+        s.art = "skins/" + MATRIX;
+        s.knobDots = false;
+        s.phosphor = 0xFF8CDCFF;
+        s.lcdGlass = 0xFF061838;
+        s.keyPrint = 0xFFD8DCE0;
+        s.keyLight = 0xFF5CB8FF;
+        s.lcd = new Box(0.11f, 0.06f, 0.89f, 0.62f);
+        s.lcdText = new Box(0.22f, 0.10f, 0.87f, 0.27f);
+        String[] ids = {Skin.PREV, Skin.PLAY, Skin.NEXT, Skin.DISPLAY, Skin.MENU, null, null};
+        String[] labels = {"|<<", "PLAY", ">>|", "DISP", "FUNC", "AUDIO", "LIST"};
+        for (int i = 0; i < ids.length; i++) {
+            float l = 0.15f + i * 0.1017f;
+            s.control(ids[i], labels[i], new Box(l, 0.655f, l + 0.0897f, 0.715f));
+        }
+        s.control(Skin.SOURCE, "SRC", new Box(0.145f, 0.77f, 0.205f, 0.88f), true)
+                .control(Skin.POWER, "OFF", new Box(0.795f, 0.77f, 0.855f, 0.88f), true);
+        s.knob = new Box(0.30f, 0.725f, 0.47f, 0.985f);
+        // The multi-control: only part of the look.
+        s.trim("|", new Box(0.58f, 0.725f, 0.75f, 0.985f));
+        s.zone(Zones.HEADER, 0.40f, 0.005f, 0.60f, 0.055f)
+                .zone(Zones.LCD, 0.13f, 0.10f, 0.21f, 0.27f)
+                .zone(Zones.FACEPLATE, 0.015f, 0.90f, 0.13f, 0.98f)
+                .zone(Zones.CORNER, 0.87f, 0.90f, 0.985f, 0.98f)
+                .zone(Zones.VISUALIZER, 0.13f, 0.31f, 0.87f, 0.59f);
+        return s;
+    }
+
+    /**
      * A 1960s radio: fluted chrome push-buttons, no visualizer, its track text centred in the window. The modern
      * one, made again for classic cars today, has black keys and shows bars under the text.
      */
@@ -819,11 +907,11 @@ public final class Skins {
     }
 
     /**
-     * A CD and Bluetooth unit of the 2020s in one DIN: matt black, a CD slot across the top, a knob in a
+     * A CD unit in one DIN, in the style of the late 1980s: matt black, a CD slot across the top, a knob in a
      * chrome ring, a white dot-matrix display and a row of keys along the foot with red legends.
      */
     private static Skin matte() {
-        Skin s = new Skin(MATTE, "Matte CD 2020", "2020s", 1, 0xFF2A2B2E, 0xFF1A1B1D, 0xFF060607, 0xFF050505,
+        Skin s = new Skin(MATTE, "Matte CD 1988", "1980s", 1, 0xFF2A2B2E, 0xFF1A1B1D, 0xFF060607, 0xFF050505,
                 0xFF000000, 0xFF2A2B2E, 0xFF0E0F11, 0xFFD04848, Skin.LCD_DOT, 0.01f);
         single(s);
         s.art = "skins/" + MATTE;
@@ -852,11 +940,99 @@ public final class Skins {
     }
 
     /**
-     * A unit of the 2020s styled after the 1980s in one DIN: black, a knob in a lit ring, presets moulded
+     * A media unit in one DIN, in the style of the early 1980s: matt black, a red segment display, USB, aux and USB-C
+     * ports beside it, a knob in a ring lit orange, round keys ringed in orange, and rows of keys whose
+     * legends glow orange.
+     */
+    private static Skin amber() {
+        Skin s = new Skin(AMBER, "Amber Glow 1982", "1980s", 1, 0xFF1C1D20, 0xFF0B0B0D, 0xFF040405, 0xFF0A0303,
+                0xFF000000, 0xFF1A1B1E, 0xFF070708, 0xFFF07A28, Skin.LCD_SEGMENT, 0.012f);
+        single(s);
+        s.art = "skins/" + AMBER;
+        s.segmentFont = true;
+        s.knobDots = false;
+        s.phosphor = 0xFFFF3424;
+        s.keyPrint = 0xFFF0802E;
+        s.keyLight = 0xFFFF8A2A;
+        s.lcd = in(0.07f, 0.12f, 0.505f, 0.50f);
+        s.lcdText = in(0.16f, 0.15f, 0.495f, 0.33f);
+        s.control(Skin.DISPLAY, "DISP", in(0.518f, 0.22f, 0.572f, 0.46f))
+                .decor("\u25b2", in(0.878f, 0.24f, 0.924f, 0.46f))
+                .decor("\u25bc", in(0.928f, 0.24f, 0.974f, 0.46f));
+        s.knob = in(0.045f, 0.50f, 0.195f, 0.94f);
+        s.control(Skin.POWER, "PWR", in(0.215f, 0.62f, 0.28f, 0.90f), true)
+                .control(Skin.SOURCE, "SRC", in(0.33f, 0.62f, 0.395f, 0.90f), true)
+                .control(Skin.MENU, "MENU", in(0.433f, 0.55f, 0.515f, 0.71f))
+                .decor("EQ", in(0.522f, 0.55f, 0.598f, 0.71f))
+                .control(Skin.PREV, "|<<", in(0.433f, 0.75f, 0.515f, 0.91f))
+                .control(Skin.NEXT, ">>|", in(0.522f, 0.75f, 0.598f, 0.91f));
+        s.presets = in(0.612f, 0.55f, 0.862f, 0.91f);
+        s.presetRows = 2;
+        s.control(Skin.PLAY, "PLAY", in(0.872f, 0.55f, 0.974f, 0.71f))
+                .decor("CLK", in(0.872f, 0.75f, 0.974f, 0.91f));
+        s.zone(Zones.HEADER, in(0.205f, 0.52f, 0.41f, 0.605f))
+                .zone(Zones.LCD, in(0.08f, 0.15f, 0.15f, 0.33f))
+                .zone(Zones.FACEPLATE, in(0.205f, 0.915f, 0.41f, 0.975f))
+                .zone(Zones.CORNER, in(0.58f, 0.03f, 0.87f, 0.15f))
+                .zone(Zones.VISUALIZER, in(0.08f, 0.36f, 0.495f, 0.47f));
+        return s;
+    }
+
+    /**
+     * A unit in one DIN in the style of the mid-1980s: black, split tone keys either side of
+     * a covered card slot and USB port, a knob in a ring lit amber, a four-way pad, an amber dot-matrix
+     * display, and a block of keys on the right.
+     */
+    private static Skin dab() {
+        Skin s = new Skin(DAB, "Split Tone 1986", "1980s", 1, 0xFF1E1F22, 0xFF0E0F11, 0xFF050506, 0xFF050302,
+                0xFF000000, 0xFF1C1D20, 0xFF0A0A0C, 0xFFF09A3A, Skin.LCD_DOT, 0.01f);
+        single(s);
+        s.art = "skins/" + DAB;
+        s.knobDots = false;
+        s.phosphor = 0xFFFFA62E;
+        s.keyPrint = 0xFFF0A040;
+        s.keyLight = 0xFFFFA840;
+        s.control(Skin.MENU, "\u2261", in(0.037f, 0.10f, 0.086f, 0.37f));
+        String[][] split = {{"TREB", "BASS"}, {"BAL", "FAD"}, {"EQ", "LO"}, {"TA", "AF"}};
+        for (int i = 0; i < split.length; i++) {
+            float l = 0.091f + i * 0.054f;
+            s.decor(split[i][0], in(l, 0.10f, l + 0.049f, 0.23f))
+                    .decor(split[i][1], in(l, 0.245f, l + 0.049f, 0.37f));
+        }
+        s.control(Skin.DISPLAY, "DIS", in(0.315f, 0.10f, 0.36f, 0.37f))
+                .decor("FR", in(0.75f, 0.10f, 0.80f, 0.37f))
+                .decor("FF", in(0.805f, 0.10f, 0.855f, 0.37f))
+                .decor("BT", in(0.861f, 0.10f, 0.911f, 0.23f))
+                .decor("USB", in(0.861f, 0.245f, 0.911f, 0.37f))
+                .control(Skin.SOURCE, "SRC", in(0.916f, 0.10f, 0.966f, 0.23f))
+                .decor("SD", in(0.916f, 0.245f, 0.966f, 0.37f));
+        s.knob = in(0.035f, 0.50f, 0.165f, 0.90f);
+        s.control(Skin.POWER, "PWR", in(0.168f, 0.80f, 0.198f, 0.93f), true)
+                .decor("\u25b2", in(0.21f, 0.42f, 0.357f, 0.55f))
+                .control(Skin.PREV, "\u00ab", in(0.21f, 0.57f, 0.281f, 0.77f))
+                .control(Skin.NEXT, "\u00bb", in(0.286f, 0.57f, 0.357f, 0.77f))
+                .decor("\u25bc", in(0.21f, 0.79f, 0.357f, 0.92f));
+        s.lcd = in(0.377f, 0.43f, 0.70f, 0.80f);
+        s.lcdText = in(0.44f, 0.47f, 0.69f, 0.63f);
+        s.presets = in(0.749f, 0.42f, 0.962f, 0.75f);
+        s.presetRows = 2;
+        s.control(Skin.PLAY, "PLAY", in(0.749f, 0.78f, 0.8157f, 0.93f))
+                .decor("FM", in(0.822f, 0.78f, 0.889f, 0.93f))
+                .decor("AM", in(0.8956f, 0.78f, 0.962f, 0.93f));
+        s.zone(Zones.HEADER, in(0.40f, 0.815f, 0.69f, 0.875f))
+                .zone(Zones.LCD, in(0.385f, 0.47f, 0.435f, 0.63f))
+                .zone(Zones.FACEPLATE, in(0.035f, 0.40f, 0.20f, 0.48f))
+                .zone(Zones.CORNER, in(0.40f, 0.02f, 0.72f, 0.085f))
+                .zone(Zones.VISUALIZER, in(0.385f, 0.66f, 0.69f, 0.77f));
+        return s;
+    }
+
+    /**
+     * A unit in one DIN in the style of the early 1980s: black, a knob in a lit ring, presets moulded
      * in clear red that glow, a flip-down cover above an orange dot-matrix display, and square keys.
      */
     private static Skin heritage() {
-        Skin s = new Skin(HERITAGE, "Heritage 2023", "2020s", 1, 0xFF1E1F22, 0xFF0E0F11, 0xFF050506, 0xFF050302,
+        Skin s = new Skin(HERITAGE, "Heritage 1983", "1980s", 1, 0xFF1E1F22, 0xFF0E0F11, 0xFF050506, 0xFF050302,
                 0xFF000000, 0xFF1C1D20, 0xFF0A0A0C, 0xFFD8DCE0, Skin.LCD_DOT, 0.01f);
         single(s);
         s.art = "skins/" + HERITAGE;

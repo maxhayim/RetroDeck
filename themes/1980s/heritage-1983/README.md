@@ -1,8 +1,8 @@
-# Heritage 2023
+# Heritage 1983
 
-**Era:** 2020s  ·  **Size:** Single DIN  ·  **Display:** Dot matrix lit orange, whatever the dash lighting  ·  **Skin id:** `heritage23`
+**Era:** 1980s  ·  **Size:** Single DIN  ·  **Display:** Dot matrix lit orange, whatever the dash lighting  ·  **Skin id:** `heritage23`
 
-A unit of the 2020s styled after the 1980s, in one DIN: black, square keys, a knob in a ring lit red, presets moulded in clear red that glow, and a flip-down cover above an orange dot-matrix display. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it.
+A unit in one DIN in the style of the early 1980s: black, square keys, a knob in a ring lit red, presets moulded in clear red that glow, and a flip-down cover above an orange dot-matrix display. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it.
 
 On a single-DIN head unit's own wide screen (about 8:3) the radio fills the screen; on a bigger one it sits across the lower half under a screen for the visualizer, the song and the clock.
 
@@ -10,7 +10,7 @@ On a single-DIN head unit's own wide screen (about 8:3) the radio fills the scre
 
 Recorded from the running app (v0.15.0) on an Android TV box at 1920×1080 (240 dpi), playing a song with the TV muted: the visualizer follows the music, and the display shows MUTE where the artist would be. The faceplate is the 3D render; the display and knob pointer are drawn live on top.
 
-![Heritage 2023 playing, fading from day to night](day-night.webp)
+![Heritage 1983 playing, fading from day to night](day-night.webp)
 
 ![By day](tv-day.jpg)
 <sub>By day (Key Lighting Off)</sub>

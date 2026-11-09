@@ -62,7 +62,7 @@ public final class Skin {
     public Box lcd, lcdText;
     /** Six preset buttons share this box, or null for none. */
     public Box presets;
-    /** Presets in one row of six, or two rows of three. */
+    /** Presets in one row of six, two rows of three, or six rows: one column down the side. */
     public int presetRows = 1;
     /** A printed name on each preset key besides its number, as on tape decks (REW, FF), or null. */
     public String[] presetLabels;
@@ -80,6 +80,11 @@ public final class Skin {
      * of the vehicle's own replaces them.
      */
     public int[] barInks;
+    /**
+     * A display that prints each bar in a colour of its own, from the bass across to the treble, as the
+     * rainbow analysers of the early 2000s did, or null. A colour of the vehicle's own replaces them.
+     */
+    public int[] bandInks;
     /** The peak marker's own colour on such a display, or 0 for the usual. */
     public int peakInk;
     /** Segments in each bar. */
@@ -224,10 +229,10 @@ public final class Skin {
     public List<Box> presetBoxes() {
         List<Box> out = new ArrayList<>();
         if (presets == null) return out;
-        int rows = presetRows == 2 ? 2 : 1, cols = 6 / rows;
+        int rows = presetRows == 2 || presetRows == 6 ? presetRows : 1, cols = 6 / rows;
         float gap = presets.width() * (rows == 2 ? 0.03f : 0.015f);
         float w = (presets.width() - gap * (cols - 1)) / cols;
-        float vgap = rows == 2 ? presets.height() * 0.08f : 0;
+        float vgap = presets.height() * (rows == 2 ? 0.08f : rows == 6 ? 0.03f : 0);
         float h = (presets.height() - vgap * (rows - 1)) / rows;
         for (int i = 0; i < 6; i++) {
             int row = i / cols, col = i % cols;

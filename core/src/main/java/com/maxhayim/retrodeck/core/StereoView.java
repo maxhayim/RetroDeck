@@ -989,7 +989,8 @@ public class StereoView extends View {
                     for (int s = 0; s < segs; s++) {
                         float top = v.bottom - (s + 1) * sh + sh * 0.18f;
                         // Colour displays shade each column from the illumination up into the accent.
-                        int col = barInk(s, segs, base, ink);
+                        int col = skin.bandInks != null && visualizerColor == 0
+                                ? skin.bandInks[i * skin.bandInks.length / n] : barInk(s, segs, base, ink);
                         if (s < lit && !reflective) {
                             // Lit phosphor bleeds light around itself.
                             paint.setColor(Illumination.withAlpha(col, neon() ? 0x50 : 0x30));

@@ -96,7 +96,7 @@ public class SkinTest {
             for (String z : s.faceplateZones()) assertTrue(s.name + " " + z, s.body.contains(s.zone(z)));
             assertTrue(s.name, s.body.contains(s.lcd));
         }
-        assertEquals(11, singles);
+        assertEquals(13, singles);
     }
 
     @Test
@@ -165,6 +165,7 @@ public class SkinTest {
     public void barColoursAreWhole() {
         for (Skin s : Skins.all()) {
             assertTrue(s.name, s.barSegs >= 4);
+            if (s.bandInks != null) for (int c : s.bandInks) assertEquals(s.name, 0xFF, c >>> 24);
             if (s.barInks == null) continue;
             assertTrue(s.name, s.barInks.length > 0 && s.barInks.length <= s.barSegs);
             for (int c : s.barInks) assertEquals(s.name, 0xFF, c >>> 24);

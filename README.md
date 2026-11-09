@@ -37,8 +37,12 @@
     <td width="50%"><img src="themes/1960s/chrome-1965-modern/day-night.webp" alt="Chrome 1965 Modern, playing, fading between day and night"/><br/><sub>Chrome 1965 Modern: the same radio as made again today, with black keys and a visualizer</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/1980s/heritage-1983/day-night.webp" alt="Heritage 1983, playing, fading between day and night"/><br/><sub>Heritage 1983: in the style of the early 1980s, with clear red presets that glow and an orange dot-matrix display</sub></td>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984, playing, fading between day and night"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/1980s/tape-deck-1987/day-night.webp" alt="Tape Deck 1987, playing, fading between day and night"/><br/><sub>Tape Deck 1987: a cassette deck with a green-lit LCD, tone sliders and clear presets that glow green at night</sub></td>
+    <td width="50%"><img src="themes/1980s/matte-cd-1988/day-night.webp" alt="Matte CD 1988, playing, fading between day and night"/><br/><sub>Matte CD 1988: matt black with a CD slot, a knob in a chrome ring and a white dot-matrix display</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1990s/digital-1996/day-night.webp" alt="Digital 1996, playing, fading between day and night"/><br/><sub>Digital 1996: grained plastic, rubber keys and a dot-matrix display</sub></td>
@@ -47,10 +51,6 @@
   <tr>
     <td width="50%"><img src="themes/2010s/bluetooth-2016/day-night.webp" alt="Bluetooth 2016, playing, fading between day and night"/><br/><sub>Bluetooth 2016: gloss black, a big knob in a lit ring and keys edged with light strips that glow in the dash colour at night</sub></td>
     <td width="50%"><img src="themes/2010s/red-line-2019/day-night.webp" alt="Red Line 2019, playing, fading between day and night"/><br/><sub>Red Line 2019: matt black with a red segment display, a knob in a red ring and keys that light red at night</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="themes/2020s/matte-cd-2020/day-night.webp" alt="Matte CD 2020, playing, fading between day and night"/><br/><sub>Matte CD 2020: matt black with a CD slot, a knob in a chrome ring and a white dot-matrix display</sub></td>
-    <td width="50%"><img src="themes/2020s/heritage-2023/day-night.webp" alt="Heritage 2023, playing, fading between day and night"/><br/><sub>Heritage 2023: a current unit styled after the 1980s, with clear red presets that glow and an orange dot-matrix display</sub></td>
   </tr>
 </table>
 
@@ -71,6 +71,9 @@
   </tr>
   <tr>
     <td width="50%"><img src="themes/2000s/multi-control-2000/day-night.webp" alt="Multi Control 2000, playing, fading between day and night"/><br/><sub>Multi Control 2000: nearly all display, its bars fanned round a half circle in blue</sub></td>
+    <td width="50%"><img src="themes/2000s/twin-dial-2001/day-night.webp" alt="Twin Dial 2001, playing, fading between day and night"/><br/><sub>Twin Dial 2001: two round green dials in a wide silver frame, ringed with spokes that follow the music</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
   <tr>
@@ -104,20 +107,22 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Twenty skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+  <li><strong>Twenty-four skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
       <li>Chrome 1965 Modern: the same radio as made again today, with black keys and a visualizer</li>
+      <li>Amber Glow 1982: matt black, a red segment display, a panel of ports, a knob in a ring lit orange and keys whose legends glow orange</li>
+      <li>Heritage 1983: a knob in a ring lit red, presets in clear red, and a flip-down cover over an orange dot-matrix display</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
       <li>Classic 1985: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</li>
+      <li>Split Tone 1986: split tone keys, an open cover over a card slot and USB port, a four-way pad and an amber dot-matrix display</li>
       <li>Tape Deck 1987: a black cassette deck with tone sliders, a green-lit LCD with dark digits and presets that glow green</li>
+      <li>Matte CD 1988: matt black, a CD slot, a knob in a chrome ring, a white dot-matrix display and red-printed keys</li>
       <li>Digital 1996: grained plastic, rubber keys and a dot-matrix display</li>
       <li>Detachable 1998: a curved graphite faceplate with chrome trim, a big encoder and a colour display</li>
       <li>Bluetooth 2016: gloss black, a big knob in a lit ring, keys edged with light strips and a blue segment display</li>
       <li>Red Line 2019: matt black, a red segment display, a knob in a red ring and keys with red legends</li>
-      <li>Matte CD 2020: matt black, a CD slot, a knob in a chrome ring, a white dot-matrix display and red-printed keys</li>
-      <li>Heritage 2023: styled after the 1980s, a knob in a ring lit red, presets in clear red, and a flip-down cover over an orange dot-matrix display</li>
     </ul>
     Double DIN, filling the screen:
     <ul>
@@ -129,6 +134,8 @@
       <li>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser, white bars under a green line and blue above</li>
       <li>Multi Control 2000: nearly all display, a big blue fluorescent window whose bars fan round a half circle</li>
       <li>Twin Dial 2001: two round green fluorescent dials in a wide silver frame, each ringed with fine spokes that follow the music, the volume on the left and the track on the right</li>
+      <li>Rainbow 2002: a silver unit with an in-dash CD changer, its wide window's bars running through the rainbow from the bass to the treble</li>
+      <li>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over a strip of slim keys and two big polished knobs</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>

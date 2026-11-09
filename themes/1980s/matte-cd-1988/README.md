@@ -1,8 +1,8 @@
-# Matte CD 2020
+# Matte CD 1988
 
-**Era:** 2020s  ·  **Size:** Single DIN  ·  **Display:** Dot matrix lit white, whatever the dash lighting  ·  **Skin id:** `cd20`
+**Era:** 1980s  ·  **Size:** Single DIN  ·  **Display:** Dot matrix lit white, whatever the dash lighting  ·  **Skin id:** `cd20`
 
-A CD and Bluetooth unit of the 2020s in one DIN: matt black, a CD slot across the top, a knob in a chrome ring, a white dot-matrix display, a USB port and an aux jack, and a row of keys along the foot with red legends that light red at night. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it.
+A CD unit in one DIN, in the style of the late 1980s: matt black, a CD slot across the top, a knob in a chrome ring, a white dot-matrix display, a USB port and an aux jack, and a row of keys along the foot with red legends that light red at night. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it.
 
 On a single-DIN head unit's own wide screen (about 8:3) the radio fills the screen; on a bigger one it sits across the lower half under a screen for the visualizer, the song and the clock.
 
@@ -10,7 +10,7 @@ On a single-DIN head unit's own wide screen (about 8:3) the radio fills the scre
 
 Recorded from the running app (v0.15.0) on an Android TV box at 1920×1080 (240 dpi), playing a song with the TV muted: the visualizer follows the music, and the display shows MUTE where the artist would be. The faceplate is the 3D render; the display and knob pointer are drawn live on top.
 
-![Matte CD 2020 playing, fading from day to night](day-night.webp)
+![Matte CD 1988 playing, fading from day to night](day-night.webp)
 
 ![By day](tv-day.jpg)
 <sub>By day (Key Lighting Off)</sub>
