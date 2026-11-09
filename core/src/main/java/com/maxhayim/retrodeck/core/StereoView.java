@@ -102,6 +102,9 @@ public class StereoView extends View {
     private final Paint glyph = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final android.graphics.Rect glyphBounds = new android.graphics.Rect();
     private boolean scrollToEnd;
+    /** When the current title started scrolling (uptime ms): a new song starts at its beginning. */
+    private long scrollStart;
+    private String scrollTitle;
     private final RectF rect = new RectF();
     private final Path path = new Path();
     private final Path window = new Path();
@@ -261,6 +264,11 @@ public class StereoView extends View {
         int w = getWidth(), h = getHeight();
         if (w == 0 || h == 0) return;
         long now = SystemClock.uptimeMillis();
+        // A new song's title scrolls from its beginning.
+        if (state.title != null && !state.title.equals(scrollTitle)) {
+            scrollTitle = state.title;
+            scrollStart = now;
+        }
 
         if (!state.power) {
             drawStandby(c, w, h);
@@ -867,7 +875,7 @@ public class StereoView extends View {
 
         java.util.List<SegmentText.Cell> list = SegmentText.cells(s);
         int total = SegmentText.width(list);
-        int offset = SegmentText.scroll(total, cells, SystemClock.uptimeMillis(), scrollToEnd);
+        int offset = SegmentText.scroll(total, cells, SystemClock.uptimeMillis() - scrollStart, scrollToEnd);
         SegmentText.Cell[] shown = SegmentText.window(list, offset, cells);
         // A radio from before visualizers centres its text in the window, with nothing under it.
         int pad = skin.noVisualizer && total < cells ? (cells - total) / 2 : 0;
@@ -895,6 +903,12 @@ public class StereoView extends View {
             float gy = y - capH / 2f - glyphBounds.exactCenterY();
             c.drawText(cell.glyph, gx, gy, glyph);
         }
+    }
+
+    /** Starts the title scrolling from its beginning, as when a new song starts. */
+    public void restartScroll() {
+        scrollStart = SystemClock.uptimeMillis();
+        invalidate();
     }
 
     /** Shows the end of text too long for the display instead of scrolling it, for still screenshots. */

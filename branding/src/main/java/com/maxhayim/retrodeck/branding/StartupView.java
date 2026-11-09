@@ -84,6 +84,30 @@ public final class StartupView extends View {
         invalidate();
     }
 
+    /**
+     * Draws the sequence as it stands elapsedMs after it started, without animating the view itself:
+     * for videos. Lay the view out first. Returns how far it has faded out, 0 to 1.
+     */
+    public float drawAt(Canvas c, VehicleProfile p, long elapsedMs) {
+        if (profile != p || timeline == null) {
+            profile = p;
+            renderer.setProfile(p);
+            timeline = new StartupTimeline(p.startup);
+            still = false;
+        }
+        StartupTimeline.Frame f;
+        if (timeline.durationMs() <= 0) {
+            // Startup is off: show the finished welcome screen instead.
+            f = new StartupTimeline.Frame();
+            f.logo = f.badge = 1;
+            f.lcd = p.startup.lcdBoot ? 1 : 0;
+        } else {
+            f = timeline.at(Math.min(elapsedMs, timeline.durationMs() - 1));
+        }
+        draw(c, f);
+        return f.exit;
+    }
+
     public BrandingRenderer renderer() {
         return renderer;
     }

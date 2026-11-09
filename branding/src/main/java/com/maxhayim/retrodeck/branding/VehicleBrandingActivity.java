@@ -169,6 +169,7 @@ public class VehicleBrandingActivity extends Activity {
         rowKeys = add(l, "Key Lighting", v -> chooseKeyLighting());
         rowStartup = add(l, "Startup Animation", v -> startActivity(new Intent(this, StartupEditorActivity.class)));
         add(l, "Preview", v -> openPreview()).value("Startup, stereo and standby, full screen");
+        add(l, "Record a Video", v -> recordVideo()).value("A silent tour to share: startup, day and night, visualizer, standby");
 
         l.addView(Ui.section(this, "Share and reset"));
         add(l, "Import/Export Branding Pack", v -> showPacks()).value("ZIP files, works offline");
@@ -761,6 +762,123 @@ public class VehicleBrandingActivity extends Activity {
         if (which == OWN_VISUALIZER) profile.visualizerColor = color;
         else if (which == OWN_SCREEN) profile.screenColor = color;
         else profile.bodyColor = color;
+    }
+
+    // ---- video ----
+
+    private VideoTour tour;
+
+    /**
+     * Records the vehicle's theme as a silent MP4 to share: the startup animation, the stereo by day
+     * and by night with the playing song, the full-screen visualizer and standby.
+     */
+    private void recordVideo() {
+        if (!VideoTour.supported()) {
+            error("Record a video", "Recording a video needs Android 6 or newer. Packs still carry screenshots.");
+            return;
+        }
+        final File tmp = new File(getCacheDir(), "tour.mp4");
+        //noinspection ResultOfMethodCallIgnored
+        tmp.delete();
+        final VehicleProfile p = profile;
+        final ProgressDialog progress = new ProgressDialog(this);
+        tour = new VideoTour(this, store, p, com.maxhayim.retrodeck.core.StereoState.shown, tmp, new VideoTour.Listener() {
+            @Override
+            public void onProgress(float done) {
+                progress.setProgress(Math.round(done * 100));
+            }
+
+            @Override
+            public void onDone(File video, String err) {
+                tour = null;
+                dismiss(progress);
+                if (video == null) {
+                    error("Couldn't record the video", err);
+                    return;
+                }
+                saveVideo(video, p);
+            }
+        });
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setMax(100);
+        progress.setTitle("Recording a video");
+        progress.setMessage(String.format(Locale.US, "%d seconds, without sound. RetroDeck draws it as it records.",
+                tour.durationMs() / 1000));
+        progress.setCancelable(false);
+        progress.setButton(android.content.DialogInterface.BUTTON_NEGATIVE, "Stop", (d, w) -> {
+            if (tour != null) tour.stop();
+        });
+        progress.show();
+        tour.start();
+    }
+
+    /** Moves the finished video to Movies/RetroDeck (or RetroDeck's own folder on older Android). */
+    private void saveVideo(final File video, VehicleProfile p) {
+        String name = p.displayName().replaceAll("[^A-Za-z0-9._-]+", "-") + "-"
+                + new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date()) + ".mp4";
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                android.content.ContentValues v = new android.content.ContentValues();
+                v.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name);
+                v.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
+                v.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_MOVIES + "/RetroDeck");
+                Uri uri = getContentResolver().insert(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, v);
+                if (uri == null) throw new java.io.IOException("The Movies folder isn't available.");
+                try (OutputStream out = getContentResolver().openOutputStream(uri);
+                     java.io.InputStream in = new java.io.FileInputStream(video)) {
+                    if (out == null) throw new java.io.IOException("The Movies folder isn't available.");
+                    copy(in, out);
+                }
+                //noinspection ResultOfMethodCallIgnored
+                video.delete();
+                videoSaved("Saved to Movies/RetroDeck/" + name, uri);
+            } else {
+                File dir = getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES);
+                if (dir == null) dir = new File(getFilesDir(), "videos");
+                //noinspection ResultOfMethodCallIgnored
+                dir.mkdirs();
+                File dest = new File(dir, name);
+                try (OutputStream out = new FileOutputStream(dest); java.io.InputStream in = new java.io.FileInputStream(video)) {
+                    copy(in, out);
+                }
+                //noinspection ResultOfMethodCallIgnored
+                video.delete();
+                videoSaved("Saved to " + dest.getPath() + "\n\nCopy it with a USB cable or a file manager.", null);
+            }
+        } catch (Exception e) {
+            error("Couldn't save the video", e.getMessage() == null ? e.toString() : e.getMessage());
+        }
+    }
+
+    private void videoSaved(String message, final Uri uri) {
+        android.app.AlertDialog.Builder b = Ui.dialog(this).setTitle("Video recorded")
+                .setMessage(message + (hasLogos(java.util.Collections.singletonList(profile)) ? "\n\n" + SHARE_NOTE : ""))
+                .setPositiveButton("OK", null);
+        if (uri != null) {
+            b.setNeutralButton("Share", (d, w) -> {
+                Intent send = new Intent(Intent.ACTION_SEND).setType("video/mp4").putExtra(Intent.EXTRA_STREAM, uri)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    startActivity(Intent.createChooser(send, "Share the video"));
+                } catch (android.content.ActivityNotFoundException e) {
+                    toast("No app here can share a video. Copy it from Movies/RetroDeck.");
+                }
+            });
+        }
+        b.show();
+    }
+
+    private static void copy(java.io.InputStream in, OutputStream out) throws java.io.IOException {
+        byte[] buf = new byte[64 * 1024];
+        int n;
+        while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Leaving the screen ends a recording; what was recorded is kept.
+        if (tour != null) tour.stop();
     }
 
     private void openPreview() {
