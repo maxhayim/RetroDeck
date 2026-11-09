@@ -20,10 +20,14 @@ import java.util.Map;
  */
 public class SettingsActivity extends Activity {
 
-    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", DISPLAY = "Display", BUTTONS = "Buttons", ABOUT = "About";
+    private static final String PERSONALIZATION = "Personalization", AUDIO = "Audio", DISPLAY = "Display", BUTTONS = "Buttons",
+            UPDATES = "Updates", ABOUT = "About";
 
     private LinearLayout sections, rows;
     private String current = PERSONALIZATION;
+    /** Updates: the row showing the updater's status, and whether an install row is shown. */
+    private Ui.Row updateStatus;
+    private boolean installShown;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -46,7 +50,17 @@ public class SettingsActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Ui.immersive(this);
+        Updater.visible++;
+        // The updater works on its own thread and reports through its status; show it as it changes.
+        Updater.onChange = this::showUpdates;
         show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Updater.visible--;
+        Updater.onChange = null;
     }
 
     private Map<String, List<RetroDeckModule.SettingsEntry>> entries() {
@@ -62,6 +76,7 @@ public class SettingsActivity extends Activity {
                 list.add(e);
             }
         }
+        m.put(UPDATES, new ArrayList<>());
         m.put(ABOUT, new ArrayList<>());
         return m;
     }
@@ -83,6 +98,7 @@ public class SettingsActivity extends Activity {
         }
 
         rows.removeAllViews();
+        updateStatus = null;
         rows.addView(Ui.section(this, current));
         List<RetroDeckModule.SettingsEntry> list = all.get(current);
         if (list != null) {
@@ -94,7 +110,56 @@ public class SettingsActivity extends Activity {
         if (AUDIO.equals(current)) audioRows();
         if (DISPLAY.equals(current)) displayRows();
         if (BUTTONS.equals(current)) buttonRows();
+        if (UPDATES.equals(current)) updateRows();
         if (ABOUT.equals(current)) aboutRows();
+    }
+
+    private void updateRows() {
+        rows.addView(Ui.row(this, "Updates", Updater.label(Updater.mode(this)), v -> {
+            final String[] modes = Updater.MODES;
+            String[] labels = new String[modes.length];
+            int now = 0;
+            for (int i = 0; i < modes.length; i++) {
+                labels[i] = Updater.label(modes[i]);
+                if (modes[i].equals(Updater.mode(this))) now = i;
+            }
+            Ui.dialog(this).setTitle("Updates").setSingleChoiceItems(labels, now, (d, w) -> {
+                Updater.setMode(this, modes[w]);
+                d.dismiss();
+                show();
+            }).show();
+        }));
+        rows.addView(Ui.divider(this));
+        updateStatus = Ui.row(this, "Check for updates now", "", v -> Updater.checkNow(this));
+        rows.addView(updateStatus);
+        rows.addView(Ui.divider(this));
+        final Updater.Release r = Updater.available(this);
+        installShown = r != null;
+        if (r != null) {
+            rows.addView(Ui.row(this, "Install RetroDeck " + r.version, "Downloads it from GitHub and installs it. "
+                    + "RetroDeck closes while it does; open it again after.", v -> Updater.installNow(this)));
+            rows.addView(Ui.divider(this));
+        }
+        showUpdates();
+        note("Off: RetroDeck never checks. Notify only: while RetroDeck is open it checks GitHub every few hours and "
+                + "says once when there's a new version. Automatic: it also downloads the new version, and installs it "
+                + "when you switch the stereo off with PWR or the head unit's screen goes off, never while music plays.");
+        note("Android 12 and newer install without asking once RetroDeck has updated itself once. Older Android, and "
+                + "a first update, ask you to tap Install; Android may first ask to allow RetroDeck to install apps. "
+                + "An update must be signed with the same key as this copy, or it's refused.");
+        note("A check asks GitHub for the latest release of " + Updater.REPO + ". GitHub sees the head unit's "
+                + "internet address and RetroDeck's version, and nothing else is sent.");
+    }
+
+    /** Keeps the status line current while Updates is open. */
+    private void showUpdates() {
+        if (updateStatus == null) return;
+        if ((Updater.available(this) != null) != installShown) {
+            show();
+            return;
+        }
+        String s = Updater.status(this);
+        updateStatus.value(s.isEmpty() ? "Version " + BuildConfig.VERSION_NAME : s);
     }
 
     private void audioRows() {
@@ -175,7 +240,8 @@ public class SettingsActivity extends Activity {
         }
         rows.addView(Ui.row(this, "RetroDeck", "Version " + version + "  ·  MIT License", null));
         rows.addView(Ui.divider(this));
-        rows.addView(Ui.row(this, "Privacy", "No account, no cloud, no network. Profiles and logos stay on this device.", null));
+        rows.addView(Ui.row(this, "Privacy", "No account, no cloud. Profiles and logos stay on this device. "
+                + "Online only for GIPHY search and update checks (Updates can be Off).", null));
         rows.addView(Ui.divider(this));
         rows.addView(Ui.row(this, "Open source", "AndroidSVG 1.4 by Paul LeBeau, Apache License 2.0", null));
         rows.addView(Ui.divider(this));

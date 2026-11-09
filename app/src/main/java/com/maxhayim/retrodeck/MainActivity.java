@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         public void run() {
             player.tick();
             checkIdle();
+            checkUpdates();
             main.postDelayed(this, 1000);
         }
     };
@@ -121,12 +122,14 @@ public class MainActivity extends Activity implements StereoView.Listener {
         lastInput = android.os.SystemClock.uptimeMillis();
         buttons = ButtonsActivity.load(this);
         applyProfile();
+        Updater.visible++;
         main.post(tick);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Updater.visible--;
         main.removeCallbacks(tick);
     }
 
@@ -214,6 +217,8 @@ public class MainActivity extends Activity implements StereoView.Listener {
                 if (!state.power) {
                     player.pause();
                     stereo.setFullscreen(false);
+                    Updater.standby = true;
+                    Updater.onStandby(this);
                 }
                 MelodyBox.play(this, state.power ? MelodyBox.start(this) : MelodyBox.stop(this));
                 break;
@@ -338,8 +343,21 @@ public class MainActivity extends Activity implements StereoView.Listener {
         @Override
         public void onReceive(android.content.Context c, Intent i) {
             if (state.power) MelodyBox.play(MainActivity.this, MelodyBox.stop(MainActivity.this));
+            if (!state.playing) {
+                Updater.standby = true;
+                Updater.onStandby(MainActivity.this);
+            }
         }
     };
+
+    /** Checks GitHub every few hours while the stereo is open, and says once when there's a new version. */
+    private void checkUpdates() {
+        Updater.standby = !state.power && !state.playing;
+        Updater.checkIfDue(this);
+        if (startup.isPlaying()) return;
+        String news = Updater.announce(this);
+        if (news != null) android.widget.Toast.makeText(this, news, android.widget.Toast.LENGTH_LONG).show();
+    }
 
     private void checkIdle() {
         int after = DisplaySettings.fullscreenAfter(this);

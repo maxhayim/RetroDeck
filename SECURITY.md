@@ -51,9 +51,14 @@ Responsible disclosure is required.
 
 ## Privacy
 
-- No account and no cloud service. The `INTERNET` permission is used only by GIPHY search, while its screen is
-  open: the search words and the API key go to GIPHY's API, and results and the chosen GIF come from GIPHY's media
-  servers, over HTTPS with TLS 1.2 or newer. Links anywhere else are never followed.
+- No account and no cloud service. The `INTERNET` permission is used only by GIPHY search and by updates.
+- GIPHY search, only while its screen is open: the search words and the API key go to GIPHY's API, and results and
+  the chosen GIF come from GIPHY's media servers, over HTTPS with TLS 1.2 or newer. Links anywhere else are never
+  followed.
+- Updates (Settings → Updates: Off, Notify only or Automatic): unless Off, RetroDeck asks GitHub's API for the latest
+  release of maxhayim/RetroDeck every few hours while it's open, and downloads the release's APK over HTTPS. Before
+  installing, it checks the APK is RetroDeck, newer, and signed with the same key as the copy installed; Android
+  checks the key again. Automatic never installs while music plays.
 - GIFs, from GIPHY, a file or a pack, are size-checked (8 MB, 800 pixels a side, 500 frames) and decoded by
   RetroDeck's own decoder, never by anything that could run code.
 - Profiles and logos stay in the app's private storage. Exporting a pack is the only way they leave the device,

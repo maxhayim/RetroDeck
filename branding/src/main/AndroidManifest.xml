@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only for GIPHY search, while its screen is open. -->
+    <!-- For GIPHY search, only while its screen is open. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Android 11+ hides other apps unless asked; these let RetroDeck find a file picker. -->

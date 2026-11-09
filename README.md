@@ -14,14 +14,14 @@
     <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   </a>
   <img src="https://img.shields.io/badge/Screens-1024%C3%97600%20and%20up-lightgrey" alt="1024x600 and up">
-  <img src="https://img.shields.io/badge/Network-GIPHY%20search%20only-FF9F43" alt="Network: GIPHY search only">
+  <img src="https://img.shields.io/badge/Network-GIPHY%20%2B%20update%20checks-FF9F43" alt="Network: GIPHY search and update checks">
 </p>
 
 <h1>RetroDeck</h1>
 
 <p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (seven of them, from a 1984 hi-fi deck and 1990 and 1994 factory units to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
 
-<p>Everything works offline. There is no account and no cloud service; the only time RetroDeck goes online is while you search GIPHY for a visualizer animation. It needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
+<p>Everything works offline. There is no account and no cloud service; RetroDeck goes online only while you search GIPHY for a visualizer animation, and to check GitHub for a new version of itself, which you can switch off. It needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
 
 <h2>Screenshots</h2>
 
@@ -155,6 +155,7 @@
   <li><strong>Melody box</strong>: a short station chime, like the melodies Japanese train platforms play, when the stereo comes on. Four original tunes (Departure, Morning Line, Harbour, Last Train) on a synthesized bell, or your own sound files. A shut-down chime can be switched on too (Settings → Audio)</li>
   <li><strong>Presets 1–6</strong>: a favourite song on each. Tap to play it; hold for a moment to save the song that's playing, like saving a radio station</li>
   <li><strong>Buttons</strong>: every key on the stereo works by touch, and any head-unit, steering-wheel or remote key can be given any action (play/pause, next, previous, volume, mute, a preset, SRC, DISP, the full-screen visualizer, power, Settings) under Settings → Buttons. Media keys, Menu and the number keys 1–6 work out of the box; any key wakes the stereo from standby</li>
+  <li><strong>Updates</strong>: Off, Notify only or Automatic (Settings → Updates; Notify only to start with). RetroDeck checks GitHub every few hours while it's open. Notify only says once when there's a new version, to install from Settings. Automatic also downloads it and installs it when you switch the stereo off with PWR or the head unit's screen goes off, never while music plays. Android 12 and newer install without asking once RetroDeck has updated itself once; older Android asks for one tap. An update signed with a different key is refused</li>
   <li><strong>Old head units</strong>: Android 4.4 and newer, large images downsampled on import, 512 px logos on low-memory devices, the static faceplate drawn once and cached</li>
 </ul>
 
@@ -254,7 +255,7 @@ adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim
 
 <p><strong>Images.</strong> An imported file is copied to a temporary file (25 MB limit), recognised by its content, decoded with a power-of-two sample size so a huge photo never loads at full size, turned upright from its EXIF data, scaled to 1024 px (512 px on low-memory devices), trimmed of transparent margins and saved as PNG in the profile's folder. SVGs are drawn by AndroidSVG at that size. Crop, rotation and colour edits are applied when drawing and cached, so the stored image never changes.</p>
 
-<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Animations are GIF files next to them, checked when they come in and kept as they are. Nothing is sent anywhere except by GIPHY search: while its screen is open, the words you search for and RetroDeck's API key go to GIPHY, and the pictures come from GIPHY's servers over HTTPS. That is the only use of the <code>INTERNET</code> permission.</p>
+<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Animations are GIF files next to them, checked when they come in and kept as they are. Nothing is sent anywhere except by GIPHY search and update checks. While GIPHY's screen is open, the words you search for and RetroDeck's API key go to GIPHY, and the pictures come from GIPHY's servers over HTTPS. Unless Updates is Off, RetroDeck asks GitHub for its latest release every few hours while it's open, and downloads the APK from GitHub when you install it or in Automatic. Those are the only uses of the <code>INTERNET</code> permission.</p>
 
 <p><strong>Startup.</strong> The sequence is a pure function of time (<code>StartupTimeline</code>), drawn over the stereo, which is already running underneath; a tap skips it and it never runs longer than six seconds. Each frame only draws the cached logo bitmaps with alpha and colour filters on a hardware layer.</p>
 
