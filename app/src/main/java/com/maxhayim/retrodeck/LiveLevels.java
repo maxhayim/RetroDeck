@@ -23,7 +23,10 @@ final class LiveLevels implements Levels {
     private int session, rateHz;
     private long attachedAt, heardAt;
 
-    /** The audio session followed, or 0. */
+    /** Follow everything the head unit plays (Android's output mix), for music in other apps. */
+    static final int MIX = -1;
+
+    /** The audio session followed, MIX, or 0. */
     int session() {
         return session;
     }
@@ -34,7 +37,7 @@ final class LiveLevels implements Levels {
         session = audioSession;
         if (audioSession == 0) return false;
         try {
-            Visualizer v = new Visualizer(audioSession);
+            Visualizer v = new Visualizer(audioSession == MIX ? 0 : audioSession);
             int[] range = Visualizer.getCaptureSizeRange();
             v.setCaptureSize(Math.max(range[0], Math.min(1024, range[1])));
             v.setEnabled(true);
@@ -66,7 +69,14 @@ final class LiveLevels implements Levels {
 
     @Override
     public void read(float[] out, long now, boolean playing) {
-        if (visualizer == null || (heardAt == 0 && SystemClock.uptimeMillis() - attachedAt > SILENT_MS)) {
+        if (visualizer == null) {
+            fallback.read(out, now, playing);
+            return;
+        }
+        // A device whose Visualizer gives only silence: the bars move on their own. Following the
+        // output mix, keep listening, as music may start later or come from an app that was silent.
+        boolean silent = heardAt == 0 && SystemClock.uptimeMillis() - attachedAt > SILENT_MS;
+        if (silent && session != MIX) {
             fallback.read(out, now, playing);
             return;
         }
@@ -88,6 +98,10 @@ final class LiveLevels implements Levels {
             }
         } else {
             java.util.Arrays.fill(live, 0f);
+        }
+        if (silent && heardAt == 0) {
+            fallback.read(out, now, playing);
+            return;
         }
         // Bars jump up with the music and fall back smoothly, as a meter's needle does.
         for (int i = 0; i < out.length; i++) out[i] = live[i] >= out[i] ? live[i] : Math.max(live[i], out[i] * 0.82f);

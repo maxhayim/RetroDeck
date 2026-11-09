@@ -70,6 +70,45 @@ final class Player {
         return tracks.size();
     }
 
+    /** True while RetroDeck's own player is playing a song. */
+    boolean ownPlaying() {
+        try {
+            return player != null && player.isPlaying();
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+    /** Shows RetroDeck's own song again, after another app's. */
+    void showOwn() {
+        state.playing = ownPlaying();
+        describe();
+    }
+
+    // ---- audio focus: RetroDeck's music and the radio or another player pause each other ----
+
+    @SuppressWarnings("deprecation")
+    private final AudioManager.OnAudioFocusChangeListener focus = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int change) {
+            if (change == AudioManager.AUDIOFOCUS_LOSS || change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                if (player != null && player.isPlaying()) player.pause();
+                Player.this.state.playing = false;
+                Player.this.listener.onChanged();
+            }
+        }
+    };
+
+    @SuppressWarnings("deprecation")
+    private void takeFocus() {
+        audio.requestAudioFocus(focus, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void dropFocus() {
+        audio.abandonAudioFocus(focus);
+    }
+
     /** The playing song's audio session, for the visualizer to follow, or 0. */
     int session() {
         return player == null ? 0 : player.getAudioSessionId();
@@ -101,6 +140,7 @@ final class Player {
             player.pause();
             state.playing = false;
         } else if (player != null) {
+            takeFocus();
             player.start();
             state.playing = true;
         } else {
@@ -111,6 +151,7 @@ final class Player {
 
     void pause() {
         if (player != null && player.isPlaying()) player.pause();
+        dropFocus();
         state.playing = false;
         listener.onChanged();
     }
@@ -199,11 +240,39 @@ final class Player {
         listener.onChanged();
     }
 
+    /**
+     * How this head unit's volume answers, found out by itself on the first turn of the knob:
+     * Android's music volume (most), the volume of whatever is playing (some head units' radios use
+     * another stream), or none, where the head unit keeps its volume to itself.
+     */
+    private static final int VOL_UNKNOWN = 0, VOL_MUSIC = 1, VOL_ACTIVE = 2, VOL_NONE = 3;
+    private int volumeWay = VOL_UNKNOWN;
+
     void setVolume(int v) {
-        int max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int max = Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        int dir = Integer.signum(v - state.volume);
         // Turning it up undoes a mute; some head units stay muted otherwise.
         if (v > 0 && (state.muted || systemMuted())) unmute();
-        audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(v * max / (float) StereoState.MAX_VOLUME), 0);
+        if (Build.VERSION.SDK_INT >= 21 && audio.isVolumeFixed()) volumeWay = VOL_NONE;
+        if (volumeWay == VOL_UNKNOWN || volumeWay == VOL_MUSIC) {
+            int before = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int target = Math.round(v * max / (float) StereoState.MAX_VOLUME);
+            audio.setStreamVolume(AudioManager.STREAM_MUSIC, target, 0);
+            if (target == before || audio.getStreamVolume(AudioManager.STREAM_MUSIC) != before) {
+                if (target != before) volumeWay = VOL_MUSIC;
+            } else if (dir != 0) {
+                // The music volume didn't move: try the stream of whatever is playing, as the head unit's keys do.
+                volumeWay = VOL_ACTIVE;
+            }
+        }
+        if (volumeWay == VOL_ACTIVE && dir != 0) {
+            audio.adjustSuggestedStreamVolume(dir > 0 ? AudioManager.ADJUST_RAISE : AudioManager.ADJUST_LOWER,
+                    AudioManager.USE_DEFAULT_STREAM_TYPE, AudioManager.FLAG_SHOW_UI);
+        }
+        if (volumeWay == VOL_NONE) {
+            notice("USE THE CAR'S VOLUME");
+            return;
+        }
         state.volume = v;
         listener.onChanged();
     }
@@ -219,7 +288,7 @@ final class Player {
         }
         int sys = systemVolume();
         // Follow volume changed with the head unit's own keys, but keep finer steps set here.
-        if (Math.abs(sys - state.volume) > StereoState.MAX_VOLUME / Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))) {
+        if (volumeWay != VOL_ACTIVE && volumeWay != VOL_NONE && Math.abs(sys - state.volume) > StereoState.MAX_VOLUME / Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))) {
             state.volume = sys;
         }
         // Muted or unmuted with the head unit's own keys.
@@ -246,6 +315,7 @@ final class Player {
                 return true;
             });
             mp.prepare();
+            takeFocus();
             mp.start();
             player = mp;
             state.playing = true;
@@ -258,6 +328,7 @@ final class Player {
     }
 
     void stop() {
+        dropFocus();
         if (player != null) {
             try {
                 player.release();

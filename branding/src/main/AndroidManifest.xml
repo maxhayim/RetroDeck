@@ -41,6 +41,8 @@
                 <data android:mimeType="application/x-zip-compressed" />
             </intent-filter>
         </activity>
+        <activity android:name=".SkinGalleryActivity" android:theme="@style/RetroDeck.Theme"
+            android:exported="false" />
         <activity android:name=".LogoEditorActivity" android:theme="@style/RetroDeck.Theme"
             android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".PlacementEditorActivity" android:theme="@style/RetroDeck.Theme"

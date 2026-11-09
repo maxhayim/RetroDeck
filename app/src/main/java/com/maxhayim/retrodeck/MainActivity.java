@@ -47,6 +47,9 @@ public class MainActivity extends Activity implements StereoView.Listener {
     private StartupView startup;
     private BrandingRenderer renderer;
     private Player player;
+    private OtherApps others;
+    /** Showing and controlling music in another app (the radio, a music player) instead of RetroDeck's own. */
+    private boolean following;
     private final LiveLevels levels = new LiveLevels();
     private ButtonMap buttons = ButtonMap.defaults();
     private long lastInput = android.os.SystemClock.uptimeMillis();
@@ -58,6 +61,8 @@ public class MainActivity extends Activity implements StereoView.Listener {
         @Override
         public void run() {
             player.tick();
+            others.tick(player.ownPlaying());
+            chooseSource();
             checkIdle();
             checkUpdates();
             main.postDelayed(this, 1000);
@@ -89,6 +94,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
             stereo.invalidate();
             followMusic();
         });
+        others = new OtherApps(this, this::chooseSource);
         applyProfile();
         store.addListener(onProfileChanged);
         // The stereo is built and running underneath, so a tap on the animation reaches it at once.
@@ -122,6 +128,8 @@ public class MainActivity extends Activity implements StereoView.Listener {
         // Time spent in Settings doesn't count as the stereo sitting idle.
         lastInput = android.os.SystemClock.uptimeMillis();
         buttons = ButtonsActivity.load(this);
+        // Access to other apps' song titles may have just been allowed in Android's settings.
+        others.start();
         applyProfile();
         Updater.visible++;
         main.post(tick);
@@ -141,13 +149,83 @@ public class MainActivity extends Activity implements StereoView.Listener {
         if (StereoState.shown == state) StereoState.shown = null;
         unregisterReceiver(screenOff);
         player.stop();
+        others.stop();
         levels.release();
+    }
+
+    /**
+     * Found by itself: RetroDeck's own music when it plays, otherwise music playing in another app,
+     * which stays the one shown and controlled while paused, until RetroDeck's own plays again.
+     */
+    private void chooseSource() {
+        if (player == null || others == null) return;
+        boolean was = following;
+        if (player.ownPlaying()) following = false;
+        else if (others.playing) following = true;
+        if (following) {
+            state.source = sourceName(others.app);
+            if (!others.title.isEmpty()) {
+                state.title = others.title;
+                state.artist = others.artist;
+            } else {
+                state.title = others.app.isEmpty() ? "ANOTHER APP" : others.app;
+                state.artist = OtherApps.titlesPossible() && !others.hasAccess() ? "SRC: SHOW SONG TITLES" : "";
+            }
+            state.playing = others.playing;
+            state.track = 0;
+            state.positionMs = others.positionMs;
+            state.durationMs = others.durationMs;
+            if (others.playing) offerTitles();
+        } else if (was) {
+            state.source = "MEDIA";
+            player.showOwn();
+        }
+        followMusic();
+        stereo.invalidate();
+    }
+
+    /** The app's name as a source, as a radio shows FM or CD: short and in capitals. */
+    static String sourceName(String app) {
+        if (app == null || app.trim().isEmpty()) return "AUX";
+        String a = app.trim().toUpperCase(Locale.ROOT);
+        if (a.contains("RADIO") || a.equals("FM")) return "RADIO";
+        if (a.contains("BLUETOOTH") || a.startsWith("BT")) return "BT";
+        if (a.length() <= 8) return a;
+        String first = a.split("\\s+")[0];
+        return first.length() <= 8 ? first : first.substring(0, 8);
+    }
+
+    /** Once, when music first plays in another app: offers to show its titles and control it. */
+    private void offerTitles() {
+        if (!OtherApps.titlesPossible() || others.hasAccess() || startup.isPlaying()) return;
+        SharedPreferences p = getSharedPreferences("levels", MODE_PRIVATE);
+        if (p.getBoolean("askedTitles", false)) return;
+        p.edit().putBoolean("askedTitles", true).apply();
+        Ui.dialog(this).setTitle("Music in another app")
+                .setMessage("RetroDeck noticed music playing in another app. To show its song titles and make the stereo's "
+                        + "keys control it, allow RetroDeck in Android's Notification access. RetroDeck only reads which song "
+                        + "is playing; it doesn't read your notifications, and nothing leaves the head unit.\n\n"
+                        + "Without it, the keys still work as media keys and the visualizer still follows the music.")
+                .setPositiveButton("Open settings", (d, w) -> openTitleAccess())
+                .setNegativeButton("Not now", null)
+                .show();
+    }
+
+    private void openTitleAccess() {
+        try {
+            startActivity(OtherApps.accessSettings());
+        } catch (android.content.ActivityNotFoundException e) {
+            Ui.dialog(this).setTitle("Notification access")
+                    .setMessage("This head unit has no Notification access screen, so RetroDeck can't show other apps' "
+                            + "song titles. The keys and the visualizer still work.")
+                    .setPositiveButton("OK", null).show();
+        }
     }
 
     /** Points the visualizer at the song that's playing; the first time, asks to read it. */
     private void followMusic() {
         if (player == null) return;
-        int s = player.session();
+        int s = following ? LiveLevels.MIX : player.session();
         if (s == levels.session()) return;
         if (s != 0 && Build.VERSION.SDK_INT >= 23
                 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -176,7 +254,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     public void onRequestPermissionsResult(int request, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(request, permissions, results);
         if (request == HEAR_MUSIC && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-            levels.attach(player.session());
+            levels.attach(following ? LiveLevels.MIX : player.session());
         }
     }
 
@@ -204,6 +282,10 @@ public class MainActivity extends Activity implements StereoView.Listener {
             // Any key wakes a stereo in standby, as on a real one.
             state.power = true;
             MelodyBox.play(this, MelodyBox.start(this));
+            stereo.invalidate();
+            return;
+        }
+        if (following && sendToOther(action)) {
             stereo.invalidate();
             return;
         }
@@ -267,6 +349,34 @@ public class MainActivity extends Activity implements StereoView.Listener {
                 break;
         }
         stereo.invalidate();
+    }
+
+    /** Play, pause, next and previous go to the other app while it's the one shown. */
+    private boolean sendToOther(String action) {
+        int key;
+        switch (action) {
+            case ButtonMap.PLAY_PAUSE:
+                key = KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
+                break;
+            case ButtonMap.PLAY:
+                key = KeyEvent.KEYCODE_MEDIA_PLAY;
+                break;
+            case ButtonMap.PAUSE:
+                key = KeyEvent.KEYCODE_MEDIA_PAUSE;
+                break;
+            case ButtonMap.NEXT:
+                key = KeyEvent.KEYCODE_MEDIA_NEXT;
+                break;
+            case ButtonMap.PREV:
+                key = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+                break;
+            default:
+                return false;
+        }
+        others.send(key);
+        // Shown at once; the app's own state follows when it answers.
+        if (key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) state.playing = !state.playing;
+        return true;
     }
 
     @Override
@@ -389,7 +499,40 @@ public class MainActivity extends Activity implements StereoView.Listener {
             Arrays.sort(found);
             for (File f : found) songs.add(Uri.fromFile(f));
         }
-        if (songs.isEmpty()) {
+        final List<OtherApps.App> apps = OtherApps.musicApps(this);
+        List<String> items = new ArrayList<>();
+        final List<Runnable> acts = new ArrayList<>();
+        if (following && player.count() > 0) {
+            items.add("RetroDeck's music");
+            acts.add(() -> {
+                following = false;
+                player.showOwn();
+                player.play(true);
+                chooseSource();
+            });
+        }
+        for (OtherApps.App a : apps) {
+            items.add(a.label);
+            acts.add(() -> {
+                try {
+                    startActivity(a.open);
+                } catch (RuntimeException e) {
+                    android.widget.Toast.makeText(this, "Couldn't open " + a.label, android.widget.Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if (!songs.isEmpty()) {
+            String n = songs.size() == 1 ? "1 song" : songs.size() + " songs";
+            items.add("Add " + n + " from the music folder");
+            acts.add(() -> player.add(songs));
+        }
+        items.add("Choose songs with the file picker…");
+        acts.add(this::pick);
+        if (OtherApps.titlesPossible() && !others.hasAccess()) {
+            items.add("Show song titles from other apps…");
+            acts.add(this::openTitleAccess);
+        }
+        if (songs.isEmpty() && apps.isEmpty()) {
             Ui.dialog(this).setTitle("Add music")
                     .setMessage("Open the file picker, or copy songs into RetroDeck's music folder with a file manager, "
                             + "a USB cable or adb, then press SRC again:\n\n" + folder.getPath())
@@ -398,12 +541,9 @@ public class MainActivity extends Activity implements StereoView.Listener {
                     .show();
             return;
         }
-        String n = songs.size() == 1 ? "1 song" : songs.size() + " songs";
-        Ui.dialog(this).setTitle("Add music")
-                .setItems(new String[]{"Add " + n + " from the music folder", "Choose with the file picker…"}, (d, w) -> {
-                    if (w == 0) player.add(songs);
-                    else pick();
-                }).show();
+        Ui.dialog(this).setTitle("Source")
+                .setItems(items.toArray(new String[0]), (d, w) -> acts.get(w).run())
+                .show();
     }
 
     private void pick() {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- The visualizer reads the music RetroDeck itself plays; Android's Visualizer needs these.
-         The microphone is never used. -->
+    <!-- The visualizer reads the music RetroDeck plays, or what the head unit plays when the music is
+         in another app; Android's Visualizer needs these. The microphone is never used. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
@@ -11,6 +11,21 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />
+
+    <!-- Finding the head unit's radio and music players for SRC (Android 11+ hides other apps otherwise). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.APP_MUSIC" />
+        </intent>
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+    </queries>
 
     <!-- Some head units report no touchscreen even though they have one. -->
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
@@ -44,6 +59,18 @@
             android:name=".ButtonsActivity"
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <!-- Lets Android give RetroDeck other apps' media sessions (song titles, play/pause) once the
+             user allows it in Notification access. No notification is read. -->
+        <service
+            android:name=".NowPlayingListener"
+            android:label="RetroDeck song titles"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".UpdateReceiver"

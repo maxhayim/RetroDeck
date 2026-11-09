@@ -115,7 +115,7 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Twenty-four skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them.
+  <li><strong>Twenty-four skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
@@ -159,7 +159,9 @@
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
   <li><strong>Your own colours</strong> for the visualizer, the background behind it, and the radio itself: the radio's greys and blacks take the colour keeping their shading, while its displays, lamps and print keep theirs</li>
   <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
-  <li><strong>Music</strong>: plays audio files from the device; SRC adds files (or songs from the music folder), the knob sets the media volume</li>
+  <li><strong>Music</strong>: plays audio files from the device; SRC adds files (or songs from the music folder), the knob sets the volume</li>
+  <li><strong>Music in other apps, found by itself</strong>: when the head unit's radio, a music player, Bluetooth audio or another app plays, the stereo shows it (the app as the source, such as RADIO or BT), its keys play, pause and skip in that app, and the visualizer follows what the head unit plays. Song titles need Notification access, offered once (RetroDeck reads only which song is playing); without it the keys still work as media keys. SRC lists the head unit's radio and music apps. RetroDeck's own music and the other app pause each other, as two players do</li>
+  <li><strong>Volume, found by itself</strong>: the knob uses Android's music volume, or the volume of whatever is playing where a head unit keeps its radio on another, and says USE THE CAR'S VOLUME where the head unit allows neither</li>
   <li><strong>Full-screen visualizer</strong>: the visualizer (or your GIF) over the whole screen, with the song and clock along the bottom. Hold DISP or press a key set to it, or let it come on by itself after a while without a touch while music plays (Settings → Display; off until you choose a time). A touch or key brings the stereo back; media keys and presets keep working while it shows</li>
   <li><strong>Melody box</strong>: a short station chime, like the melodies Japanese train platforms play, when the stereo comes on. Four original tunes (Departure, Morning Line, Harbour, Last Train) on a synthesized bell, or your own sound files. A shut-down chime can be switched on too (Settings → Audio)</li>
   <li><strong>Presets 1–6</strong>: a favourite song on each. Tap to play it; hold for a moment to save the song that's playing, like saving a radio station</li>
@@ -322,8 +324,8 @@ my-vehicle.zip
 <h2>Known Limitations</h2>
 
 <ul>
-  <li><strong>The visualizer is simulated.</strong> It moves while music plays but doesn't follow the audio (nor does an animation's speed): reading the output mix on Android needs the microphone permission, which a car stereo shouldn't ask for.</li>
-  <li><strong>Media from SRC</strong> is a list of files. There is no radio tuner, Bluetooth audio or folder browsing yet.</li>
+  <li><strong>The visualizer follows the music</strong> only with Android's "record audio" permission, which RetroDeck asks for once and uses only to read the sound being played, never the microphone. Without it, or on a head unit whose Visualizer gives silence, the bars move on their own (as does an animation's speed).</li>
+  <li><strong>RetroDeck has no tuner of its own.</strong> The radio, Bluetooth audio and other players are the head unit's own apps, shown and controlled from the stereo. A radio app that publishes no song title shows its name, and one that ignores media keys can't be controlled from RetroDeck's keys.</li>
   <li><strong>GIPHY search</strong> uses a free key that allows 100 searches an hour for everyone using the same copy of RetroDeck. If it runs out, wait an hour, paste your own free key from GIPHY's developer site, or import a GIF file instead.</li>
   <li><strong>Animated WebP and GIF</strong> logos aren't supported (a GIF can be the visualizer animation instead); WebP files with transparency need Android 4.3 or newer, which RetroDeck's minimum already covers.</li>
   <li><strong>SVG support</strong> is AndroidSVG's: text uses the device's fonts, and filters and some CSS are ignored. For an exact look, export the logo as PNG.</li>
