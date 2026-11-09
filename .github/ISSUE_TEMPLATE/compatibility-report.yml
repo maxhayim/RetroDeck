@@ -1,0 +1,71 @@
+name: Compatibility report
+description: Tell us how RetroDeck behaved on a real head unit (works, partly works, or broke something).
+labels: ["compatibility"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! RetroDeck is tested on Android TV boxes; reports from real head units are how we learn what works in a car. Please try things while **parked**.
+        Remove anything personal (VIN, plate, phone numbers, Wi-Fi names, account names) before posting, including from screenshots.
+  - type: input
+    id: car
+    attributes:
+      label: Car
+      description: Make, model and years, e.g. "Toyota Camry 2012-2014". Leave out the VIN and plate.
+    validations:
+      required: true
+  - type: input
+    id: unit
+    attributes:
+      label: Unit as sold
+      description: Brand/seller and model as listed, e.g. "Seller X 9-inch 2-DIN, Android 10".
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Android and screen
+      description: Android version and build (Settings → About), and the screen's resolution, e.g. "Android 10, 1024×600". Some units show a higher Android version than they run; say so if you know.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: RetroDeck version
+      description: Settings → About, e.g. 0.17.0.
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Overall result
+      options:
+        - Everything I tested worked
+        - Mostly worked (details below)
+        - Something stopped working (details below)
+    validations:
+      required: true
+  - type: checkboxes
+    id: tested
+    attributes:
+      label: What worked
+      description: Tick what you tried and found working; leave the rest empty.
+      options:
+        - label: The skin fills the screen properly (which skin below)
+        - label: Music plays, and the knob turns the volume
+        - label: The visualizer moves with the music
+        - label: The keys on the screen work by touch
+        - label: The head unit's own keys and steering-wheel keys work (Settings → Buttons)
+        - label: Startup animation and melody when RetroDeck opens
+        - label: Shut-down melody when the car is switched off
+        - label: Updates (Settings → Updates) found or installed a new version
+  - type: textarea
+    id: problems
+    attributes:
+      label: What didn't work
+      description: What you did, what happened, and what you expected. Name the skin, and anything in the car that stopped working while RetroDeck ran.
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. A photo of the screen helps with layout problems. Hide anything personal first.

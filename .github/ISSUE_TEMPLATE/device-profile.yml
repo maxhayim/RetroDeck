@@ -1,0 +1,46 @@
+name: Device profile
+description: Propose or improve a head-unit profile (its screen, and which keys its buttons and steering wheel send).
+labels: ["profile"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A profile tells RetroDeck what a kind of head unit needs: its screen size and the keys its buttons and steering-wheel controls send, so they can work without setting each one up. Profiles match on what the unit runs, never on a brand name.
+        Never post firmware files, firmware download links or factory codes.
+  - type: input
+    id: family
+    attributes:
+      label: Unit or firmware family
+      description: e.g. FYT UIS7862, MTCE PX5, DoFun, YT9216, or the unit as sold.
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Screen
+      description: Resolution and Android version, e.g. "1024×600, Android 10". Single-DIN units with a wide screen too (e.g. 1280×480).
+    validations:
+      required: true
+  - type: textarea
+    id: keys
+    attributes:
+      label: Keys
+      description: |
+        One per line: the button, the key name RetroDeck shows for it in Settings → Buttons, and what it should do. For example:
+        Steering wheel ▲ · KEYCODE_MEDIA_NEXT · next track
+        Knob press · KEYCODE_MUTE · mute
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: quirks
+    attributes:
+      label: Anything else it needs
+      description: e.g. the screen turns off late or never when the car stops, volume is set by the unit and not Android, keys that only work in the unit's own radio app.
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: Your own unit (say which), and/or public links.
+    validations:
+      required: true
