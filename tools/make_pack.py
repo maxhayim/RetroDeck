@@ -6,14 +6,18 @@ are yours: RetroDeck ships none, and this tool never fetches any. Import the ZIP
 Settings -> Personalization -> Vehicle Branding -> Import/Export Branding Pack -> Import a pack.
 
     python3 tools/make_pack.py custom-themes/my-car/theme.json \
-        --manufacturer car-maker.png --model model-badge.png --audio audio-brand.png -o my-car.zip
+        --manufacturer custom-themes/my-car/car-maker.png --model custom-themes/my-car/model-badge.png \
+        --audio custom-themes/my-car/audio-brand.png -o custom-themes/my-car.zip
+
+Keep your theme's working files in its folder (custom-themes/my-car/) and write the pack next to the
+folder (custom-themes/my-car.zip): that ZIP is the one file you send.
 
 Logos: PNG (best: light artwork on a transparent background), JPEG, WebP or SVG, at most 4096 pixels
 a side and 8 MB. Only share a pack with people who may use the logos in it.
 
 The pack gets screenshots: the stereo by day and by night, the full-screen visualizer by day and by
-night, and the startup screen (assets/p0-screenshot-NAME.png, with copies saved next to the ZIP as
-OUT-NAME.png), as packs exported in the app have, so whoever you send it to can see it
+night, and the startup screen (assets/p0-screenshot-NAME.png, inside the ZIP; --save-screenshots
+also saves copies next to it), as packs exported in the app have, so whoever you send it to can see it
 before importing.
 It is drawn by RetroDeck's own importer and renderer (PackRenderTest), which needs this repository's
 build setup (JDK 17 in JAVA_HOME and the Android SDK). Without it, or with --no-preview, the pack is
@@ -33,6 +37,7 @@ import zipfile
 ROLES = ("manufacturer", "model", "audio")
 MAX_BYTES = 8 * 1024 * 1024
 MAX_SIDE = 4096
+MAX_VIDEO_BYTES = 20 * 1024 * 1024
 
 
 def sniff(b):
@@ -141,7 +146,11 @@ def main():
     ap.add_argument("--model", help="logo file for the model role (a model badge)")
     ap.add_argument("--audio", help="logo file for the audio brand (the stereo maker on a factory radio)")
     ap.add_argument("-o", "--out", required=True, help="the .zip to write")
-    ap.add_argument("--no-preview", action="store_true", help="don't add a screenshot")
+    ap.add_argument("--no-preview", action="store_true", help="don't add screenshots")
+    ap.add_argument("--video", help="an MP4 tour to include (Vehicle Branding -> Record a Video); "
+                    "needs RetroDeck 0.20.0 or newer to import")
+    ap.add_argument("--save-screenshots", action="store_true",
+                    help="also save the screenshots next to the ZIP (they're always inside it)")
     a = ap.parse_args()
 
     with open(a.preset, encoding="utf-8") as f:
@@ -171,6 +180,14 @@ def main():
         "compatibleSkins": [profile["skin"]],
         "profiles": [profile],
     }
+    video = None
+    if a.video:
+        with open(a.video, "rb") as f:
+            video = f.read()
+        if len(video) > MAX_VIDEO_BYTES:
+            sys.exit(f"video: {len(video) >> 20} MB; the limit is {MAX_VIDEO_BYTES >> 20} MB")
+        if video[4:8] != b"ftyp":
+            sys.exit("video: not an MP4 file")
     if os.path.exists(a.out):
         sys.exit(f"{a.out} already exists; pick another name")
     write_zip(a.out, manifest, packed)
@@ -182,15 +199,22 @@ def main():
                 inside = f"assets/p0-screenshot-{name}.png"
                 packed[inside] = png
                 listed[name] = inside
-                beside = os.path.splitext(a.out)[0] + f"-{name}.png"
-                with open(beside, "wb") as f:
-                    f.write(png)
+                if a.save_screenshots:
+                    with open(os.path.splitext(a.out)[0] + f"-{name}.png", "wb") as f:
+                        f.write(png)
             manifest["profiles"][0]["screenshots"] = listed
             if "day" in listed:
                 manifest["preview"] = listed["day"]
-            print(f"Added {len(listed)} screenshots ({', '.join(listed)}) inside the pack, with copies next to it "
-                  f"({os.path.splitext(a.out)[0]}-NAME.png).")
+            print(f"Added {len(listed)} screenshots ({', '.join(listed)}) inside the pack"
+                  + (f", with copies next to it ({os.path.splitext(a.out)[0]}-NAME.png)." if a.save_screenshots else "."))
             write_zip(a.out, manifest, packed)
+    if video:
+        # Added after the screenshots are drawn: the video is for people to watch, not imported.
+        packed["assets/tour.mp4"] = video
+        manifest["video"] = "assets/tour.mp4"
+        manifest["formatVersion"] = 4
+        write_zip(a.out, manifest, packed)
+        print(f"Added the video ({len(video) >> 20} MB) as assets/tour.mp4.")
     print(f"Wrote {a.out}: {preset.get('name')}, skin {profile['skin']}, logos: {', '.join(assets) or 'none'}")
     print("Import it on the head unit: Vehicle Branding -> Import/Export Branding Pack -> Import a pack.")
     print("Only share it with people who may use the logos in it.")

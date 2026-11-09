@@ -9,7 +9,6 @@ signing.properties
 *.jks
 __pycache__/
 
-# Custom themes: your own logos and packs stay on this computer. Only the guide and the template are shared.
+# Custom themes: your own logos and packs stay on this computer. Only the guide is shared.
 custom-themes/*
 !custom-themes/README.md
-!custom-themes/template-z32.json

@@ -66,6 +66,32 @@ public class BrandingPackTest {
         }
     }
 
+    // ---- video ----
+
+    private static byte[] mp4() {
+        byte[] d = new byte[64];
+        byte[] head = {0, 0, 0, 24, 'f', 't', 'y', 'p', 'i', 's', 'o', 'm'};
+        System.arraycopy(head, 0, d, 0, head.length);
+        return d;
+    }
+
+    @Test
+    public void acceptsOneVideo() throws Exception {
+        BrandingPack.Pack p = read(zip("manifest.json", manifest(profile(null, null)), "assets/tour.mp4", mp4()));
+        assertEquals(1, p.entries.size());
+    }
+
+    @Test
+    public void rejectsAVideoThatIsntMp4() throws Exception {
+        rejects(zip("manifest.json", manifest(profile(null, null)), "assets/tour.mp4", new byte[64]), "isn't an MP4");
+    }
+
+    @Test
+    public void rejectsTwoVideos() throws Exception {
+        rejects(zip("manifest.json", manifest(profile(null, null)), "assets/a.mp4", mp4(), "assets/b.mp4", mp4()),
+                "more than one video");
+    }
+
     // ---- accepted ----
 
     @Test

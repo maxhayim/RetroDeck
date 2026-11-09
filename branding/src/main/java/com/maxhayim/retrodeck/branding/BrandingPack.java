@@ -21,29 +21,34 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Branding packs: a ZIP holding manifest.json and the logo images, for sharing vehicle profiles
- * offline. Packs are data only. Nothing in one is ever run; only manifest.json and images in assets/
- * are accepted, and every image is decoded and re-encoded as PNG before it's used.
+ * offline. Packs are data only. Nothing in one is ever run; only manifest.json, images in assets/
+ * and one MP4 video are accepted, and every image is decoded and re-encoded as PNG before it's used.
  *
  * Layout:
  * <pre>
  * manifest.json        {"format": "retrodeck-branding-pack", "formatVersion": 1, "profiles": [...]}
  * assets/NAME.png      logos (png, jpg, jpeg, webp or svg)
  * assets/NAME.gif      visualizer animations
+ * assets/NAME.mp4      a video tour of the theme, for people to watch ("video" in the manifest);
+ *                      checked but not imported, like the screenshots
  * </pre>
  * Each profile is the ProfileJson object with "assets": {"manufacturer": "assets/...", "model": ...,
  * "animation": ..., "audio": ...}. Packs with an animation are format 2 and packs with an audio brand
- * logo format 3, so older versions say they need an update instead of dropping what they don't know.
+ * logo format 3, and packs with a video format 4, so older versions say they need an update instead of
+ * dropping what they don't know.
  */
 public final class BrandingPack {
 
     public static final String FORMAT = "retrodeck-branding-pack";
     /** Packs with a newer major version are refused; unknown fields in this version are ignored. */
-    public static final int FORMAT_VERSION = 3;
+    public static final int FORMAT_VERSION = 4;
     public static final String MIME = "application/zip";
 
-    public static final long MAX_PACK_BYTES = 24L * 1024 * 1024;
-    public static final long MAX_TOTAL_BYTES = 32L * 1024 * 1024;
+    public static final long MAX_PACK_BYTES = 40L * 1024 * 1024;
+    public static final long MAX_TOTAL_BYTES = 48L * 1024 * 1024;
     public static final int MAX_ENTRY_BYTES = 8 * 1024 * 1024;
+    /** A video tour (Record a Video makes about 8 MB at 720p, 12 MB at full HD). */
+    public static final int MAX_VIDEO_BYTES = 20 * 1024 * 1024;
     public static final int MAX_MANIFEST_BYTES = 256 * 1024;
     public static final int MAX_ENTRIES = 40;
     public static final int MAX_PROFILES = 16;
@@ -94,11 +99,14 @@ public final class BrandingPack {
                 if (problem != null) throw new InvalidPackException(problem);
                 if (files.containsKey(name)) throw new InvalidPackException("The pack lists " + name + " twice.");
                 if (files.size() >= MAX_ENTRIES) throw new InvalidPackException("The pack has too many files.");
-                int cap = name.equals("manifest.json") ? MAX_MANIFEST_BYTES : MAX_ENTRY_BYTES;
+                boolean video = name.endsWith(".mp4");
+                if (video && hasVideo(files)) throw new InvalidPackException("The pack has more than one video.");
+                int cap = name.equals("manifest.json") ? MAX_MANIFEST_BYTES : video ? MAX_VIDEO_BYTES : MAX_ENTRY_BYTES;
                 // Sizes in the ZIP header can lie; count what actually comes out.
                 byte[] data = readCapped(zip, cap, name);
                 total += data.length;
                 if (total > MAX_TOTAL_BYTES) throw new InvalidPackException("The pack is too large when unpacked.");
+                if (video && !isMp4(data)) throw new InvalidPackException(name + " isn't an MP4 video.");
                 files.put(name, data);
             }
         } catch (Limited.TooLargeException ex) {
@@ -198,8 +206,18 @@ public final class BrandingPack {
             return "The pack contains an unsafe file path: " + printable(name);
         }
         if (name.equals("manifest.json")) return null;
-        if (name.matches("assets/[A-Za-z0-9._-]{1,64}\\.(png|jpg|jpeg|webp|svg|gif)")) return null;
+        if (name.matches("assets/[A-Za-z0-9._-]{1,64}\\.(png|jpg|jpeg|webp|svg|gif|mp4)")) return null;
         return "The pack contains a file RetroDeck doesn't accept: " + printable(name);
+    }
+
+    private static boolean hasVideo(Map<String, byte[]> files) {
+        for (String n : files.keySet()) if (n.endsWith(".mp4")) return true;
+        return false;
+    }
+
+    /** An MP4 (ISO media) file starts with a box whose type is "ftyp". */
+    static boolean isMp4(byte[] d) {
+        return d.length > 12 && d[4] == 'f' && d[5] == 't' && d[6] == 'y' && d[7] == 'p';
     }
 
     /** Files added by macOS and Windows when zipping; skipped silently. */
