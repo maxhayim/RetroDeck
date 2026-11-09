@@ -65,7 +65,7 @@ public final class ProfileStore {
                 VehicleProfile p = ProfileJson.read(list.getJSONObject(i));
                 if (p.id.isEmpty() || find(p.id) != null) continue;
                 // Forget logos whose files have gone missing.
-                for (int r = 0; r < 2; r++) if (p.logoFile[r] != null && !logo(p, r).exists()) p.logoFile[r] = null;
+                for (int r = 0; r < VehicleProfile.COUNT; r++) if (p.logoFile[r] != null && !logo(p, r).exists()) p.logoFile[r] = null;
                 if (p.animationFile != null && !animation(p).exists()) p.animationFile = null;
                 profiles.add(p);
             }
@@ -198,7 +198,7 @@ public final class ProfileStore {
         VehicleProfile p = src.copy();
         p.id = UUID.randomUUID().toString();
         p.trim = p.trim.isEmpty() ? "Copy" : VehicleProfile.cleanName(p.trim + " copy");
-        for (int r = 0; r < 2; r++) {
+        for (int r = 0; r < VehicleProfile.COUNT; r++) {
             File from = logo(src, r);
             if (from == null || !from.exists()) {
                 p.logoFile[r] = null;
@@ -237,7 +237,7 @@ public final class ProfileStore {
         fresh.model = p.model;
         fresh.year = p.year;
         fresh.trim = p.trim;
-        for (int r = 0; r < 2; r++) {
+        for (int r = 0; r < VehicleProfile.COUNT; r++) {
             fresh.logoFile[r] = p.logoFile[r];
             fresh.logoColor[r] = p.logoColor[r];
         }

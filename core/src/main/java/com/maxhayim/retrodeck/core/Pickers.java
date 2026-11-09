@@ -14,6 +14,14 @@ import android.net.Uri;
  */
 public final class Pickers {
 
+    /**
+     * Shown wherever a device turns out to have no file picker. Amaze is free, open source (GPL-3.0),
+     * on Google Play and F-Droid, runs on Android TV, and answers GET_CONTENT with a content:// link
+     * RetroDeck can read, so once it's installed open() finds it with no setup.
+     */
+    public static final String FILE_MANAGER_TIP = "Or install a file manager, such as Amaze File Manager (free and open source, "
+            + "on Google Play and F-Droid). RetroDeck then uses it to choose files.";
+
     private Pickers() {}
 
     /** Asks the user for a file to open. False when the device has no picker; the caller explains what to do. */

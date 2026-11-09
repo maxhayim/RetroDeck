@@ -3,6 +3,10 @@ package com.maxhayim.retrodeck.core;
 /** What the stereo is showing. The app fills it in; the view only draws it. */
 public final class StereoState {
 
+    /** What the stereo is showing now, for screenshots in shared packs; null when it isn't open. */
+    public static volatile StereoState shown;
+
+
     public static final int MAX_VOLUME = 30;
 
     public boolean power = true;

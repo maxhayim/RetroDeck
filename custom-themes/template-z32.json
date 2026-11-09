@@ -1,9 +1,10 @@
 {
   "name": "My car",
-  "about": "Template: Z32 Factory 1990 with the car maker logo above the changer's eject key (PWR) and the audio brand on the tape door. Copy it into a folder of your own and change the names.",
+  "about": "Template: Z32 Factory 1990 with the car maker's name above the changer's eject key (PWR), the audio brand on the tape door, and the model badge on the startup and standby screens. Copy it into a folder of your own and change the names.",
   "logos": {
-    "manufacturer": "The car maker's name, a wide wordmark, light on a transparent background. Shown above PWR on the changer, and on the startup and standby screens.",
-    "model": "The audio brand's wordmark, light on a transparent background. Shown on the tape door."
+    "manufacturer": "The car maker's name, a wide wordmark, light on a transparent background. Shown above PWR on the changer.",
+    "model": "The model badge, light on a transparent background. Shown on the startup and standby screens.",
+    "audio": "The audio brand's wordmark, light on a transparent background. Shown on the tape door."
   },
   "profile": {
     "id": "pack-my-car",
@@ -28,6 +29,12 @@
           "y": 0.5
         },
         "model": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "audio": {
           "visible": true,
           "scale": 0.8,
           "x": 0.5,
@@ -46,6 +53,12 @@
           "scale": 0.8,
           "x": 0.5,
           "y": 0.5
+        },
+        "audio": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
         }
       },
       "corner": {
@@ -56,6 +69,12 @@
           "y": 0.5
         },
         "model": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "audio": {
           "visible": false,
           "scale": 0.8,
           "x": 0.5,
@@ -74,6 +93,12 @@
           "scale": 0.8,
           "x": 0.5,
           "y": 0.5
+        },
+        "audio": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
         }
       },
       "visualizer": {
@@ -88,34 +113,52 @@
           "scale": 0.9,
           "x": 0.5,
           "y": 0.5
+        },
+        "audio": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
         }
       },
       "startup": {
         "manufacturer": {
-          "visible": true,
+          "visible": false,
           "scale": 0.65,
           "x": 0.5,
           "y": 0.42
         },
         "model": {
-          "visible": false,
-          "scale": 0.32,
+          "visible": true,
+          "scale": 0.75,
           "x": 0.5,
-          "y": 0.9
+          "y": 0.45
+        },
+        "audio": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
         }
       },
       "standby": {
         "manufacturer": {
-          "visible": true,
+          "visible": false,
           "scale": 0.6,
           "x": 0.5,
           "y": 0.5
         },
         "model": {
-          "visible": false,
-          "scale": 0.4,
+          "visible": true,
+          "scale": 0.7,
           "x": 0.5,
-          "y": 0.9
+          "y": 0.5
+        },
+        "audio": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
         }
       }
     },
@@ -126,5 +169,9 @@
       "powerOn": true,
       "lcdBoot": true
     }
+  },
+  "previewSong": {
+    "title": "Night Drive",
+    "artist": "RetroDeck preview"
   }
 }

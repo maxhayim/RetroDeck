@@ -63,7 +63,7 @@ public class LogoEditorActivity extends Activity {
 
         LinearLayout root = Ui.vertical(this);
         root.setBackgroundColor(Ui.BG);
-        String title = role == VehicleProfile.MANUFACTURER ? "Manufacturer Logo" : "Model Badge";
+        String title = VehicleProfile.roleLabel(role);
         root.addView(Ui.header(this, title, newFile != null ? "New image — adjust it, then save" : draft.displayName()));
         LinearLayout body = Ui.horizontal(this);
         body.setGravity(0);

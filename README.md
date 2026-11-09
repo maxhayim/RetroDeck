@@ -152,7 +152,7 @@
   <li><strong>Logo editor</strong>: crop, rotate, opacity, brightness and colour tint, all non-destructive; aspect ratio always kept unless you turn it off</li>
   <li><strong>Placement</strong>: put each logo in the radio display header, the LCD, the faceplate, a corner badge, behind the visualizer, on the startup screen or on the standby screen; drag it or use sliders, with a live preview before saving</li>
   <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text</li>
-  <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting, then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
+  <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting ("HELLO" and the car's name, or your own text in any language), then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
   <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights. At night the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too. On Z32 Factory 1990 the legends are white, printed by day and backlit at night</li>
   <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the visualizer is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text. GIFs travel in branding packs</li>
   <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
@@ -232,6 +232,16 @@ adb install RetroDeck-0.1.0.apk
 
 <h3>Head units without a file picker</h3>
 
+<p><strong>The easy way: install a file manager.</strong> We suggest <a href="https://github.com/TeamAmaze/AmazeFileManager">Amaze File Manager</a>: free, open source (GPL-3.0), on <a href="https://play.google.com/store/apps/details?id=com.amaze.filemanager">Google Play</a> and <a href="https://f-droid.org/packages/com.amaze.filemanager/">F-Droid</a>, and it runs on Android TV. Its current version needs Android 6.0; <a href="https://github.com/TeamAmaze/AmazeFileManager/releases/tag/v3.10">v3.10</a> runs on Android 4.4. With it installed:</p>
+
+<ul>
+  <li>RetroDeck uses it as its file picker for songs, logos, GIFs and packs, with no setup.</li>
+  <li>A branding pack opens straight into RetroDeck: in Amaze, open the ZIP's ⋮ menu → Open with → Other → <strong>Import into RetroDeck</strong>. (Tapping it opens Amaze's own ZIP viewer.) RetroDeck asks before importing.</li>
+  <li>Its FTP server lets you drop files on the head unit from a computer over Wi-Fi.</li>
+</ul>
+
+<p>Packs sent with <a href="https://github.com/localsend/localsend">LocalSend</a> open the same way, and so do ZIPs shared from a chat app.</p>
+
 <p>Some head units and Android TV builds have no working file picker, or one that only shows photos (so SVG logos and ZIP packs can't be picked). RetroDeck then also lists the images, GIFs and packs in its own import folder, and songs in its music folder (press SRC). Neither needs a storage permission:</p>
 
 <pre>
@@ -292,7 +302,7 @@ my-vehicle.zip
 
 <h3>Custom themes</h3>
 
-<p>Make a theme for a real radio on a computer: a theme file picks the skin and puts each of your logos where the real unit had its marks, and <code>tools/make_pack.py</code> builds it into a branding pack, checked the way RetroDeck checks one. Work in <a href="custom-themes/">custom-themes</a>: git ignores everything there except its guide and a template, so your logos and packs never reach GitHub. Each pack gets a screenshot (<code>assets/preview.png</code>), drawn by the app's own importer and renderer, so people can see it before importing it.</p>
+<p>Make a theme for a real radio on a computer: a theme file picks the skin and puts each of your logos where the real unit had its marks, and <code>tools/make_pack.py</code> builds it into a branding pack, checked the way RetroDeck checks one. Work in <a href="custom-themes/">custom-themes</a>: git ignores everything there except its guide and a template, so your logos and packs never reach GitHub. Each pack gets screenshots (the stereo by day and by night, the full-screen visualizer by day and by night, and the startup screen), drawn by the app's own importer and renderer, so people can see it before importing it. Packs exported in the app carry the same screenshots, showing the song that's playing.</p>
 
 <h2>Logos and Trademarks</h2>
 

@@ -145,10 +145,9 @@ public class PlacementEditorActivity extends Activity {
         controls.addView(Ui.section(this, Zones.label(zone)));
         roleChips = Ui.horizontal(this);
         roleChips.setPadding(Ui.dp(this, 14), 0, Ui.dp(this, 14), Ui.dp(this, 4));
-        String[] names = {"Manufacturer logo", "Model badge"};
-        for (int r = 0; r < 2; r++) {
+                for (int r = 0; r < VehicleProfile.COUNT; r++) {
             final int rr = r;
-            roleChips.addView(Ui.chip(this, names[r], r == role, v -> {
+            roleChips.addView(Ui.chip(this, VehicleProfile.roleLabel(r), r == role, v -> {
                 role = rr;
                 showZone();
             }), Ui.margins(Ui.wrap(), this, 4, 0, 4, 0));
@@ -156,7 +155,7 @@ public class PlacementEditorActivity extends Activity {
         controls.addView(roleChips);
         final Placement p = draft.placement(zone, role);
         if (!draft.hasLogo(role)) {
-            String name = role == VehicleProfile.MANUFACTURER ? draft.manufacturer : draft.model;
+            String name = draft.roleName(role);
             TextView t = Ui.text(this, name.isEmpty()
                     ? "No image or name yet. Import one in Vehicle Branding."
                     : "No image yet, so the name \"" + name + "\" is shown instead.", 13, Ui.SUB, false);

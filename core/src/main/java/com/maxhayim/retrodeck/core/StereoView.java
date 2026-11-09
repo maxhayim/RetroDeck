@@ -98,6 +98,10 @@ public class StereoView extends View {
     private long volumeChangedAt = -10_000;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /** Characters a segment display can't form, drawn in the system font. */
+    private final Paint glyph = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final android.graphics.Rect glyphBounds = new android.graphics.Rect();
+    private boolean scrollToEnd;
     private final RectF rect = new RectF();
     private final Path path = new Path();
     private final Path window = new Path();
@@ -848,20 +852,55 @@ public class StereoView extends View {
         return b.toString();
     }
 
-    /** A full row of character cells, unlit ones included, with the text lit from the left. */
+    /**
+     * A full row of character cells, unlit ones included, with the text lit from the left. Characters the
+     * segments can't form (Japanese, Hebrew, Cyrillic...) are drawn in the system font in their cells, and
+     * text too long for the row scrolls.
+     */
     private void segmentCells(Canvas c, String s, float x, float y, float width, int ink, float h) {
-        int cells = Math.max(1, (int) (width / text.measureText("~")));
+        float cw = text.measureText("~");
+        int cells = Math.max(1, (int) (width / cw));
         StringBuilder all = new StringBuilder();
         for (int i = 0; i < cells; i++) all.append('~');
         text.setColor(Illumination.withAlpha(ink, UNLIT));
         c.drawText(all.toString(), x, y, text);
-        String lit = segments(s, true);
-        if (lit.length() > cells) lit = lit.substring(0, cells);
+
+        java.util.List<SegmentText.Cell> list = SegmentText.cells(s);
+        int total = SegmentText.width(list);
+        int offset = SegmentText.scroll(total, cells, SystemClock.uptimeMillis(), scrollToEnd);
+        SegmentText.Cell[] shown = SegmentText.window(list, offset, cells);
         // A radio from before visualizers centres its text in the window, with nothing under it.
-        if (skin.noVisualizer) lit = blanks((cells - lit.length()) / 2) + lit;
+        int pad = skin.noVisualizer && total < cells ? (cells - total) / 2 : 0;
+        StringBuilder lit = new StringBuilder(blanks(pad));
+        for (int i = 0; i + pad < cells; i++) lit.append(shown[i] != null ? shown[i].seg : '!');
         segmentGlow(true, ink, h);
-        c.drawText(lit, x, y, text);
+        c.drawText(lit.toString(), x, y, text);
         text.clearShadowLayer();
+
+        // The glyphs: as tall as a segment character, centred in their cells, glowing the same.
+        float capH = -text.getFontMetrics().ascent * 0.92f;
+        for (int i = 0; i + pad < cells; i++) {
+            SegmentText.Cell cell = shown[i];
+            if (cell == null || cell.glyph == null) continue;
+            glyph.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+            glyph.setTextAlign(Paint.Align.CENTER);
+            glyph.setTextSize(capH * (cell.span == 2 ? 1.0f : 1.15f));
+            float gw = glyph.measureText(cell.glyph), room = cw * cell.span * 0.92f;
+            if (gw > room) glyph.setTextSize(glyph.getTextSize() * room / gw);
+            glyph.setColor(bright(ink));
+            glyph.setShadowLayer(h * (neon() ? 0.08f : 0.06f), 0, 0, Illumination.withAlpha(ink, neon() ? 0xE0 : 0xB0));
+            glyph.getTextBounds(cell.glyph, 0, cell.glyph.length(), glyphBounds);
+            float gx = x + (i + pad) * cw + cw * cell.span / 2f;
+            // Centred on the segment characters' height.
+            float gy = y - capH / 2f - glyphBounds.exactCenterY();
+            c.drawText(cell.glyph, gx, gy, glyph);
+        }
+    }
+
+    /** Shows the end of text too long for the display instead of scrolling it, for still screenshots. */
+    public void setScrollToEnd(boolean end) {
+        scrollToEnd = end;
+        invalidate();
     }
 
     /** One run of digits, its unlit segments behind it. */

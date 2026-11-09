@@ -99,10 +99,36 @@ public class StartupEditorActivity extends Activity {
         controls.addView(Ui.section(this, "Steps"));
         controls.addView(Ui.toggle(this, "Power-on lamps", s.powerOn, (b, on) -> s.powerOn = on));
         controls.addView(Ui.toggle(this, "LCD greeting", s.lcdBoot, (b, on) -> s.lcdBoot = on));
+        Ui.Row greeting = Ui.row(this, "Greeting text", s.greeting.isEmpty()
+                ? "HELLO  " + draft.displayName().toUpperCase(Locale.US) + "  (default)" : s.greeting, v -> editGreeting());
+        controls.addView(greeting);
         android.widget.TextView note = Ui.text(this, "Tap the screen to skip the animation at any time. RetroDeck is ready underneath while it plays.",
                 13, Ui.SUB, false);
         note.setPadding(Ui.dp(this, 18), Ui.dp(this, 8), Ui.dp(this, 18), Ui.dp(this, 16));
         controls.addView(note);
+    }
+
+    /** Any text in any language; {car} becomes the vehicle's name. Blank brings back the default. */
+    private void editGreeting() {
+        final android.widget.EditText e = new android.widget.EditText(this);
+        e.setText(draft.startup.greeting);
+        e.setHint(StartupConfig.DEFAULT_GREETING);
+        e.setSingleLine(true);
+        e.setSelectAllOnFocus(true);
+        e.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(StartupConfig.MAX_GREETING)});
+        FrameLayout box = new FrameLayout(this);
+        box.setPadding(Ui.dp(this, 20), Ui.dp(this, 8), Ui.dp(this, 20), 0);
+        box.addView(e);
+        Ui.dialog(this).setTitle("Greeting text")
+                .setMessage("Shown on the startup screen, in any language. {car} is replaced by the vehicle's name. "
+                        + "Leave it blank for the default.")
+                .setView(box)
+                .setPositiveButton("OK", (d, w) -> {
+                    draft.startup.greeting = StartupConfig.cleanGreeting(e.getText().toString());
+                    build();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void play() {

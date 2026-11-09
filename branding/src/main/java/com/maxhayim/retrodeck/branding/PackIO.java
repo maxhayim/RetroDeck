@@ -24,20 +24,25 @@ final class PackIO {
     private PackIO() {}
 
     static void export(ProfileStore store, List<VehicleProfile> profiles, OutputStream out, String createdWith) throws IOException {
+        export(store, profiles, new HashMap<>(), out, createdWith);
+    }
+
+    static void export(ProfileStore store, List<VehicleProfile> profiles, Map<VehicleProfile, Map<String, byte[]>> screenshots,
+                       OutputStream out, String createdWith) throws IOException {
         Map<VehicleProfile, byte[][]> logos = new HashMap<>();
         Map<VehicleProfile, byte[]> animations = new HashMap<>();
         for (VehicleProfile p : profiles) {
             File anim = store.animation(p);
             if (anim != null && anim.exists()) animations.put(p, read(anim));
-            byte[][] b = new byte[2][];
-            for (int r = 0; r < 2; r++) {
+            byte[][] b = new byte[VehicleProfile.COUNT][];
+            for (int r = 0; r < VehicleProfile.COUNT; r++) {
                 File f = store.logo(p, r);
                 if (f != null && f.exists()) b[r] = read(f);
             }
             logos.put(p, b);
         }
         String name = profiles.size() == 1 ? profiles.get(0).displayName() : profiles.size() + " vehicles";
-        BrandingPack.write(out, name, profiles, logos, animations, createdWith);
+        BrandingPack.write(out, name, profiles, logos, animations, screenshots, createdWith);
     }
 
     /**
@@ -54,7 +59,7 @@ final class PackIO {
             for (BrandingPack.Entry e : pack.entries) {
                 VehicleProfile p = e.profile;
                 p.id = store.newProfile().id;
-                for (int r = 0; r < 2; r++) {
+                for (int r = 0; r < VehicleProfile.COUNT; r++) {
                     p.logoFile[r] = null;
                     p.logoColor[r] = 0;
                     if (e.logos[r] == null) continue;

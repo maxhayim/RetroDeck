@@ -1,11 +1,8 @@
 package com.maxhayim.retrodeck.branding;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.view.View;
 
-import com.maxhayim.retrodeck.core.StereoView;
+import com.maxhayim.retrodeck.core.StereoState;
 
 import org.junit.Assume;
 import org.junit.Test;
@@ -19,12 +16,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Previews a branding pack on a computer: imports it through the same checks and importer as the
- * head unit, then draws each of its profiles on its skin into build/branding-renders/pack-*.png.
+ * head unit, then draws each of its profiles the way an exported pack's screenshots are drawn (stereo
+ * by day and night, full-screen visualizer by day and night, startup) into
+ * build/branding-renders/pack-INDEX-SKIN-NAME.png.
  * Only runs when given a pack: ./gradlew :branding:testDebugUnitTest -Ppack=path/to/pack.zip
- * (optionally -Prender.size=1920x1080).
+ * (optionally -Prender.size=1920x1080, -Ppack.title=..., -Ppack.artist=...).
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
@@ -44,25 +44,24 @@ public class PackRenderTest {
         try (InputStream in = new FileInputStream(path)) {
             result = PackIO.importPack(ctx, store, in);
         }
+        StereoState song = new StereoState();
+        song.title = System.getProperty("pack.title");
+        song.artist = System.getProperty("pack.artist", "");
+
         File dir = new File("build/branding-renders");
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
         int i = 0;
         for (VehicleProfile p : result.added) {
-            StereoView v = new StereoView(ctx);
-            v.setOverlay(new BrandingRenderer(store, p));
-            Previews.apply(v, p);
-            v.setState(Previews.state());
-            v.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
-            v.layout(0, 0, w, h);
-            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            v.draw(new Canvas(bm));
-            File out = new File(dir, "pack-" + (i++) + "-" + p.skin + ".png");
-            try (FileOutputStream o = new FileOutputStream(out)) {
-                bm.compress(Bitmap.CompressFormat.PNG, 100, o);
+            Map<String, byte[]> shots = PackScreenshots.draw(ctx, store, p, song, w, h);
+            for (Map.Entry<String, byte[]> e : shots.entrySet()) {
+                File out = new File(dir, "pack-" + i + "-" + p.skin + "-" + e.getKey() + ".png");
+                try (FileOutputStream o = new FileOutputStream(out)) {
+                    o.write(e.getValue());
+                }
+                System.out.println("Rendered " + out.getAbsolutePath());
             }
-            System.out.println("Rendered " + out.getAbsolutePath());
+            i++;
         }
     }
 }

@@ -5,16 +5,20 @@ A theme file (theme.json in a folder of custom-themes) picks the skin and says w
 are yours: RetroDeck ships none, and this tool never fetches any. Import the ZIP on the head unit with
 Settings -> Personalization -> Vehicle Branding -> Import/Export Branding Pack -> Import a pack.
 
-    python3 tools/make_pack.py custom-themes/300zx/theme.json \
-        --manufacturer car-maker.png --model audio-brand.png -o 300zx.zip
+    python3 tools/make_pack.py custom-themes/my-car/theme.json \
+        --manufacturer car-maker.png --model model-badge.png --audio audio-brand.png -o my-car.zip
 
 Logos: PNG (best: light artwork on a transparent background), JPEG, WebP or SVG, at most 4096 pixels
 a side and 8 MB. Only share a pack with people who may use the logos in it.
 
-The pack gets a screenshot, assets/preview.png, so whoever you send it to can see it before importing.
+The pack gets screenshots: the stereo by day and by night, the full-screen visualizer by day and by
+night, and the startup screen (assets/p0-screenshot-NAME.png, with copies saved next to the ZIP as
+OUT-NAME.png), as packs exported in the app have, so whoever you send it to can see it
+before importing.
 It is drawn by RetroDeck's own importer and renderer (PackRenderTest), which needs this repository's
 build setup (JDK 17 in JAVA_HOME and the Android SDK). Without it, or with --no-preview, the pack is
-made without one. RetroDeck ignores the screenshot when importing.
+made without them. RetroDeck ignores the screenshots when importing. A pack with an audio brand logo
+needs a RetroDeck that knows about it (pack format 3).
 Standard library only.
 """
 import argparse
@@ -26,7 +30,7 @@ import subprocess
 import sys
 import zipfile
 
-ROLES = ("manufacturer", "model")
+ROLES = ("manufacturer", "model", "audio")
 MAX_BYTES = 8 * 1024 * 1024
 MAX_SIDE = 4096
 
@@ -82,7 +86,10 @@ def load_logo(role, path):
     return data, kind
 
 
-PREVIEW = "assets/preview.png"
+# The screenshots, as the app's own export makes them: stereo by day and night, full-screen visualizer
+# by day and night, and the startup screen.
+# When the visualizer looks the same day and night there's one, "visualizer".
+SCREENSHOTS = ("day", "night", "visualizer", "visualizer-day", "visualizer-night", "startup")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -93,8 +100,8 @@ def write_zip(path, manifest, packed):
             z.writestr(name, data)
 
 
-def render_preview(pack):
-    """Draws the pack with RetroDeck's own importer and renderer; returns the PNG bytes or None."""
+def render_preview(pack, song=None):
+    """Draws the pack with RetroDeck's own importer and renderer: {screenshot name: PNG bytes}, or None."""
     out = os.path.join(REPO, "branding", "build", "branding-renders")
     for f in os.listdir(out) if os.path.isdir(out) else []:
         if f.startswith("pack-"):
@@ -102,7 +109,11 @@ def render_preview(pack):
     gradlew = os.path.join(REPO, "gradlew.bat" if os.name == "nt" else "gradlew")
     cmd = [gradlew, "-q", ":branding:testDebugUnitTest", "--tests", "*PackRenderTest*", "--rerun",
            "-Ppack=" + os.path.abspath(pack), "-Prender.size=1920x1080"]
-    print("Drawing the screenshot (the first time takes a few minutes)...")
+    # The song shown playing in the screenshot: "previewSong": {"title": ..., "artist": ...} in the theme file.
+    for key in ("title", "artist"):
+        if song and song.get(key):
+            cmd.append(f"-Ppack.{key}={song[key]}")
+    print("Drawing the screenshots (the first time takes a few minutes)...")
     try:
         r = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True)
     except OSError as e:
@@ -114,15 +125,21 @@ def render_preview(pack):
         print("No screenshot: the preview didn't run. Is JAVA_HOME set to JDK 17, and the Android SDK installed?")
         print(tail)
         return None
-    with open(os.path.join(out, shots[0]), "rb") as f:
-        return f.read()
+    result = {}
+    for name in SCREENSHOTS:
+        file = next((f for f in shots if f.startswith("pack-0-") and f.endswith("-" + name + ".png")), None)
+        if file:
+            with open(os.path.join(out, file), "rb") as f:
+                result[name] = f.read()
+    return result
 
 
 def main():
     ap = argparse.ArgumentParser(description="Build a RetroDeck branding pack from a theme file and your own logos.")
-    ap.add_argument("preset", help="a theme file, e.g. custom-themes/300zx/theme.json")
+    ap.add_argument("preset", help="a theme file, e.g. custom-themes/my-car/theme.json")
     ap.add_argument("--manufacturer", help="logo file for the manufacturer role")
-    ap.add_argument("--model", help="logo file for the model role")
+    ap.add_argument("--model", help="logo file for the model role (a model badge)")
+    ap.add_argument("--audio", help="logo file for the audio brand (the stereo maker on a factory radio)")
     ap.add_argument("-o", "--out", required=True, help="the .zip to write")
     ap.add_argument("--no-preview", action="store_true", help="don't add a screenshot")
     a = ap.parse_args()
@@ -130,7 +147,7 @@ def main():
     with open(a.preset, encoding="utf-8") as f:
         preset = json.load(f)
     profile = dict(preset["profile"])
-    files = {"manufacturer": a.manufacturer, "model": a.model}
+    files = {"manufacturer": a.manufacturer, "model": a.model, "audio": a.audio}
     if not any(files.values()):
         for role in ROLES:
             print(f"--{role}: {preset.get('logos', {}).get(role, '')}")
@@ -148,7 +165,7 @@ def main():
 
     manifest = {
         "format": "retrodeck-branding-pack",
-        "formatVersion": 1,
+        "formatVersion": 3 if "audio" in assets else 1,
         "name": preset.get("name", "Branding pack")[:40],
         "createdWith": "RetroDeck tools/make_pack.py",
         "compatibleSkins": [profile["skin"]],
@@ -158,15 +175,22 @@ def main():
         sys.exit(f"{a.out} already exists; pick another name")
     write_zip(a.out, manifest, packed)
     if not a.no_preview:
-        shot = render_preview(a.out)
-        if shot:
-            manifest["preview"] = PREVIEW
-            packed[PREVIEW] = shot
+        shots = render_preview(a.out, preset.get("previewSong"))
+        if shots:
+            listed = {}
+            for name, png in shots.items():
+                inside = f"assets/p0-screenshot-{name}.png"
+                packed[inside] = png
+                listed[name] = inside
+                beside = os.path.splitext(a.out)[0] + f"-{name}.png"
+                with open(beside, "wb") as f:
+                    f.write(png)
+            manifest["profiles"][0]["screenshots"] = listed
+            if "day" in listed:
+                manifest["preview"] = listed["day"]
+            print(f"Added {len(listed)} screenshots ({', '.join(listed)}) inside the pack, with copies next to it "
+                  f"({os.path.splitext(a.out)[0]}-NAME.png).")
             write_zip(a.out, manifest, packed)
-            beside = os.path.splitext(a.out)[0] + "-preview.png"
-            with open(beside, "wb") as f:
-                f.write(shot)
-            print(f"Added a screenshot: {PREVIEW} inside the pack, and {beside} next to it.")
     print(f"Wrote {a.out}: {preset.get('name')}, skin {profile['skin']}, logos: {', '.join(assets) or 'none'}")
     print("Import it on the head unit: Vehicle Branding -> Import/Export Branding Pack -> Import a pack.")
     print("Only share it with people who may use the logos in it.")

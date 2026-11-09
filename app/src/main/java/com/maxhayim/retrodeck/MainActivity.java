@@ -76,6 +76,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         renderer = new BrandingRenderer(store, profile);
         stereo.setOverlay(renderer);
         stereo.setState(state);
+        StereoState.shown = state;
         stereo.setListener(this);
         root.addView(stereo, new FrameLayout.LayoutParams(-1, -1));
         startup = new StartupView(this, store);
@@ -137,6 +138,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
     protected void onDestroy() {
         super.onDestroy();
         store.removeListener(onProfileChanged);
+        if (StereoState.shown == state) StereoState.shown = null;
         unregisterReceiver(screenOff);
         player.stop();
         levels.release();
@@ -408,7 +410,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         if (!Pickers.open(this, AUDIO, PICK_MUSIC)) {
             Ui.dialog(this).setTitle("No file picker")
                     .setMessage("This device has no file picker for music. Copy songs into this folder with a file manager, "
-                            + "a USB cable or adb, then press SRC again:\n\n" + musicFolder().getPath())
+                            + "a USB cable or adb, then press SRC again:\n\n" + musicFolder().getPath() + "\n\n" + Pickers.FILE_MANAGER_TIP)
                     .setPositiveButton("OK", null)
                     .show();
         }

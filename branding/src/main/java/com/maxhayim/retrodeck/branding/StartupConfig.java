@@ -23,6 +23,11 @@ public final class StartupConfig {
     public boolean powerOn = true;
     /** Include the simulated LCD start-up text. */
     public boolean lcdBoot = true;
+    /** The greeting's own text, any language; "{car}" is replaced by the vehicle's name. Blank: the default. */
+    public String greeting = "";
+
+    public static final String DEFAULT_GREETING = "HELLO  {car}";
+    public static final int MAX_GREETING = 60;
 
     public StartupConfig copy() {
         StartupConfig c = new StartupConfig();
@@ -31,12 +36,14 @@ public final class StartupConfig {
         c.durationMs = durationMs;
         c.powerOn = powerOn;
         c.lcdBoot = lcdBoot;
+        c.greeting = greeting;
         return c;
     }
 
     public StartupConfig sanitize() {
         if (!exists(preset)) preset = GLOW;
         durationMs = Math.max(MIN_MS, Math.min(MAX_MS, durationMs));
+        greeting = cleanGreeting(greeting);
         return this;
     }
 
@@ -44,6 +51,24 @@ public final class StartupConfig {
     public int effectiveMs() {
         if (!enabled) return 0;
         return INSTANT.equals(preset) ? INSTANT_MS : durationMs;
+    }
+
+    /** No control characters or line breaks, at most MAX_GREETING long. */
+    public static String cleanGreeting(String s) {
+        if (s == null) return "";
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < s.length() && b.length() < MAX_GREETING; i++) {
+            char c = s.charAt(i);
+            if (!Character.isISOControl(c)) b.append(c);
+        }
+        return b.toString().trim();
+    }
+
+    /** The greeting as shown for a vehicle called car (blank when unnamed). */
+    public String greetingFor(String car) {
+        String g = greeting == null || greeting.trim().isEmpty() ? DEFAULT_GREETING : greeting;
+        g = g.replace("{car}", car == null ? "" : car).trim();
+        return g.isEmpty() ? "HELLO" : g;
     }
 
     public static boolean exists(String p) {

@@ -13,8 +13,13 @@ import java.util.Map;
 /** One vehicle: its names, logos, colours, skin and start-up screen. Stored on the device only. */
 public final class VehicleProfile {
 
-    public static final int MANUFACTURER = 0, MODEL = 1;
-    public static final String[] ROLES = {"manufacturer", "model"};
+    /**
+     * The logos a profile can hold: the car maker's, a model badge, and the audio brand a factory radio
+     * carried (say, on its tape door). AUDIO came later: packs that use it are format 3.
+     */
+    public static final int MANUFACTURER = 0, MODEL = 1, AUDIO = 2;
+    public static final String[] ROLES = {"manufacturer", "model", "audio"};
+    public static final int COUNT = ROLES.length;
     public static final int MAX_NAME = 40;
 
     public String id;
@@ -25,10 +30,10 @@ public final class VehicleProfile {
     public String trim = "";
 
     /** File names inside the profile's folder, or null when no logo was imported. */
-    public final String[] logoFile = new String[2];
-    public final LogoAdjust[] adjust = {new LogoAdjust(), new LogoAdjust()};
+    public final String[] logoFile = new String[COUNT];
+    public final LogoAdjust[] adjust = {new LogoAdjust(), new LogoAdjust(), new LogoAdjust()};
     /** Colour found in each logo by ColorExtractor, or 0. */
-    public final int[] logoColor = new int[2];
+    public final int[] logoColor = new int[COUNT];
 
     public String skin = Skins.CLASSIC;
     public String visualizer = Visualizers.BARS;
@@ -48,7 +53,7 @@ public final class VehicleProfile {
     public String keyLighting = KeyLights.AUTO;
     public StartupConfig startup = new StartupConfig();
 
-    /** zone -> {manufacturer placement, model placement}. */
+    /** zone -> {manufacturer, model, audio placement}. */
     public final Map<String, Placement[]> placements = new HashMap<>();
 
     public long updatedAt;
@@ -71,16 +76,27 @@ public final class VehicleProfile {
     }
 
     private void put(String zone, Placement manufacturer, Placement model) {
-        placements.put(zone, new Placement[]{manufacturer, model});
+        // The audio brand starts hidden everywhere: it's placed by hand or by a pack.
+        placements.put(zone, new Placement[]{manufacturer, model, new Placement(false, 0.8f, 0.5f, 0.5f)});
     }
 
     public Placement placement(String zone, int role) {
         Placement[] p = placements.get(zone);
         if (p == null) {
-            p = new Placement[]{new Placement(), new Placement()};
+            p = new Placement[]{new Placement(), new Placement(), new Placement()};
             placements.put(zone, p);
         }
         return p[role];
+    }
+
+    /** "Manufacturer logo", "Model badge" or "Audio brand logo". */
+    public static String roleLabel(int role) {
+        return role == MANUFACTURER ? "Manufacturer logo" : role == MODEL ? "Model badge" : "Audio brand logo";
+    }
+
+    /** The name shown in place of a missing logo; the audio brand has none. */
+    public String roleName(int role) {
+        return role == MANUFACTURER ? manufacturer : role == MODEL ? model : "";
     }
 
     public boolean hasLogo(int role) {
@@ -111,7 +127,7 @@ public final class VehicleProfile {
         p.model = model;
         p.year = year;
         p.trim = trim;
-        for (int r = 0; r < 2; r++) {
+        for (int r = 0; r < COUNT; r++) {
             p.logoFile[r] = logoFile[r];
             p.adjust[r] = adjust[r].copy();
             p.logoColor[r] = logoColor[r];
@@ -131,7 +147,9 @@ public final class VehicleProfile {
         p.startup = startup.copy();
         p.placements.clear();
         for (Map.Entry<String, Placement[]> e : placements.entrySet()) {
-            p.placements.put(e.getKey(), new Placement[]{e.getValue()[0].copy(), e.getValue()[1].copy()});
+            Placement[] from = e.getValue(), to = new Placement[COUNT];
+            for (int r = 0; r < COUNT; r++) to[r] = from[r].copy();
+            p.placements.put(e.getKey(), to);
         }
         p.updatedAt = updatedAt;
         return p;

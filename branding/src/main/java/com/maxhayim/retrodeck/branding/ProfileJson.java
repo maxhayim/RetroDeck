@@ -45,7 +45,7 @@ public final class ProfileJson {
         o.put("palette", palette);
 
         JSONObject logos = new JSONObject();
-        for (int r = 0; r < 2; r++) {
+        for (int r = 0; r < VehicleProfile.COUNT; r++) {
             JSONObject l = new JSONObject();
             if (p.logoFile[r] != null) l.put("file", p.logoFile[r]);
             if (p.logoColor[r] != 0) l.put("color", Illumination.hex(p.logoColor[r]));
@@ -57,7 +57,7 @@ public final class ProfileJson {
         JSONObject zones = new JSONObject();
         for (String z : Zones.ALL) {
             JSONObject zo = new JSONObject();
-            for (int r = 0; r < 2; r++) zo.put(VehicleProfile.ROLES[r], writePlacement(p.placement(z, r)));
+            for (int r = 0; r < VehicleProfile.COUNT; r++) zo.put(VehicleProfile.ROLES[r], writePlacement(p.placement(z, r)));
             zones.put(z, zo);
         }
         o.put("placements", zones);
@@ -68,6 +68,7 @@ public final class ProfileJson {
         s.put("durationMs", p.startup.durationMs);
         s.put("powerOn", p.startup.powerOn);
         s.put("lcdBoot", p.startup.lcdBoot);
+        if (!p.startup.greeting.isEmpty()) s.put("greeting", p.startup.greeting);
         o.put("startup", s);
         return o;
     }
@@ -127,7 +128,7 @@ public final class ProfileJson {
         }
 
         JSONObject logos = o.optJSONObject("logos");
-        for (int r = 0; r < 2 && logos != null; r++) {
+        for (int r = 0; r < VehicleProfile.COUNT && logos != null; r++) {
             JSONObject l = logos.optJSONObject(VehicleProfile.ROLES[r]);
             if (l == null) continue;
             String file = l.optString("file", null);
@@ -141,7 +142,7 @@ public final class ProfileJson {
         for (String z : Zones.ALL) {
             JSONObject zo = zones == null ? null : zones.optJSONObject(z);
             if (zo == null) continue;
-            for (int r = 0; r < 2; r++) {
+            for (int r = 0; r < VehicleProfile.COUNT; r++) {
                 JSONObject pl = zo.optJSONObject(VehicleProfile.ROLES[r]);
                 if (pl != null) p.placements.get(z)[r] = readPlacement(pl);
             }
@@ -154,6 +155,7 @@ public final class ProfileJson {
             p.startup.durationMs = s.optInt("durationMs", StartupConfig.DEFAULT_MS);
             p.startup.powerOn = s.optBoolean("powerOn", true);
             p.startup.lcdBoot = s.optBoolean("lcdBoot", true);
+            p.startup.greeting = s.optString("greeting", "");
         }
         p.startup.sanitize();
         return p;

@@ -31,14 +31,14 @@ import java.util.zip.ZipOutputStream;
  * assets/NAME.gif      visualizer animations
  * </pre>
  * Each profile is the ProfileJson object with "assets": {"manufacturer": "assets/...", "model": ...,
- * "animation": ...}. Packs with an animation are format 2, so older versions say they need an update
- * instead of refusing the GIF as an unknown file.
+ * "animation": ..., "audio": ...}. Packs with an animation are format 2 and packs with an audio brand
+ * logo format 3, so older versions say they need an update instead of dropping what they don't know.
  */
 public final class BrandingPack {
 
     public static final String FORMAT = "retrodeck-branding-pack";
     /** Packs with a newer major version are refused; unknown fields in this version are ignored. */
-    public static final int FORMAT_VERSION = 2;
+    public static final int FORMAT_VERSION = 3;
     public static final String MIME = "application/zip";
 
     public static final long MAX_PACK_BYTES = 24L * 1024 * 1024;
@@ -58,8 +58,8 @@ public final class BrandingPack {
     /** One profile from a pack, with its logo bytes by role (null when absent). */
     public static final class Entry {
         public final VehicleProfile profile;
-        public final byte[][] logos = new byte[2][];
-        public final String[] formats = new String[2];
+        public final byte[][] logos = new byte[VehicleProfile.COUNT][];
+        public final String[] formats = new String[VehicleProfile.COUNT];
         /** The visualizer animation's GIF bytes, or null. */
         public byte[] animation;
 
@@ -143,7 +143,7 @@ public final class BrandingPack {
             if (po == null) throw new InvalidPackException("Profile " + (i + 1) + " isn't valid.");
             Entry entry = new Entry(ProfileJson.read(po));
             JSONObject assets = po.optJSONObject("assets");
-            for (int r = 0; r < 2; r++) {
+            for (int r = 0; r < VehicleProfile.COUNT; r++) {
                 entry.profile.logoFile[r] = null;
                 String path = assets == null ? null : assets.optString(VehicleProfile.ROLES[r], null);
                 if (path == null || path.isEmpty()) continue;
@@ -262,9 +262,19 @@ public final class BrandingPack {
         write(out, name, profiles, logos, new java.util.HashMap<>(), createdWith);
     }
 
-    /** Writes a pack; animations.get(profile) is the GIF bytes of its animation, if it has one. */
     public static void write(OutputStream out, String name, List<VehicleProfile> profiles, Map<VehicleProfile, byte[][]> logos,
                              Map<VehicleProfile, byte[]> animations, String createdWith) throws IOException {
+        write(out, name, profiles, logos, animations, new java.util.HashMap<>(), createdWith);
+    }
+
+    /**
+     * Writes a pack; animations.get(profile) is the GIF bytes of its animation, if it has one, and
+     * screenshots.get(profile) its screenshots by name (see PackScreenshots). Screenshots are only for
+     * people looking at the pack: importing ignores them.
+     */
+    public static void write(OutputStream out, String name, List<VehicleProfile> profiles, Map<VehicleProfile, byte[][]> logos,
+                             Map<VehicleProfile, byte[]> animations, Map<VehicleProfile, Map<String, byte[]>> screenshots,
+                             String createdWith) throws IOException {
         try (ZipOutputStream zip = new ZipOutputStream(out)) {
             JSONObject m = new JSONObject();
             JSONArray list = new JSONArray();
@@ -272,9 +282,13 @@ public final class BrandingPack {
             Set<String> skins = new HashSet<>();
             try {
                 m.put("format", FORMAT);
-                boolean animated = false;
-                for (VehicleProfile p : profiles) animated |= animations.get(p) != null;
-                m.put("formatVersion", animated ? FORMAT_VERSION : 1);
+                boolean animated = false, audio = false;
+                for (VehicleProfile p : profiles) {
+                    animated |= animations.get(p) != null;
+                    byte[][] b = logos.get(p);
+                    audio |= b != null && b.length > VehicleProfile.AUDIO && b[VehicleProfile.AUDIO] != null;
+                }
+                m.put("formatVersion", audio ? 3 : animated ? 2 : 1);
                 m.put("name", name);
                 m.put("createdWith", createdWith);
                 int i = 0;
@@ -284,11 +298,11 @@ public final class BrandingPack {
                     JSONObject logosJson = po.optJSONObject("logos");
                     JSONObject a = new JSONObject();
                     byte[][] bytes = logos.get(p);
-                    for (int r = 0; r < 2; r++) {
+                    for (int r = 0; r < VehicleProfile.COUNT; r++) {
                         if (logosJson != null && logosJson.optJSONObject(VehicleProfile.ROLES[r]) != null) {
                             logosJson.optJSONObject(VehicleProfile.ROLES[r]).remove("file");
                         }
-                        if (bytes == null || bytes[r] == null) continue;
+                        if (bytes == null || r >= bytes.length || bytes[r] == null) continue;
                         String path = "assets/p" + i + "-" + VehicleProfile.ROLES[r] + ".png";
                         assets.put(path, bytes[r]);
                         a.put(VehicleProfile.ROLES[r], path);
@@ -301,6 +315,20 @@ public final class BrandingPack {
                         a.put("animation", path);
                     }
                     po.put("assets", a);
+                    po.remove("screenshots");
+                    Map<String, byte[]> shots = screenshots.get(p);
+                    if (shots != null && !shots.isEmpty()) {
+                        JSONObject so = new JSONObject();
+                        for (Map.Entry<String, byte[]> e : shots.entrySet()) {
+                            if (!e.getKey().matches("[a-z-]{1,24}")) continue;
+                            String path = "assets/p" + i + "-screenshot-" + e.getKey() + ".png";
+                            assets.put(path, e.getValue());
+                            so.put(e.getKey(), path);
+                        }
+                        po.put("screenshots", so);
+                        // The first vehicle's daytime stereo is the pack's main picture.
+                        if (!m.has("preview") && so.has("day")) m.put("preview", so.getString("day"));
+                    }
                     list.put(po);
                     skins.add(p.skin);
                     i++;

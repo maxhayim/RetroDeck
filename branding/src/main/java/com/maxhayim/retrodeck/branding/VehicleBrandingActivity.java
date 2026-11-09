@@ -49,7 +49,7 @@ public class VehicleBrandingActivity extends Activity {
     static final String[] IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp", "image/svg+xml"};
     private static final String[] PACK_TYPES = {"application/zip", "application/x-zip-compressed", "application/octet-stream"};
     private static final String[] GIF_TYPES = {"image/gif"};
-    private static final int PICK_LOGO = 1, PICK_BADGE = 2, EXPORT_PACK = 3, IMPORT_PACK = 4, PICK_GIF = 5;
+    private static final int PICK_LOGO = 1, PICK_BADGE = 2, EXPORT_PACK = 3, IMPORT_PACK = 4, PICK_GIF = 5, PICK_AUDIO = 6;
 
     private ProfileStore store;
     private VehicleProfile profile;
@@ -59,7 +59,7 @@ public class VehicleBrandingActivity extends Activity {
     private final Handler main = new Handler(Looper.getMainLooper());
     private List<VehicleProfile> pendingExport;
 
-    private Ui.Row rowProfiles, rowManufacturer, rowModel, rowYear, rowTrim, rowLogo, rowBadge, rowEditLogo,
+    private Ui.Row rowProfiles, rowManufacturer, rowModel, rowYear, rowTrim, rowLogo, rowBadge, rowAudio, rowEditLogo,
             rowPlacement, rowSkin, rowVisualizer, rowAnimation, rowIllumination, rowAccent, rowVisColour, rowScreen, rowBody, rowKeys, rowStartup;
 
     @Override
@@ -153,6 +153,7 @@ public class VehicleBrandingActivity extends Activity {
         l.addView(Ui.section(this, "Logos"));
         rowLogo = add(l, "Import Manufacturer Logo", v -> pickLogo(VehicleProfile.MANUFACTURER));
         rowBadge = add(l, "Import Model Badge", v -> pickLogo(VehicleProfile.MODEL));
+        rowAudio = add(l, "Import Audio Brand Logo", v -> pickLogo(VehicleProfile.AUDIO));
         rowEditLogo = add(l, "Adjust Logo Image", v -> chooseLogoToEdit());
         rowPlacement = add(l, "Edit Logo Placement", v -> startActivity(new Intent(this, PlacementEditorActivity.class)));
 
@@ -201,6 +202,8 @@ public class VehicleBrandingActivity extends Activity {
         rowTrim.value(orNotSet(profile.trim));
         rowLogo.value(logoValue(VehicleProfile.MANUFACTURER));
         rowBadge.value(logoValue(VehicleProfile.MODEL));
+        rowAudio.value(profile.hasLogo(VehicleProfile.AUDIO) ? logoValue(VehicleProfile.AUDIO)
+                : "Not set  ·  the stereo maker on a factory radio, e.g. on the tape door");
         rowEditLogo.value("Crop, rotate, opacity, brightness, tint");
         rowPlacement.value(placementSummary());
         rowSkin.value(Skins.get(profile.skin).name);
@@ -233,7 +236,7 @@ public class VehicleBrandingActivity extends Activity {
         int n = 0;
         for (String z : com.maxhayim.retrodeck.core.Zones.ALL) {
             if (skin.zone(z) == null) continue;
-            for (int r = 0; r < 2; r++) if (profile.placement(z, r).visible) n++;
+            for (int r = 0; r < VehicleProfile.COUNT; r++) if (profile.placement(z, r).visible) n++;
         }
         return n + (n == 1 ? " placement" : " placements") + " on " + skin.name;
     }
@@ -343,7 +346,7 @@ public class VehicleBrandingActivity extends Activity {
             chooseImage(role);
             return;
         }
-        Ui.dialog(this).setTitle(role == VehicleProfile.MANUFACTURER ? "Manufacturer logo" : "Model badge")
+        Ui.dialog(this).setTitle(VehicleProfile.roleLabel(role))
                 .setItems(new String[]{"Replace with another image", "Adjust image", "Remove"}, (d, w) -> {
                     if (w == 0) chooseImage(role);
                     else if (w == 1) editLogo(role, null, 0);
@@ -361,7 +364,7 @@ public class VehicleBrandingActivity extends Activity {
      * have no usable picker, or one that only shows photos, which leaves SVG logos unreachable.
      */
     private void chooseImage(final int role) {
-        final int request = role == VehicleProfile.MANUFACTURER ? PICK_LOGO : PICK_BADGE;
+        final int request = role == VehicleProfile.MANUFACTURER ? PICK_LOGO : role == VehicleProfile.MODEL ? PICK_BADGE : PICK_AUDIO;
         final File[] files = importFolder().listFiles((dir, n) -> n.toLowerCase(Locale.US).matches(".+\\.(png|jpe?g|webp|svg)"));
         if (files == null || files.length == 0) {
             folderOrPicker("image (PNG, JPEG, WebP or SVG)", () -> {
@@ -373,7 +376,7 @@ public class VehicleBrandingActivity extends Activity {
         String[] names = new String[files.length + 1];
         names[0] = "Choose with the file picker…";
         for (int i = 0; i < files.length; i++) names[i + 1] = files[i].getName();
-        Ui.dialog(this).setTitle(role == VehicleProfile.MANUFACTURER ? "Import manufacturer logo" : "Import model badge")
+        Ui.dialog(this).setTitle("Import " + VehicleProfile.roleLabel(role).toLowerCase(Locale.US))
                 .setItems(names, (d, w) -> {
                     if (w == 0) {
                         if (!Pickers.open(this, IMAGE_TYPES, request)) explainFolder("image (PNG, JPEG, WebP or SVG)");
@@ -414,19 +417,18 @@ public class VehicleBrandingActivity extends Activity {
 
     private void explainFolder(String what) {
         error("No file picker", "This device has no file picker for this kind of file. Copy the " + what
-                + " into this folder with a file manager, a USB cable or adb, then try again:\n\n" + importFolder().getPath());
+                + " into this folder with a file manager, a USB cable or adb, then try again:\n\n" + importFolder().getPath()
+                + "\n\n" + Pickers.FILE_MANAGER_TIP + (what.contains(".zip")
+                ? " A pack can also be opened from a file manager (Open with → Import into RetroDeck) or sent from LocalSend (Share → Import into RetroDeck)." : ""));
     }
 
     private void chooseLogoToEdit() {
         List<String> names = new ArrayList<>();
         final List<Integer> roles = new ArrayList<>();
-        if (profile.hasLogo(VehicleProfile.MANUFACTURER)) {
-            names.add("Manufacturer logo");
-            roles.add(VehicleProfile.MANUFACTURER);
-        }
-        if (profile.hasLogo(VehicleProfile.MODEL)) {
-            names.add("Model badge");
-            roles.add(VehicleProfile.MODEL);
+        for (int r = 0; r < VehicleProfile.COUNT; r++) {
+            if (!profile.hasLogo(r)) continue;
+            names.add(VehicleProfile.roleLabel(r));
+            roles.add(r);
         }
         if (roles.isEmpty()) {
             toast("Import a manufacturer logo or model badge first.");
@@ -826,7 +828,7 @@ public class VehicleBrandingActivity extends Activity {
     private static final String SHARE_NOTE = "This pack contains your logos. Only share it if you have the right to share them.";
 
     private static boolean hasLogos(List<VehicleProfile> profiles) {
-        for (VehicleProfile p : profiles) if (p.hasLogo(VehicleProfile.MANUFACTURER) || p.hasLogo(VehicleProfile.MODEL)) return true;
+        for (VehicleProfile p : profiles) for (int r = 0; r < VehicleProfile.COUNT; r++) if (p.hasLogo(r)) return true;
         return false;
     }
 
@@ -837,7 +839,7 @@ public class VehicleBrandingActivity extends Activity {
         new Thread(() -> {
             String error = null;
             try (OutputStream out = opener.open()) {
-                PackIO.export(store, profiles, out, "RetroDeck " + version());
+                PackIO.export(store, profiles, screenshots(profiles), out, "RetroDeck " + version());
             } catch (Exception e) {
                 error = e.getMessage() == null ? e.toString() : e.getMessage();
             }
@@ -850,6 +852,39 @@ public class VehicleBrandingActivity extends Activity {
                         .setPositiveButton("OK", null).show();
             });
         }, "pack-export").start();
+    }
+
+    /** How many vehicles in a pack get screenshots; packs have a limit on files. */
+    private static final int SCREENSHOT_PROFILES = 3;
+
+    /**
+     * Screenshots of the first few vehicles for the pack: day and night, the full-screen visualizer,
+     * and the startup screen, with the song that's playing. Views draw on the main thread, so this
+     * waits for it; a failure leaves the pack without screenshots rather than failing the export.
+     */
+    private java.util.Map<VehicleProfile, java.util.Map<String, byte[]>> screenshots(List<VehicleProfile> profiles) {
+        final java.util.Map<VehicleProfile, java.util.Map<String, byte[]>> out = new java.util.HashMap<>();
+        for (int i = 0; i < profiles.size() && i < SCREENSHOT_PROFILES; i++) {
+            final VehicleProfile p = profiles.get(i);
+            final java.util.concurrent.CountDownLatch done = new java.util.concurrent.CountDownLatch(1);
+            main.post(() -> {
+                try {
+                    out.put(p, PackScreenshots.draw(this, store, p, com.maxhayim.retrodeck.core.StereoState.shown, 1920, 1080));
+                } catch (Throwable t) {
+                    // Out of memory on a small head unit, say: share the pack without them.
+                } finally {
+                    done.countDown();
+                }
+            });
+            try {
+                if (!done.await(30, java.util.concurrent.TimeUnit.SECONDS)) break;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        // The latch makes the main thread's writes visible here.
+        return out;
     }
 
     private void importPack() {
@@ -940,6 +975,9 @@ public class VehicleBrandingActivity extends Activity {
                 break;
             case PICK_BADGE:
                 importLogo(VehicleProfile.MODEL, uri);
+                break;
+            case PICK_AUDIO:
+                importLogo(VehicleProfile.AUDIO, uri);
                 break;
             case EXPORT_PACK:
                 runExport(() -> getContentResolver().openOutputStream(uri), "Your branding pack was saved.");

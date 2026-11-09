@@ -95,12 +95,69 @@ public class BrandingPackTest {
     }
 
     @Test
+    public void audioBrandLogoMakesAFormat3PackThatRoundTrips() throws Exception {
+        VehicleProfile p = ProfileJsonTest.sample();
+        p.placement(com.maxhayim.retrodeck.core.Zones.HEADER, VehicleProfile.AUDIO).visible = true;
+        byte[] audio = TestImages.png(400, 60);
+        Map<VehicleProfile, byte[][]> logos = new HashMap<>();
+        logos.put(p, new byte[][]{TestImages.png(300, 120), null, audio});
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BrandingPack.write(out, "Factory", Collections.singletonList(p), logos, "RetroDeck test");
+
+        java.util.zip.ZipInputStream z = new java.util.zip.ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
+        z.getNextEntry();
+        JSONObject m = new JSONObject(new String(z.readAllBytes(), StandardCharsets.UTF_8));
+        assertEquals(3, m.getInt("formatVersion"));
+
+        BrandingPack.Entry e = read(out.toByteArray()).entries.get(0);
+        assertArrayEquals(audio, e.logos[VehicleProfile.AUDIO]);
+        assertNull(e.logos[VehicleProfile.MODEL]);
+        assertTrue(e.profile.placement(com.maxhayim.retrodeck.core.Zones.HEADER, VehicleProfile.AUDIO).visible);
+    }
+
+    @Test
+    public void packsWithoutTheAudioBrandKeepItHidden() throws Exception {
+        // Format 1 and 2 packs predate the audio brand: it must not appear anywhere.
+        BrandingPack.Entry e = read(zip("manifest.json", manifest(profile("assets/a.png", null)),
+                "assets/a.png", TestImages.png(300, 120))).entries.get(0);
+        for (String zone : com.maxhayim.retrodeck.core.Zones.ALL) {
+            assertTrue(!e.profile.placement(zone, VehicleProfile.AUDIO).visible);
+        }
+    }
+
+    @Test
     public void screenshotFromThePackToolIsAccepted() throws Exception {
         // tools/make_pack.py adds assets/preview.png for people to look at; importing ignores it.
         byte[] m = new JSONObject(new String(manifest(profile("assets/manufacturer.png", null)), StandardCharsets.UTF_8))
                 .put("preview", "assets/preview.png").toString().getBytes(StandardCharsets.UTF_8);
         BrandingPack.Pack pack = read(zip("manifest.json", m, "assets/manufacturer.png", TestImages.png(300, 120),
                 "assets/preview.png", TestImages.png(1920, 1080)));
+        assertEquals(1, pack.entries.size());
+        assertNull(pack.entries.get(0).logos[1]);
+    }
+
+    @Test
+    public void exportedPackCarriesItsScreenshotsAndStillImports() throws Exception {
+        VehicleProfile p = ProfileJsonTest.sample();
+        Map<VehicleProfile, byte[][]> logos = new HashMap<>();
+        logos.put(p, new byte[][]{TestImages.png(300, 120), null, null});
+        Map<String, byte[]> shots = new java.util.LinkedHashMap<>();
+        for (String n : PackScreenshots.NAMES) shots.put(n, TestImages.png(192, 108));
+        Map<VehicleProfile, Map<String, byte[]>> all = new HashMap<>();
+        all.put(p, shots);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BrandingPack.write(out, "Shared", Collections.singletonList(p), logos, new HashMap<>(), all, "RetroDeck test");
+
+        java.util.zip.ZipInputStream z = new java.util.zip.ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
+        z.getNextEntry();
+        JSONObject m = new JSONObject(new String(z.readAllBytes(), StandardCharsets.UTF_8));
+        JSONObject listed = m.getJSONArray("profiles").getJSONObject(0).getJSONObject("screenshots");
+        assertEquals(5, listed.length());
+        assertEquals("assets/p0-screenshot-night.png", listed.getString("night"));
+        assertEquals("assets/p0-screenshot-visualizer-day.png", listed.getString("visualizer-day"));
+        assertEquals("assets/p0-screenshot-day.png", m.getString("preview"));
+
+        BrandingPack.Pack pack = read(out.toByteArray());
         assertEquals(1, pack.entries.size());
         assertNull(pack.entries.get(0).logos[1]);
     }

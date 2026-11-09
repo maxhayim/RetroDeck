@@ -27,6 +27,7 @@ android {
             systemProperty 'demo.dir', rootProject.file('docs/demo').path
             // -Ppack=path/to/pack.zip previews a branding pack (PackRenderTest).
             if (project.hasProperty('pack')) systemProperty 'pack', file(project.property('pack')).path
+            ['pack.title', 'pack.artist'].each { if (project.hasProperty(it)) systemProperty it, project.property(it) }
         }
     }
 

@@ -156,7 +156,7 @@ public final class StartupView extends View {
             }
         }
 
-        for (int role = 0; role < 2; role++) {
+        for (int role = 0; role < VehicleProfile.COUNT; role++) {
             float a = role == VehicleProfile.MANUFACTURER ? f.logo : f.badge;
             if (a <= 0.001f) continue;
             Placement p = profile.placement(Zones.STARTUP, role);
@@ -259,10 +259,14 @@ public final class StartupView extends View {
     private void drawLcd(Canvas c, int w, int h, float u, float p, int illum, Skin skin) {
         String preset = profile.startup.preset;
         int color = StartupConfig.GREEN_LCD.equals(preset) ? GREEN : illum;
-        String msg = "HELLO  " + profile.displayName().toUpperCase(Locale.US);
-        if (profile.displayName().equals("Unnamed vehicle")) msg = "HELLO";
-        int n = Math.round(msg.length() * Math.min(1f, p * 1.4f));
-        String shown = msg.substring(0, Math.max(0, Math.min(msg.length(), n)));
+        String car = profile.displayName().equals("Unnamed vehicle") ? "" : profile.displayName();
+        String msg = profile.startup.greetingFor(car);
+        // The default greeting is in capitals, like the old displays; your own text is kept as typed.
+        if (profile.startup.greeting.isEmpty()) msg = msg.toUpperCase(Locale.US);
+        // Typed in one character at a time, never splitting a character made of two chars.
+        int count = msg.codePointCount(0, msg.length());
+        int n = Math.max(0, Math.min(count, Math.round(count * Math.min(1f, p * 1.4f))));
+        String shown = msg.substring(0, msg.offsetByCodePoints(0, n));
         text.reset();
         text.setAntiAlias(true);
         text.setTypeface(Typeface.create(skin.lcdStyle == Skin.LCD_MODERN ? Typeface.SANS_SERIF : Typeface.MONOSPACE, Typeface.BOLD));

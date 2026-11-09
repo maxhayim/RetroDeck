@@ -57,7 +57,7 @@ public final class BrandingRenderer implements StereoView.Overlay {
         float alpha = 1f;
         if (Zones.VISUALIZER.equals(zone)) alpha = 0.35f;
         if (Zones.STANDBY.equals(zone)) alpha = 0.75f;
-        for (int role = 0; role < 2; role++) {
+        for (int role = 0; role < VehicleProfile.COUNT; role++) {
             Placement p = profile.placement(zone, role);
             if (!p.visible) continue;
             drawLogo(c, skin, zone, px, role, p, alpha, illumination);
@@ -122,7 +122,7 @@ public final class BrandingRenderer implements StereoView.Overlay {
     }
 
     private RectF drawName(Canvas c, Skin skin, String zoneId, Box zone, int role, Placement p, float alpha, int illumination) {
-        String name = role == VehicleProfile.MANUFACTURER ? profile.manufacturer : profile.model;
+        String name = profile.roleName(role);
         if (name == null || name.trim().isEmpty()) return null;
         name = name.trim().toUpperCase(Locale.US);
         text.reset();
