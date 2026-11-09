@@ -6,6 +6,18 @@ A unit in one DIN in the style of the mid-1980s: black, split tone keys (TREB an
 
 On a single-DIN head unit's own wide screen (about 8:3) the radio fills the screen; on a bigger one it sits across the lower half under a screen for the visualizer, the song and the clock.
 
+## Screenshots
+
+Recorded from the running app (v0.17.0) on an Android TV box at 1920×1080 (240 dpi), playing a song with the TV muted: the bars on the screen above and in the amber display follow the music. On a 16:9 screen the radio sits across the lower half under the visualizer screen. The display says MUTE because the TV was muted. The faceplate is the 3D render; the display and knob pointer are drawn live on top.
+
+![Split Tone 1986 playing, fading from day to night](day-night.webp)
+
+![By day](tv-day.jpg)
+<sub>By day (Key Lighting Off)</sub>
+
+![At night](tv-night.jpg)
+<sub>At night (Key Lighting Always on)</sub>
+
 ## Day and night
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display and knob pointer are drawn by the app on top in the render tests (no logos).

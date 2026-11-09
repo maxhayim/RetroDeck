@@ -4,6 +4,18 @@
 
 A satin silver double-DIN unit from around 2002 with an in-dash CD changer: a slot across the top, and a wide black window whose analyser runs from green and yellow in the bass through cyan and blue to purple and pink in the treble, with white peaks and the bands printed under it. A round blue key (power) and the volume keys run down the left, the presets down the right, and a row of silver keys along the foot. The legends are dark on the silver keys by day and backlit ice blue at night. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it.
 
+## Screenshots
+
+Recorded from the running app (v0.17.0) on an Android TV box at 1920×1080 (240 dpi), playing a song with the TV muted: the analyser runs through the rainbow with the music. The display says MUTE because the TV was muted. The faceplate is the 3D render; the display and knob pointer are drawn live on top.
+
+![Rainbow 2002 playing, fading from day to night](day-night.webp)
+
+![By day](tv-day.jpg)
+<sub>By day (Key Lighting Off)</sub>
+
+![At night](tv-night.jpg)
+<sub>At night (Key Lighting Always on)</sub>
+
 ## Day and night
 
 Rendered, not taken on a device: the faceplate is modelled in 3D in Blender, and the display is drawn by the app on top in the render tests (no logos).

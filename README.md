@@ -37,8 +37,12 @@
     <td width="50%"><img src="themes/1960s/chrome-1965-modern/day-night.webp" alt="Chrome 1965 Modern, playing, fading between day and night"/><br/><sub>Chrome 1965 Modern: the same radio as made again today, with black keys and a visualizer</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/1980s/amber-glow-1982/day-night.webp" alt="Amber Glow 1982, playing, fading between day and night"/><br/><sub>Amber Glow 1982: in the style of the early 1980s, matt black with a red segment display, a knob in a ring lit orange and orange legends that glow at night</sub></td>
     <td width="50%"><img src="themes/1980s/heritage-1983/day-night.webp" alt="Heritage 1983, playing, fading between day and night"/><br/><sub>Heritage 1983: in the style of the early 1980s, with clear red presets that glow and an orange dot-matrix display</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/1980s/hi-fi-1984/day-night.webp" alt="Hi-Fi 1984, playing, fading between day and night"/><br/><sub>Hi-Fi 1984: black anodised aluminium, champagne print, slim keys and tape switches</sub></td>
+    <td width="50%"><img src="themes/1980s/split-tone-1986/day-night.webp" alt="Split Tone 1986, playing, fading between day and night"/><br/><sub>Split Tone 1986: split tone keys either side of an open cover over a card slot, a four-way pad and an amber dot-matrix display</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/1980s/tape-deck-1987/day-night.webp" alt="Tape Deck 1987, playing, fading between day and night"/><br/><sub>Tape Deck 1987: a cassette deck with a green-lit LCD, tone sliders and clear presets that glow green at night</sub></td>
@@ -72,6 +76,10 @@
   <tr>
     <td width="50%"><img src="themes/2000s/multi-control-2000/day-night.webp" alt="Multi Control 2000, playing, fading between day and night"/><br/><sub>Multi Control 2000: nearly all display, its bars fanned round a half circle in blue</sub></td>
     <td width="50%"><img src="themes/2000s/twin-dial-2001/day-night.webp" alt="Twin Dial 2001, playing, fading between day and night"/><br/><sub>Twin Dial 2001: two round green dials in a wide silver frame, ringed with spokes that follow the music</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2000s/rainbow-2002/day-night.webp" alt="Rainbow 2002, playing, fading between day and night"/><br/><sub>Rainbow 2002: a silver unit with an in-dash CD changer, its bars running through the rainbow from the bass to the treble</sub></td>
+    <td width="50%"><img src="themes/2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004, playing, fading between day and night"/><br/><sub>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over slim keys and two big polished knobs</sub></td>
   </tr>
   <tr>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
