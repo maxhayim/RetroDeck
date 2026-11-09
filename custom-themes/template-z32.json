@@ -1,0 +1,130 @@
+{
+  "name": "My car",
+  "about": "Template: Z32 Factory 1990 with the car maker logo above the changer's eject key (PWR) and the audio brand on the tape door. Copy it into a folder of your own and change the names.",
+  "logos": {
+    "manufacturer": "The car maker's name, a wide wordmark, light on a transparent background. Shown above PWR on the changer, and on the startup and standby screens.",
+    "model": "The audio brand's wordmark, light on a transparent background. Shown on the tape door."
+  },
+  "profile": {
+    "id": "pack-my-car",
+    "manufacturer": "",
+    "model": "",
+    "year": "",
+    "trim": "",
+    "skin": "z32factory90",
+    "visualizer": "bars",
+    "palette": {
+      "illumination": "amber",
+      "custom": "#FF9F43",
+      "accent": "#FF3B30",
+      "keys": "auto"
+    },
+    "placements": {
+      "header": {
+        "manufacturer": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": true,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "faceplate": {
+        "manufacturer": {
+          "visible": true,
+          "scale": 0.85,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "corner": {
+        "manufacturer": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "lcd": {
+        "manufacturer": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.8,
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "visualizer": {
+        "manufacturer": {
+          "visible": false,
+          "scale": 0.9,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.9,
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "startup": {
+        "manufacturer": {
+          "visible": true,
+          "scale": 0.65,
+          "x": 0.5,
+          "y": 0.42
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.32,
+          "x": 0.5,
+          "y": 0.9
+        }
+      },
+      "standby": {
+        "manufacturer": {
+          "visible": true,
+          "scale": 0.6,
+          "x": 0.5,
+          "y": 0.5
+        },
+        "model": {
+          "visible": false,
+          "scale": 0.4,
+          "x": 0.5,
+          "y": 0.9
+        }
+      }
+    },
+    "startup": {
+      "enabled": true,
+      "preset": "glow",
+      "durationMs": 3000,
+      "powerOn": true,
+      "lcdBoot": true
+    }
+  }
+}

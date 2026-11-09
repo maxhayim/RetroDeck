@@ -94,6 +94,17 @@ public class BrandingPackTest {
         assertTrue(pack.compatibleSkins.contains(p.skin));
     }
 
+    @Test
+    public void screenshotFromThePackToolIsAccepted() throws Exception {
+        // tools/make_pack.py adds assets/preview.png for people to look at; importing ignores it.
+        byte[] m = new JSONObject(new String(manifest(profile("assets/manufacturer.png", null)), StandardCharsets.UTF_8))
+                .put("preview", "assets/preview.png").toString().getBytes(StandardCharsets.UTF_8);
+        BrandingPack.Pack pack = read(zip("manifest.json", m, "assets/manufacturer.png", TestImages.png(300, 120),
+                "assets/preview.png", TestImages.png(1920, 1080)));
+        assertEquals(1, pack.entries.size());
+        assertNull(pack.entries.get(0).logos[1]);
+    }
+
     static byte[] gif() throws Exception {
         try (java.io.InputStream in = BrandingPackTest.class.getResourceAsStream("/gif/moving.gif")) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();

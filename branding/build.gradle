@@ -25,6 +25,8 @@ android {
             if (project.hasProperty('render')) systemProperty 'render', 'true'
             if (project.hasProperty('render.size')) systemProperty 'render.size', project.property('render.size')
             systemProperty 'demo.dir', rootProject.file('docs/demo').path
+            // -Ppack=path/to/pack.zip previews a branding pack (PackRenderTest).
+            if (project.hasProperty('pack')) systemProperty 'pack', file(project.property('pack')).path
         }
     }
 

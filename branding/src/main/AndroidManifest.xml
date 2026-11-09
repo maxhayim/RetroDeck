@@ -21,8 +21,26 @@
     </queries>
 
     <application>
+        <!-- Exported only so a branding pack can be opened or shared here from another app (LocalSend,
+             a file manager, a chat app). It asks before importing, and every pack is checked. -->
         <activity android:name=".VehicleBrandingActivity" android:theme="@style/RetroDeck.Theme"
-            android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize|keyboardHidden" />
+            android:exported="true" android:label="Import into RetroDeck"
+            android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+            </intent-filter>
+        </activity>
         <activity android:name=".LogoEditorActivity" android:theme="@style/RetroDeck.Theme"
             android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".PlacementEditorActivity" android:theme="@style/RetroDeck.Theme"

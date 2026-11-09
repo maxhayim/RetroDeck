@@ -101,6 +101,38 @@ public class VehicleBrandingActivity extends Activity {
         body.addView(right, Ui.weight(0.56f));
 
         setContentView(root);
+        if (state == null) offerSharedPack(getIntent());
+    }
+
+    /**
+     * A pack opened or shared from another app (LocalSend, a file manager, a chat app): "Open with
+     * RetroDeck" or Share → RetroDeck. Works without a file picker. Nothing is imported until the user
+     * says so, and the pack gets the same checks as any other.
+     */
+    @SuppressWarnings("deprecation") // the typed getParcelableExtra needs API 33
+    private void offerSharedPack(Intent intent) {
+        if (intent == null) return;
+        Uri uri = null;
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) uri = intent.getData();
+        else if (Intent.ACTION_SEND.equals(intent.getAction())) uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (uri == null) return;
+        final Uri pack = uri;
+        Ui.dialog(this).setTitle("Import a branding pack?")
+                .setMessage(displayName(pack) + "\n\nRetroDeck checks the pack first. Its vehicles are added to your profiles, "
+                        + "and the first one becomes active.")
+                .setPositiveButton("Import", (d, w) -> runImport(() -> getContentResolver().openInputStream(pack)))
+                .setNegativeButton("Cancel", null).show();
+    }
+
+    private String displayName(Uri uri) {
+        try (android.database.Cursor c = getContentResolver().query(uri,
+                new String[]{android.provider.OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+            if (c != null && c.moveToFirst() && c.getString(0) != null) return c.getString(0);
+        } catch (Exception ignored) {
+            // Some senders give a file:// link or don't answer; the name is only for the message.
+        }
+        String last = uri.getLastPathSegment();
+        return last != null ? last : "This pack";
     }
 
     private void buildRows(LinearLayout l) {

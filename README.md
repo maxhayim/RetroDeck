@@ -290,6 +290,10 @@ my-vehicle.zip
 
 <p>Logos from a pack are decoded and saved again as new PNG files, like a picked image. More in <a href="SECURITY.md">SECURITY.md</a>.</p>
 
+<h3>Custom themes</h3>
+
+<p>Make a theme for a real radio on a computer: a theme file picks the skin and puts each of your logos where the real unit had its marks, and <code>tools/make_pack.py</code> builds it into a branding pack, checked the way RetroDeck checks one. Work in <a href="custom-themes/">custom-themes</a>: git ignores everything there except its guide and a template, so your logos and packs never reach GitHub. Each pack gets a screenshot (<code>assets/preview.png</code>), drawn by the app's own importer and renderer, so people can see it before importing it.</p>
+
 <h2>Logos and Trademarks</h2>
 
 <p>Car makers' names and logos are their trademarks, and the logo artwork is usually also protected by copyright. RetroDeck is not affiliated with, endorsed by or sponsored by any car maker or stereo brand.</p>
