@@ -247,22 +247,39 @@ final class Player {
      */
     private static final int VOL_UNKNOWN = 0, VOL_MUSIC = 1, VOL_ACTIVE = 2, VOL_NONE = 3;
     private int volumeWay = VOL_UNKNOWN;
+    private static final String KEY_VOLUME_WAY = "volumeWay";
+
+    private void setVolumeWay(int way) {
+        if (way == volumeWay) return;
+        volumeWay = way;
+        prefs.edit().putInt(KEY_VOLUME_WAY, way).apply();
+    }
+
+    /** What the knob last found, for Diagnostics. */
+    static String volumeWayLabel(Context c) {
+        switch (c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_VOLUME_WAY, VOL_UNKNOWN)) {
+            case VOL_MUSIC: return "Android's music volume";
+            case VOL_ACTIVE: return "the playing app's volume (music volume doesn't move)";
+            case VOL_NONE: return "nothing: the head unit keeps its volume to itself";
+            default: return "not yet (turn the stereo's knob once)";
+        }
+    }
 
     void setVolume(int v) {
         int max = Math.max(1, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         int dir = Integer.signum(v - state.volume);
         // Turning it up undoes a mute; some head units stay muted otherwise.
         if (v > 0 && (state.muted || systemMuted())) unmute();
-        if (Build.VERSION.SDK_INT >= 21 && audio.isVolumeFixed()) volumeWay = VOL_NONE;
+        if (Build.VERSION.SDK_INT >= 21 && audio.isVolumeFixed()) setVolumeWay(VOL_NONE);
         if (volumeWay == VOL_UNKNOWN || volumeWay == VOL_MUSIC) {
             int before = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
             int target = Math.round(v * max / (float) StereoState.MAX_VOLUME);
             audio.setStreamVolume(AudioManager.STREAM_MUSIC, target, 0);
             if (target == before || audio.getStreamVolume(AudioManager.STREAM_MUSIC) != before) {
-                if (target != before) volumeWay = VOL_MUSIC;
+                if (target != before) setVolumeWay(VOL_MUSIC);
             } else if (dir != 0) {
                 // The music volume didn't move: try the stream of whatever is playing, as the head unit's keys do.
-                volumeWay = VOL_ACTIVE;
+                setVolumeWay(VOL_ACTIVE);
             }
         }
         if (volumeWay == VOL_ACTIVE && dir != 0) {

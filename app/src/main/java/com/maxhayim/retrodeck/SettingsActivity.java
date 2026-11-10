@@ -240,6 +240,9 @@ public class SettingsActivity extends Activity {
         }
         rows.addView(Ui.row(this, "RetroDeck", "Version " + version + "  ·  MIT License", null));
         rows.addView(Ui.divider(this));
+        rows.addView(Ui.row(this, "Diagnostics", "What RetroDeck finds on this head unit: music apps, song titles, keys, "
+                + "visualizer and volume, on one page to screenshot or share", v -> startActivity(new android.content.Intent(this, DiagnosticsActivity.class))));
+        rows.addView(Ui.divider(this));
         rows.addView(Ui.row(this, "Privacy", "No account, no cloud. Profiles and logos stay on this device. "
                 + "Online only for GIPHY search and update checks (Updates can be Off).", null));
         rows.addView(Ui.divider(this));
