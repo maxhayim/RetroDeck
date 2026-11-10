@@ -1833,7 +1833,7 @@ BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84":
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
          "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix,
          "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34, "cp13": touch,
-         "factory05": f05, "factory07": f07, "factory10": f10, "factory12": f12, "factory14": f14}
+         "n70factory05": f05, "e150factory08": f07, "xp90factory09": f10, "n70factory11": f12, "n70factory12": f14}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

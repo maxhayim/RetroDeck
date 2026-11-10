@@ -1,8 +1,8 @@
-# Factory CD 2007
+# E150 Factory 2008
 
-**Era:** 2000s  ·  **Size:** Double DIN  ·  **Display:** A reflective LCD, olive grey by day and lit amber at night  ·  **Skin id:** `factory07`
+**Era:** 2000s  ·  **Size:** Double DIN  ·  **Display:** A reflective LCD, olive grey by day and lit amber at night  ·  **Skin id:** `e150factory08`
 
-A late-2000s factory CD unit: black, a reflective LCD between a TUNE·FILE knob and a PWR·VOL knob, a row of white presets under it, call and end keys for the phone, TYPE·FOLDER and SEEK·TRACK rockers down the sides, and TEXT, DISC·AUX, FM and AM keys along the foot. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
+A 2008 factory CD unit: black, a reflective LCD between a TUNE·FILE knob and a PWR·VOL knob, a row of white presets under it, call and end keys for the phone, TYPE·FOLDER and SEEK·TRACK rockers down the sides, and TEXT, DISC·AUX, FM and AM keys along the foot. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
 
 ## Day and night
 

@@ -1,8 +1,8 @@
-# Factory Touch 2014
+# N70 Factory 2012
 
-**Era:** 2010s  ·  **Size:** Double DIN  ·  **Display:** A touch screen, with the presets as a list  ·  **Skin id:** `factory14`
+**Era:** 2010s  ·  **Size:** Double DIN  ·  **Display:** A touch screen, with the presets as a list  ·  **Skin id:** `n70factory12`
 
-A 2014 factory touch-screen unit: gloss black, a disc slot across the top, a volume knob and AUDIO, DISP and SETUP keys down the left beside a card slot, and a wide touch screen with the song on the left, |<< ▶‖ >>| buttons under it, and the six presets as a list on the right. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
+A 2012 factory touch-screen unit: gloss black, a disc slot across the top, a volume knob and AUDIO, DISP and SETUP keys down the left beside a card slot, and a wide touch screen with the song on the left, |<< ▶‖ >>| buttons under it, and the six presets as a list on the right. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
 
 ## Day and night
 

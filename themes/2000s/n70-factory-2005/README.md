@@ -1,8 +1,8 @@
-# Factory MP3 2005
+# N70 Factory 2005
 
-**Era:** 2000s  ·  **Size:** Double DIN  ·  **Display:** A big reflective LCD, olive grey by day and lit green at night  ·  **Skin id:** `factory05`
+**Era:** 2000s  ·  **Size:** Double DIN  ·  **Display:** A big reflective LCD, olive grey by day and lit green at night  ·  **Skin id:** `n70factory05`
 
-A mid-2000s factory CD unit: black, its top arched over the disc slot, a TUNE·FILE knob and a PWR·VOL knob either side of a big reflective LCD, a row of presets under it with round TEXT and MUTE keys at its ends, and a row of source keys with a track rocker along the foot. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
+A 2005 factory CD unit: black, its top arched over the disc slot, a TUNE·FILE knob and a PWR·VOL knob either side of a big reflective LCD, a row of presets under it with round TEXT and MUTE keys at its ends, and a row of source keys with a track rocker along the foot. Modelled in 3D and rendered with Blender (tools/blender/skins.py). Like every RetroDeck skin, it copies no real unit and has no brand names on it: the places where the maker's badge and marks sat are branding zones for your own logos.
 
 ## Day and night
 

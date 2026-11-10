@@ -34,11 +34,11 @@ public final class Skins {
     public static final String DIAL_MODERN = "b110factory71m";
     public static final String FACTORY_99 = "r34factory99";
     public static final String TOUCH = "cp13";
-    public static final String FACTORY_05 = "factory05";
-    public static final String FACTORY_07 = "factory07";
-    public static final String FACTORY_10 = "factory10";
-    public static final String FACTORY_12 = "factory12";
-    public static final String FACTORY_14 = "factory14";
+    public static final String N70_05 = "n70factory05";
+    public static final String E150_08 = "e150factory08";
+    public static final String XP90_09 = "xp90factory09";
+    public static final String N70_11 = "n70factory11";
+    public static final String N70_12 = "n70factory12";
 
     private static List<Skin> all;
 
@@ -74,12 +74,12 @@ public final class Skins {
             all.add(twin());
             all.add(rainbow());
             all.add(matrix());
-            all.add(factory05());
-            all.add(factory07());
-            all.add(factory10());
-            all.add(factory12());
+            all.add(n70factory05());
+            all.add(e150factory08());
+            all.add(xp90factory09());
+            all.add(n70factory11());
+            all.add(n70factory12());
             all.add(touch());
-            all.add(factory14());
             all.add(modern());
         }
         return all;
@@ -953,13 +953,13 @@ public final class Skins {
     }
 
     /**
-     * A mid-2000s factory CD unit: black, a curved top over the disc slot, TUNE·FILE and PWR·VOL knobs
+     * A 2005 factory CD unit: black, a curved top over the disc slot, TUNE·FILE and PWR·VOL knobs
      * either side of a big reflective LCD, a row of presets, and a row of source keys with a track rocker.
      */
-    private static Skin factory05() {
-        Skin s = new Skin(FACTORY_05, "Factory MP3 2005", "2000s", 2, 0xFF1C1D1F, 0xFF141516, 0xFF0A0A0B, 0xFF8E9A86,
+    private static Skin n70factory05() {
+        Skin s = new Skin(N70_05, "N70 Factory 2005", "2000s", 2, 0xFF1C1D1F, 0xFF141516, 0xFF0A0A0B, 0xFF8E9A86,
                 0xFF0A0B0C, 0xFF232426, 0xFF0E0F11, 0xFFD8DADC, Skin.LCD_REFLECTIVE, 0.008f);
-        s.art = "skins/" + FACTORY_05;
+        s.art = "skins/" + N70_05;
         s.knobDots = false;
         s.backlight = 0xFF7FD06A;
         s.panelDay = 0xFF77806C;
@@ -991,13 +991,13 @@ public final class Skins {
     }
 
     /**
-     * A late-2000s factory CD unit: black, a reflective LCD lit amber between TUNE·FILE and PWR·VOL
+     * A 2008 factory CD unit: black, a reflective LCD lit amber between TUNE·FILE and PWR·VOL
      * knobs, white presets under it, phone keys, rockers down both sides and a row of source keys.
      */
-    private static Skin factory07() {
-        Skin s = new Skin(FACTORY_07, "Factory CD 2007", "2000s", 2, 0xFF1E1F21, 0xFF151618, 0xFF0A0A0B, 0xFFA8A27E,
+    private static Skin e150factory08() {
+        Skin s = new Skin(E150_08, "E150 Factory 2008", "2000s", 2, 0xFF1E1F21, 0xFF151618, 0xFF0A0A0B, 0xFFA8A27E,
                 0xFF0A0B0C, 0xFF232426, 0xFF0E0F11, 0xFFE2E4E6, Skin.LCD_REFLECTIVE, 0.006f);
-        s.art = "skins/" + FACTORY_07;
+        s.art = "skins/" + E150_08;
         s.knobDots = false;
         s.backlight = 0xFFFFA444;
         s.panelDay = 0xFF9C9776;
@@ -1033,13 +1033,13 @@ public final class Skins {
     }
 
     /**
-     * A 2010 factory CD unit in silver grey: a green dot-matrix LCD under the disc slot, slim presets,
+     * A 2009 factory CD unit in silver grey: a green dot-matrix LCD under the disc slot, slim presets,
      * and two big knobs in chrome rings at the foot, ENTER·LIST and PWR·VOLUME, with the track keys between.
      */
-    private static Skin factory10() {
-        Skin s = new Skin(FACTORY_10, "Factory Silver 2010", "2010s", 2, 0xFF6C6E72, 0xFF55575B, 0xFF1A1B1D, 0xFFA9C08E,
+    private static Skin xp90factory09() {
+        Skin s = new Skin(XP90_09, "XP90 Factory 2009", "2000s", 2, 0xFF6C6E72, 0xFF55575B, 0xFF1A1B1D, 0xFFA9C08E,
                 0xFF0A0B0C, 0xFF2A2B2E, 0xFF0E0F11, 0xFFE8EAEC, Skin.LCD_REFLECTIVE, 0.006f);
-        s.art = "skins/" + FACTORY_10;
+        s.art = "skins/" + XP90_09;
         s.knobDots = false;
         s.backlight = 0xFFB4E27A;
         s.panelDay = 0xFF9DB08A;
@@ -1072,13 +1072,13 @@ public final class Skins {
     }
 
     /**
-     * A 2012 factory unit: black, a disc slot across the top, TUNE·FILE and PWR·VOL knobs in the top
+     * A 2011 factory unit: black, a disc slot across the top, TUNE·FILE and PWR·VOL knobs in the top
      * corners, a colour screen in the middle with three presets either side of it, and keys outside them.
      */
-    private static Skin factory12() {
-        Skin s = new Skin(FACTORY_12, "Factory Screen 2012", "2010s", 2, 0xFF1C1D1F, 0xFF131415, 0xFF0A0A0B, 0xFF05080B,
+    private static Skin n70factory11() {
+        Skin s = new Skin(N70_11, "N70 Factory 2011", "2010s", 2, 0xFF1C1D1F, 0xFF131415, 0xFF0A0A0B, 0xFF05080B,
                 0xFF000000, 0xFF242527, 0xFF0E0F11, 0xFFE4E6E8, Skin.LCD_MODERN, 0.006f);
-        s.art = "skins/" + FACTORY_12;
+        s.art = "skins/" + N70_11;
         s.knobDots = false;
         s.keyLight = 0xFFFFFFFF;
         s.keyPrint = 0xFFE4E6E8;
@@ -1107,13 +1107,13 @@ public final class Skins {
     }
 
     /**
-     * A 2014 factory touch-screen unit: gloss black, a disc slot across the top, a volume knob and
+     * A 2012 factory touch-screen unit: gloss black, a disc slot across the top, a volume knob and
      * a few keys down the left, and a wide touch screen with the transport keys and the presets on it.
      */
-    private static Skin factory14() {
-        Skin s = new Skin(FACTORY_14, "Factory Touch 2014", "2010s", 2, 0xFF141516, 0xFF0D0E0F, 0xFF060607, 0xFF0A1A2C,
+    private static Skin n70factory12() {
+        Skin s = new Skin(N70_12, "N70 Factory 2012", "2010s", 2, 0xFF141516, 0xFF0D0E0F, 0xFF060607, 0xFF0A1A2C,
                 0xFF000000, 0xFF1E1F21, 0xFF0B0C0D, 0xFFDDE2E8, Skin.LCD_MODERN, 0.006f);
-        s.art = "skins/" + FACTORY_14;
+        s.art = "skins/" + N70_12;
         s.knobDots = false;
         s.keyLight = 0xFFFFFFFF;
         s.keyPrint = 0xFFDDE2E8;
