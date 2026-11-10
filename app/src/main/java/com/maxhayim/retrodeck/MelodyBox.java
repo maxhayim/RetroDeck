@@ -31,6 +31,12 @@ final class MelodyBox {
     private static AudioTrack track;
     private static MediaPlayer media;
     private static final Handler main = new Handler(Looper.getMainLooper());
+    /**
+     * Until when a chime may still count as music playing: some head units report the music stream
+     * active for a few seconds after a sound ends, which must not look like another app playing.
+     */
+    private static long quietAt;
+    private static final long TAIL_MS = 5000;
 
     private MelodyBox() {}
 
@@ -102,6 +108,7 @@ final class MelodyBox {
                 mp.prepare();
                 mp.start();
                 media = mp;
+                quietAt = android.os.SystemClock.uptimeMillis() + Math.max(0, mp.getDuration()) + TAIL_MS;
             } catch (Exception e) {
                 Log.w("RetroDeck", "Can't play melody " + f, e);
             }
@@ -125,6 +132,7 @@ final class MelodyBox {
             t.write(pcm, 0, pcm.length);
             t.play();
             track = t;
+            quietAt = android.os.SystemClock.uptimeMillis() + pcm.length * 1000L / Melody.RATE + TAIL_MS;
             final AudioTrack done = t;
             main.postDelayed(() -> {
                 if (track == done) stopPlaying();
@@ -134,7 +142,13 @@ final class MelodyBox {
         }
     }
 
+    /** Whether a chime is playing, or ended so lately that the music stream may still read as active. */
+    static boolean sounding() {
+        return android.os.SystemClock.uptimeMillis() < quietAt;
+    }
+
     static void stopPlaying() {
+        quietAt = Math.min(quietAt, android.os.SystemClock.uptimeMillis() + TAIL_MS);
         if (track != null) {
             try {
                 track.stop();

@@ -30,6 +30,9 @@ public final class Skins {
     public static final String AMBER = "amber21";
     public static final String DAB = "dab22";
     public static final String HERITAGE = "heritage23";
+    public static final String DIAL = "b110factory71";
+    public static final String DIAL_MODERN = "b110factory71m";
+    public static final String FACTORY_99 = "r34factory99";
 
     private static List<Skin> all;
 
@@ -41,6 +44,8 @@ public final class Skins {
             all = new ArrayList<>();
             all.add(chrome(false));
             all.add(chrome(true));
+            all.add(dial(false));
+            all.add(dial(true));
             all.add(amber());
             all.add(heritage());
             all.add(hifi());
@@ -58,6 +63,7 @@ public final class Skins {
             all.add(trio());
             all.add(factory94());
             all.add(spectrum());
+            all.add(factory99());
             all.add(multi());
             all.add(twin());
             all.add(rainbow());
@@ -110,6 +116,8 @@ public final class Skins {
             try {
                 built.add(chrome(false));
                 built.add(chrome(true));
+                built.add(dial(false));
+                built.add(dial(true));
                 built.add(amber());
                 built.add(heritage());
                 built.add(hifi());
@@ -824,6 +832,111 @@ public final class Skins {
         s.zone(Zones.HEADER, in(0.36f, 0.03f, 0.64f, 0.14f))
                 .zone(Zones.FACEPLATE, in(0.08f, 0.86f, 0.27f, 0.95f))
                 .zone(Zones.CORNER, in(0.73f, 0.86f, 0.92f, 0.95f));
+        return s;
+    }
+
+    /**
+     * The factory radio of an early-1970s small saloon: a slide-rule dial lit warm behind its glass with
+     * a red needle that moves along the scale with the song, five black push-buttons under it in a
+     * chrome frame, a woodgrain face and two black knobs, TUNING and SW-VOL. A radio of 1971 had no
+     * visualizer. The modern one, made again for classic cars today, has a black face, a pale green
+     * scale and an amber needle, and shows bars under the song.
+     */
+    private static Skin dial(boolean modern) {
+        Skin s = new Skin(modern ? DIAL_MODERN : DIAL, modern ? "B110 Factory 1971 Modern" : "B110 Factory 1971",
+                "1970s", 1, modern ? 0xFF1A1B1D : 0xFF4A3424, modern ? 0xFF0B0B0C : 0xFF2A1C12, 0xFF060607,
+                modern ? 0xFF0A120D : 0xFF120C06, 0xFF000000, 0xFF0A0A0B, 0xFF040405, 0xFFE6E8EB,
+                Skin.LCD_SEGMENT, 0.012f);
+        single(s);
+        s.art = "skins/" + s.id;
+        s.knobDots = false;
+        // The dial lamp: warm white behind the 1971 glass, pale green on the modern one (its green glass is in the art).
+        s.phosphor = modern ? 0xFFD4F2DC : 0xFFFFD08A;
+        s.dialNeedle = modern ? 0xFFFF7A1E : 0xFFE0281E;
+        s.keyPrint = 0xFFD8DADD;
+        s.noVisualizer = !modern;
+        // The knobs, set in from the ends: TUNING on the left (MENU), SW-VOL on the right (the volume).
+        s.control(Skin.MENU, "TUNING", in(0.055f, 0.27f, 0.185f, 0.80f), true);
+        s.knob = in(0.815f, 0.27f, 0.945f, 0.80f);
+        // The dial window: the scale across the top (touch it for DISP), the song under it.
+        s.lcd = in(0.265f, 0.10f, 0.735f, 0.50f);
+        s.dialScale = in(0.285f, 0.13f, 0.715f, 0.255f);
+        s.control(Skin.DISPLAY, "DIAL", s.dialScale);
+        s.lcdText = in(0.295f, 0.27f, 0.705f, 0.405f);
+        s.zone(Zones.LCD, in(0.295f, 0.42f, 0.395f, 0.485f))
+                .zone(Zones.VISUALIZER, in(0.405f, 0.42f, 0.705f, 0.485f));
+        // Five push-buttons under it, in the same chrome frame.
+        String[] ids = {Skin.POWER, Skin.SOURCE, Skin.PREV, Skin.PLAY, Skin.NEXT};
+        String[] labels = {"PWR", "SRC", "|<<", "PLAY", ">>|"};
+        float l0 = 0.29f, gap = 0.012f, w = (0.71f - l0 - gap * 4) / 5;
+        for (int i = 0; i < ids.length; i++) {
+            float l = l0 + i * (w + gap);
+            s.control(ids[i], labels[i], in(l, 0.585f, l + w, 0.82f));
+        }
+        s.zone(Zones.HEADER, in(0.40f, 0.86f, 0.60f, 0.955f))
+                .zone(Zones.FACEPLATE, in(0.04f, 0.86f, 0.20f, 0.955f))
+                .zone(Zones.CORNER, in(0.80f, 0.86f, 0.96f, 0.955f));
+        return s;
+    }
+
+    /**
+     * The factory pair of a late-1990s sports coupe: a navigation unit over a CD and MD changer
+     * control, set in a dark brushed panel. Titanium-grey faces, dark keys, a slot in each, the navigation
+     * unit's keys round a joystick, and the radio's small reflective LCD, olive by day and lit amber at
+     * night, beside its source keys, a volume knob and a row of preset keys that double as disc keys.
+     */
+    private static Skin factory99() {
+        Skin s = new Skin(FACTORY_99, "R34 Factory 1999", "1990s", 2, 0xFF6E6A63, 0xFF4F4C47, 0xFF151516, 0xFFA3A878,
+                0xFF0A0B0C, 0xFF26272A, 0xFF0E0F11, 0xFFE6E8EA, Skin.LCD_REFLECTIVE, 0.006f);
+        s.art = "skins/" + FACTORY_99;
+        s.knobDots = false;
+        s.backlight = 0xFFFFA63A;
+        s.panelDay = 0xFF9A9E70;
+        s.keyLight = 0xFFFF9A3C;
+        s.keyPrint = 0xFFE8EAEC;
+        s.units.add(new Box(0.035f, 0.035f, 0.965f, 0.475f));
+        s.units.add(new Box(0.05f, 0.525f, 0.95f, 0.96f));
+        // The navigation unit: a disc slot, DISP, the map keys, a joystick, and a row along the foot.
+        s.decor("\u23CF", 0.06f, 0.075f, 0.12f, 0.14f)
+                .control(Skin.DISPLAY, "DISP", 0.065f, 0.215f, 0.20f, 0.305f)
+                .decor("MAP/PLAY", 0.53f, 0.175f, 0.655f, 0.245f)
+                .control(Skin.MENU, "MENU", 0.53f, 0.26f, 0.655f, 0.33f)
+                .decor("WIDE", 0.67f, 0.175f, 0.795f, 0.245f)
+                .decor("DETAIL", 0.67f, 0.26f, 0.795f, 0.33f)
+                .control(null, "ENTER", new Box(0.825f, 0.15f, 0.94f, 0.335f), true);
+        String[] row = {"INFO", "TV", "PIC", "GUIDE", "2-SCREEN", "3D VIEW", "", "BACK"};
+        float[] wide = {1, 1, 1, 1, 1, 1, 0.3f, 1.15f};
+        float total = 0;
+        for (float f : wide) total += f;
+        float l = 0.06f, gap = 0.008f, unit = (0.94f - l - gap * (row.length - 1)) / total;
+        for (int i = 0; i < row.length; i++) {
+            float r = l + unit * wide[i];
+            s.decor(row[i], l, 0.365f, r, 0.445f);
+            l = r + gap;
+        }
+        // The radio: a CD slot, the LCD, the source keys over the MD slot, and the volume knob.
+        s.slot = new Box(0.22f, 0.585f, 0.83f, 0.615f);
+        s.lcd = new Box(0.09f, 0.665f, 0.37f, 0.795f);
+        s.lcdText = new Box(0.10f, 0.68f, 0.36f, 0.745f);
+        s.decor("\u23CF", 0.13f, 0.578f, 0.19f, 0.622f)
+                .control(Skin.POWER, "\u2022))", 0.86f, 0.575f, 0.935f, 0.62f)
+                .control(Skin.PLAY, "CD", 0.42f, 0.675f, 0.535f, 0.725f)
+                .decor("MD", 0.545f, 0.675f, 0.66f, 0.725f)
+                .control(Skin.SOURCE, "FM/AM", 0.67f, 0.675f, 0.785f, 0.725f)
+                .decor("\u23CF", 0.735f, 0.75f, 0.795f, 0.79f);
+        s.changer = new Box(0.42f, 0.745f, 0.72f, 0.79f);
+        s.knob = new Box(0.835f, 0.655f, 0.94f, 0.83f);
+        s.decor("A.P", 0.07f, 0.865f, 0.15f, 0.935f)
+                .control(Skin.PREV, "\u2228", 0.165f, 0.875f, 0.235f, 0.935f)
+                .decor("SEL", 0.245f, 0.835f, 0.315f, 0.88f)
+                .control(Skin.NEXT, "\u2227", 0.325f, 0.875f, 0.395f, 0.935f);
+        s.presets = new Box(0.41f, 0.865f, 0.94f, 0.935f);
+        s.presetLabels = new String[]{"TITLE", "SCRL", "", "|<<", "PROG", ">>|"};
+        s.zone(Zones.HEADER, 0.23f, 0.17f, 0.33f, 0.30f)
+                .zone(Zones.LCD, 0.10f, 0.752f, 0.18f, 0.788f)
+                .zone(Zones.FACEPLATE, 0.06f, 0.575f, 0.12f, 0.64f)
+                .zone(Zones.CORNER, 0.86f, 0.055f, 0.95f, 0.13f)
+                .zone(Zones.VISUALIZER, 0.19f, 0.752f, 0.36f, 0.788f);
         return s;
     }
 

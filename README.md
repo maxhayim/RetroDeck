@@ -37,6 +37,10 @@
     <td width="50%"><img src="themes/1960s/chrome-1965-modern/day-night.webp" alt="Chrome 1965 Modern, playing, fading between day and night"/><br/><sub>Chrome 1965 Modern: the same radio as made again today, with black keys and a visualizer</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/1970s/b110-factory-1971/day-night.webp" alt="B110 Factory 1971, fading between day and night"/><br/><sub>B110 Factory 1971: an early-1970s factory radio, woodgrain and chrome, with a slide-rule dial whose red needle moves with the song</sub></td>
+    <td width="50%"><img src="themes/1970s/b110-factory-1971-modern/day-night.webp" alt="B110 Factory 1971 Modern, fading between day and night"/><br/><sub>B110 Factory 1971 Modern: the same radio as made again today, in black, with a visualizer</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/1980s/amber-glow-1982/day-night.webp" alt="Amber Glow 1982, playing, fading between day and night"/><br/><sub>Amber Glow 1982: in the style of the early 1980s, matt black with a red segment display, a knob in a ring lit orange and orange legends that glow at night</sub></td>
     <td width="50%"><img src="themes/1980s/heritage-1983/day-night.webp" alt="Heritage 1983, playing, fading between day and night"/><br/><sub>Heritage 1983: in the style of the early 1980s, with clear red presets that glow and an orange dot-matrix display</sub></td>
   </tr>
@@ -74,14 +78,15 @@
     <td width="50%"><img src="themes/1990s/spectrum-1997/day-night.webp" alt="Spectrum 1997, playing, fading between day and night"/><br/><sub>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/1990s/r34-factory-1999/day-night.webp" alt="R34 Factory 1999, fading between day and night"/><br/><sub>R34 Factory 1999: a navigation unit over a CD and MD changer control, titanium grey in a dark brushed panel; the small LCD olive by day and lit amber at night</sub></td>
     <td width="50%"><img src="themes/2000s/multi-control-2000/day-night.webp" alt="Multi Control 2000, playing, fading between day and night"/><br/><sub>Multi Control 2000: nearly all display, its bars fanned round a half circle in blue</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/2000s/twin-dial-2001/day-night.webp" alt="Twin Dial 2001, playing, fading between day and night"/><br/><sub>Twin Dial 2001: two round green dials in a wide silver frame, ringed with spokes that follow the music</sub></td>
-  </tr>
-  <tr>
     <td width="50%"><img src="themes/2000s/rainbow-2002/day-night.webp" alt="Rainbow 2002, playing, fading between day and night"/><br/><sub>Rainbow 2002: a silver unit with an in-dash CD changer, its bars running through the rainbow from the bass to the treble</sub></td>
-    <td width="50%"><img src="themes/2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004, playing, fading between day and night"/><br/><sub>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over slim keys and two big polished knobs</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004, playing, fading between day and night"/><br/><sub>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over slim keys and two big polished knobs</sub></td>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
   <tr>
@@ -115,11 +120,13 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Twenty-four skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
+  <li><strong>Twenty-seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
       <li>Chrome 1965 Modern: the same radio as made again today, with black keys and a visualizer</li>
+      <li>B110 Factory 1971: a small saloon's factory radio of the early 1970s, a woodgrain face in a chrome edge, a slide-rule dial lit warm with a red needle that moves along the scale as the song plays, five black push-buttons and two black knobs, with no visualizer</li>
+      <li>B110 Factory 1971 Modern: the same radio as made again today, in black, its dial pale green with an amber needle, and a visualizer</li>
       <li>Amber Glow 1982: matt black, a red segment display, a panel of ports, a knob in a ring lit orange and keys whose legends glow orange</li>
       <li>Heritage 1983: a knob in a ring lit red, presets in clear red, and a flip-down cover over an orange dot-matrix display</li>
       <li>Hi-Fi 1984: a black anodised Japanese hi-fi deck with champagne print, slim keys, an amber display and tape switches</li>
@@ -140,6 +147,7 @@
       <li>Trio Stack 1993: three black units, an equaliser with green bars, a disc changer controller and a head unit, with mint green keys</li>
       <li>A80 Factory 1994: a car maker's CD and tape unit in charcoal plastic, with a strip display numbering the presets and a reflective LCD, olive grey by day; at night the displays and legends glow lime green</li>
       <li>Spectrum 1997: a silver receiver over a CD player whose window is a spectrum analyser, white bars under a green line and blue above</li>
+      <li>R34 Factory 1999: a car maker's navigation unit over a CD and MD changer control, titanium grey in a dark brushed panel, with a joystick, light grey source keys and a small reflective LCD, olive by day and lit amber at night</li>
       <li>Multi Control 2000: nearly all display, a big blue fluorescent window whose bars fan round a half circle</li>
       <li>Twin Dial 2001: two round green fluorescent dials in a wide silver frame, each ringed with fine spokes that follow the music, the volume on the left and the track on the right</li>
       <li>Rainbow 2002: a silver unit with an in-dash CD changer, its wide window's bars running through the rainbow from the bass to the treble</li>

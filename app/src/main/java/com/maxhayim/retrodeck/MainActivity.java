@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements StereoView.Listener {
         @Override
         public void run() {
             player.tick();
-            others.tick(player.ownPlaying());
+            others.tick(player.ownPlaying() || MelodyBox.sounding());
             chooseSource();
             checkIdle();
             checkUpdates();
@@ -157,11 +157,17 @@ public class MainActivity extends Activity implements StereoView.Listener {
      * Found by itself: RetroDeck's own music when it plays, otherwise music playing in another app,
      * which stays the one shown and controlled while paused, until RetroDeck's own plays again.
      */
+    private static final long LOST_MS = 10_000;
+
     private void chooseSource() {
         if (player == null || others == null) return;
         boolean was = following;
         if (player.ownPlaying()) following = false;
         else if (others.playing) following = true;
+        // Music heard with no session to say which app played it: once it has been quiet a while,
+        // there's nothing to show or control, so RetroDeck's own comes back.
+        else if (following && !others.hasSession()
+                && android.os.SystemClock.uptimeMillis() - others.heardAt > LOST_MS) following = false;
         if (following) {
             state.source = sourceName(others.app);
             if (!others.title.isEmpty()) {

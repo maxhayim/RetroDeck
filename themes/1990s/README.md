@@ -35,3 +35,10 @@ A late-1990s detachable faceplate: curved graphite with chrome trim along the to
 [![Spectrum 1997](spectrum-1997/tv-night.jpg)](spectrum-1997/)
 
 A late-1990s silver stack: a receiver with a blue-white dot-matrix display and a knob, over a CD player whose window is a spectrum analyser, its fine bars white under a green line and blue above.
+
+## [R34 Factory 1999](r34-factory-1999/)
+
+[![R34 Factory 1999](r34-factory-1999/render-night.jpg)](r34-factory-1999/)
+
+A car maker's factory pair from the late 1990s: a navigation unit over a CD and MD changer control, titanium grey in a dark brushed panel, with a small reflective LCD, olive by day and lit amber at night.
+

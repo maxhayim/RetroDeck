@@ -81,6 +81,9 @@ final class Faceplate {
             case Skins.BLUETOOTH:
             case Skins.CHROME:
             case Skins.CHROME_MODERN:
+            case Skins.DIAL:
+            case Skins.DIAL_MODERN:
+            case Skins.FACTORY_99:
             case Skins.TAPE:
             case Skins.RED:
             case Skins.MATTE:

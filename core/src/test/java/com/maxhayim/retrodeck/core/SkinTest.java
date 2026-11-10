@@ -96,7 +96,7 @@ public class SkinTest {
             for (String z : s.faceplateZones()) assertTrue(s.name + " " + z, s.body.contains(s.zone(z)));
             assertTrue(s.name, s.body.contains(s.lcd));
         }
-        assertEquals(13, singles);
+        assertEquals(15, singles);
     }
 
     @Test

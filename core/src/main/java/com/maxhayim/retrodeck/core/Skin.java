@@ -97,6 +97,12 @@ public final class Skin {
      * the track on the main display.
      */
     public boolean dialBars;
+    /**
+     * A dial radio's tuning scale across the top of its window, or null: the app moves a needle along
+     * it with the song, from the start of the scale to the end, in dialNeedle's colour.
+     */
+    public Box dialScale;
+    public int dialNeedle = 0xFFE0281E;
     /** Round display windows: each is the circle, or on a screen not 16:9 the oval, that its box holds. */
     public boolean roundWindows;
     /**

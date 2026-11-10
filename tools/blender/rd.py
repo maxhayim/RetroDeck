@@ -445,7 +445,7 @@ def key(k, top, mat, hole, legend, size, height=0.12, gap=0.05, bevel=0.04, roun
     elif k["id"] == "play":
         parts.append(play_mark(cx + size * 0.2, ly, size * 0.62, legend, z))
     elif (k["id"] or "").startswith("preset") and "|" in label:
-        name, num = label.split("|")
+        name, num = label.rsplit("|", 1)
         parts.append(text(name, cx, cy + (y1 - y0) * 0.12, z, size, legend))
         parts.append(text(num, x1 - gap - 0.16, y0 + gap + 0.17, z, size * 0.72, legend))
     else:

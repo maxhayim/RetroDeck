@@ -552,11 +552,23 @@ public class StereoView extends View {
             levels.read(bands, now, state.playing);
             if (Visualizers.BARS.equals(visualizer)) drawSpokes(c, lcd, false);
         }
+        if (skin.dialScale != null) drawNeedle(c, px(skin.dialScale));
         drawOverlay(c, Zones.LCD, false);
         if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
         else drawTrackText(c, px(skin.lcdText), u);
         finish(c, lcd, u, false);
         c.restoreToCount(save);
+    }
+
+    /** A dial radio's needle, along the scale as far as the song has played, with a little glow round it. */
+    private void drawNeedle(Canvas c, RectF scale) {
+        float f = state.durationMs > 0 ? Math.max(0f, Math.min(1f, state.positionMs / (float) state.durationMs)) : 0f;
+        float x = scale.left + scale.width() * (0.02f + 0.96f * f), w = Math.max(2f, scale.height() * 0.05f);
+        float top = scale.top - scale.height() * 0.08f, bottom = scale.bottom + scale.height() * 0.08f;
+        paint.setColor(Illumination.withAlpha(skin.dialNeedle, 0x40));
+        c.drawRect(x - w * 1.8f, top, x + w * 1.8f, bottom, paint);
+        paint.setColor(skin.dialNeedle);
+        c.drawRect(x - w / 2, top, x + w / 2, bottom, paint);
     }
 
     /** A stack's equaliser or analyser window: the visualizer alone, behind the same glass as the display. */
@@ -614,7 +626,7 @@ public class StereoView extends View {
             paint.setShader(dotGrid);
             c.drawRect(lcd, paint);
             paint.setShader(null);
-        } else if (skin.lcdStyle == Skin.LCD_SEGMENT) {
+        } else if (skin.lcdStyle == Skin.LCD_SEGMENT && skin.dialScale == null) {
             // The fine control-grid mesh a vacuum fluorescent display shows over its segments.
             if (mesh == null) mesh = meshShader(Math.max(3, Math.round(u * 0.0055f)));
             paint.setShader(mesh);

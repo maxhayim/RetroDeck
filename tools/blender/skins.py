@@ -1254,10 +1254,215 @@ def matrix():
     return lights
 
 
+def wood(name, light, dark):
+    """Woodgrain: long wavy bands along x, light and dark, with a fine pore bump and a satin lacquer."""
+    m = material(name, light, 0.38, 0.5, coat=0.35)
+    n, links = m.node_tree.nodes, m.node_tree.links
+    coord = n.new("ShaderNodeTexCoord")
+    mp = n.new("ShaderNodeMapping")
+    mp.inputs["Scale"].default_value = (0.08, 1.6, 1.0)
+    links.new(coord.outputs["Object"], mp.inputs["Vector"])
+    wave = n.new("ShaderNodeTexWave")
+    wave.wave_type = "BANDS"
+    wave.bands_direction = "Y"
+    wave.inputs["Scale"].default_value = 2.2
+    wave.inputs["Distortion"].default_value = 9.0
+    wave.inputs["Detail"].default_value = 6
+    wave.inputs["Detail Scale"].default_value = 1.4
+    links.new(mp.outputs["Vector"], wave.inputs["Vector"])
+    ramp = n.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].color = (*dark, 1)
+    ramp.color_ramp.elements[1].color = (*light, 1)
+    ramp.color_ramp.elements[0].position = 0.25
+    links.new(wave.outputs["Fac"], ramp.inputs["Fac"])
+    p = n["Principled BSDF"]
+    links.new(ramp.outputs["Color"], p.inputs["Base Color"])
+    pore = n.new("ShaderNodeTexNoise")
+    pore.inputs["Scale"].default_value = 900
+    b = n.new("ShaderNodeBump")
+    b.inputs["Strength"].default_value = 0.15
+    b.inputs["Distance"].default_value = 0.002
+    links.new(pore.outputs["Fac"], b.inputs["Height"])
+    links.new(b.outputs["Normal"], p.inputs["Normal"])
+    return m
+
+
+def dial(modern=False):
+    """
+    An early-1970s factory radio: a chrome-edged woodgrain face, or black on the one made again today,
+    a slide-rule dial behind glass with its scale printed on it (the app draws the needle), five tall
+    black push-buttons under it in the same chrome frame, and a black knob at each end, TUNING and
+    SW-VOL, on chrome skirts.
+    """
+    lights = Lights(sun=1900, fill=120, softbox=1.1)
+    chrome_ = material("chrome", (0.94, 0.94, 0.96), 0.05, metal=1.0)
+    satin = material("chrome-satin", (0.80, 0.81, 0.83), 0.18, metal=1.0, aniso=0.3, brushed=True, bump=0.04)
+    if modern:
+        face = material("face", (0.010, 0.010, 0.011), 0.42, 0.4, bump=0.18, bump_scale=600)
+    else:
+        face = wood("wood", srgb(0x6A4A30), srgb(0x2E1D10))
+    recess = material("recess", (0.006, 0.006, 0.007), 0.5, 0.3)
+    keycap = material("keycap", (0.010, 0.010, 0.011), 0.22, 0.55, coat=0.5)
+    grip = material("knob", (0.012, 0.012, 0.013), 0.30, 0.5, coat=0.3)
+    cap = material("knob-cap", (0.008, 0.008, 0.009), 0.14, 0.6, coat=0.8)
+    legend = legend_material("legend", srgb(0xD8DADD))
+    ink = material("ink", srgb(0xE6E8EB), 0.5)
+    plate_ink = material("plate", (0.008, 0.008, 0.009), 0.4, 0.4)
+    # The scale, printed on the glass and lit from behind at night.
+    scale_ink = material("scale", srgb(0xE8EDE6 if modern else 0xF2EEE4), 0.5)
+    glass = material("dial-glass", (0.020, 0.032, 0.026) if modern else (0.004, 0.004, 0.005), 0.25, 0.3, coat=0.6)
+    dash()
+    # The frame: chrome, a face set a step inside it.
+    plate_box(bx(0.004), by(0.012), bx(0.996), by(0.988), 0.02 * U, chrome_, edge=0.10)
+    gx0, gy0, gx1, gy1 = bx(0.016), by(0.055), bx(0.984), by(0.945)
+    target(rbox("face", X(gx0), Y(gy1), X(gx1), Y(gy0), FACE - 0.05, FACE + 0.025, face, 0.008 * U, bevel=0.01))
+    # The dial and the keys share one chrome-framed recess in the middle.
+    keys_ = [k for k in CONTROLS if k["id"] in ("power", "source", "prev", "play", "next")]
+    lcd = L["lcd"]
+    mid = [lcd[0], lcd[1], lcd[2], max(k["box"][3] for k in keys_)]
+    m = 0.012 * U
+    rim(mid, m, 0.014 * U, chrome_, FACE - 0.06, FACE + 0.05)
+    x0, y0, x1, y1 = rect(mid)
+    cut_box(x0 - m, y0 - m, x1 + m, y1 + m, FACE + 0.03, 0.40, hole, 0.006 * U, floor=recess)
+    rbox("dial", *rect(lcd), FACE - 0.25, FACE - 0.18, glass, 0.004 * U)
+    # A thin chrome bar between the dial and the keys.
+    bx0, _, bx1, _ = rect(lcd)
+    by_ = Y(lcd[3]) - 0.012 * U
+    box("bar", bx0, by_ - 0.025, bx1, by_ + 0.025, FACE - 0.25, FACE - 0.05, satin, bevel=0.01)
+    # The scale: numbers along the top of the dial, ticks under them.
+    sc = L["dialScale"] if "dialScale" in L else [lcd[0] + 0.02, lcd[1] + 0.03, lcd[2] - 0.02, lcd[1] + 0.155]
+    z = FACE - 0.179
+    nums = ["5\u00B75", "7", "8", "9", "10", "12", "14", "16"] if modern else ["5", "7", "9", "12", "16"]
+    pos = [0.03, 0.17, 0.27, 0.37, 0.47, 0.63, 0.79, 0.95] if modern else [0.05, 0.27, 0.47, 0.70, 0.92]
+    size = (sc[3] - sc[1]) * H * 0.42
+    tx0, ty0, tx1, ty1 = rect(sc)
+    for t, f in zip(nums, pos):
+        x = tx0 + (tx1 - tx0) * f
+        text(t, x, ty1 - (ty1 - ty0) * 0.42, z, size, scale_ink, face="BarlowSemiCondensed-SemiBold")
+        if t == "5" and not modern:
+            text("4", x + size * 0.38, ty1 - (ty1 - ty0) * 0.22, z, size * 0.5, scale_ink)
+    if not modern:
+        text("kHz", tx1 - (tx1 - tx0) * 0.005, ty1 - (ty1 - ty0) * 0.80, z, size * 0.45, scale_ink, "RIGHT")
+    for i in range(41):
+        x = tx0 + (tx1 - tx0) * (0.02 + 0.96 * i / 40)
+        h = (ty1 - ty0) * (0.16 if i % 5 == 0 else 0.08)
+        box("tick", x - 0.006, ty0 + (ty1 - ty0) * 0.06, x + 0.006, ty0 + (ty1 - ty0) * 0.06 + h, z, z + 0.001,
+            scale_ink)
+    box("scale-line", tx0 + (tx1 - tx0) * 0.02, ty0 + (ty1 - ty0) * 0.05, tx0 + (tx1 - tx0) * 0.98,
+        ty0 + (ty1 - ty0) * 0.065, z, z + 0.001, scale_ink)
+    # The push-buttons: tall black caps standing close together, a small legend on each.
+    size = min(fit(keys_), 0.20)
+    for k in keys_:
+        key(k, FACE - 0.045, keycap, hole, legend, size, height=0.30, gap=0.025, bevel=0.03, r=0.03, cut_face=False)
+    # The knobs: black, ridged, on chrome skirts; TUNING (MENU) on the left, SW-VOL on the right.
+    tuning = [k for k in CONTROLS if k["id"] == "menu"][0]
+    for b, grips in ((L["knob"], 60), (tuning["box"], 60)):
+        cx, cy, r = knob(b, FACE, hole, grip, cap, ridges=grips, height=0.42, cap_frac=0.80, r_frac=0.72,
+                         skirt=chrome_ if modern else satin)
+        cylinder("skirt-ring", cx, cy, r * 1.22, FACE - 0.04, FACE + 0.06, chrome_, bevel=0.02)
+    # Their names, on small black plates on the 1971 face, printed on the modern one.
+    for t, b in ((["TUNING"], tuning["box"]), (["SW-VOL", "TONE"], L["knob"])):
+        cx = X((b[0] + b[2]) / 2)
+        top = Y(b[1]) + 0.02 * U
+        sz = 0.034 * U
+        for i, line in enumerate(t):
+            y = top + (len(t) - 1 - i) * sz * 1.15 + sz * 0.6
+            if not modern:
+                w = len(line) * sz * 0.55 + sz * 0.5
+                rbox("name-plate", cx - w / 2, y - sz * 0.6, cx + w / 2, y + sz * 0.6, FACE, FACE + 0.04,
+                     plate_ink, sz * 0.15)
+            text(line, cx, y, FACE + (0.041 if not modern else 0.026), sz, ink, face="BarlowSemiCondensed-SemiBold", spacing=1.15)
+
+    def lit(pressed, night):
+        p = scale_ink.node_tree.nodes["Principled BSDF"]
+        p.inputs["Emission Color"].default_value = (*srgb(0xD8F5DE if modern else 0xFFE2B0), 1)
+        p.inputs["Emission Strength"].default_value = 1.4 if night else 0.0
+        g = glass.node_tree.nodes["Principled BSDF"]
+        g.inputs["Emission Color"].default_value = (*srgb(0x2E6A48 if modern else 0x5A3A12), 1)
+        g.inputs["Emission Strength"].default_value = 0.10 if night else 0.0
+    return lights, lit
+
+
+def r34():
+    """
+    A late-1990s factory pair: a navigation unit over a CD and MD changer control, titanium grey,
+    in a dark brushed panel. Dark keys, a disc slot in each, the navigation keys round a joystick, the
+    radio's light grey source keys, its MD slot, a small LCD and a knurled volume knob.
+    """
+    lights = Lights(sun=2100, fill=120, softbox=0.9)
+    panel = material("panel", (0.050, 0.050, 0.052), 0.32, metal=0.85, aniso=0.5, brushed=True, bump=0.06)
+    ti = material("titanium", (0.20, 0.19, 0.175), 0.30, metal=0.75, bump=0.10, bump_scale=900)
+    edge = material("edge", (0.34, 0.33, 0.31), 0.22, metal=0.85)
+    keycap = material("keycap", (0.016, 0.016, 0.018), 0.36, 0.5, bump=0.05, bump_scale=1200)
+    light = material("keycap-light", (0.50, 0.51, 0.52), 0.30, 0.5, metal=0.4)
+    knurl = material("knurl", (0.10, 0.10, 0.105), 0.30, metal=0.8)
+    spun = material("spun", (0.40, 0.40, 0.41), 0.16, metal=1.0, rings=True, bump=0.08)
+    satin = material("satin", (0.30, 0.30, 0.31), 0.25, metal=0.9)
+    legend = legend_material("legend", srgb(0xE8EAEC))
+    dark = legend_material("legend-dark", srgb(0x202124))
+    ink = material("ink", srgb(0xE2E4E6), 0.5)
+    inkd = material("ink-dark", srgb(0x1A1B1D), 0.5)
+    dash()
+    # The brushed panel the pair is set in, filling the screen.
+    box("panel", -0.2, -0.2, W + 0.2, H + 0.2, -0.5, FACE - 0.12, panel)
+    units(ti, 0.010 * U, edge=0.05, edge_mat=edge)
+    nav, radio = L["units"]
+    # Navigation unit: a disc slot across the top, its name, the keys.
+    slot([nav[0] + 0.14, 0.085, nav[2] - 0.17, 0.125], satin)
+    printed("NAVIGATION SYSTEM", 0.345, 0.285, 0.024 * U, ink, "LEFT", 1.1)
+    printed("MULTI FUNCTION", 0.075, 0.20, 0.018 * U, ink, "LEFT", 1.1)
+    printed("DIGITAL AUDIO", 0.91, 0.14, 0.014 * U, ink, "CENTER", 1.2)
+    # Radio: CD slot, MD slot, the window.
+    slot(L["slot"], satin)
+    printed("CD/MD CHANGER CONTROL", 0.5, 0.568, 0.018 * U, ink, "CENTER", 1.15)
+    ch = L["changer"]
+    x0, y0, x1, y1 = rect(ch)
+    target(rbox("md-lip", x0 - 0.04, y0 - 0.04, x1 + 0.04, y1 + 0.04, FACE - 0.1, FACE + 0.03, satin, 0.03, bevel=0.01))
+    cut_box(x0, y0, x1, y1, FACE + 0.031, 0.25, hole, 0.01)
+    box("md-door", x0 + 0.03, y0 + 0.03, x1 - 0.03, y1 - 0.03, FACE - 0.12, FACE - 0.05,
+        material("md-door", (0.006, 0.006, 0.007), 0.3, 0.5), bevel=0.01)
+    text("16Mbit SHOCK PROOF MEMORY", (x0 + x1) / 2, (y0 + y1) / 2, FACE - 0.049, 0.016 * U, ink, "CENTER", 1.1)
+    window(L["lcd"], 0.008 * U, 0.004 * U, material("lcd", (0.02, 0.022, 0.016), 0.3, 0.3),
+           material("surround", (0.010, 0.010, 0.011), 0.5, 0.3))
+    printed("AUTO PRESET", 0.09, 0.82, 0.016 * U, ink, "LEFT", 1.1)
+    printed("VOL", 0.915, 0.645, 0.022 * U, ink, "CENTER", 1.1)
+    lights_keys = ("CD", "MD", "FM/AM")
+    for k in CONTROLS + DECOR:
+        x0, y0, x1, y1 = rect(k["box"])
+        if k["round"]:
+            # The joystick: a black dome in a ring, ENTER on it, four arrows round it.
+            cx, cy = centre(k["box"])
+            r = min(x1 - x0, y1 - y0) / 2
+            cut_circle(cx, cy, r, FACE, 0.2, hole)
+            cylinder("ring", cx, cy, r * 0.98, FACE - 0.05, FACE + 0.08, keycap, bevel=0.03)
+            for i in range(8):
+                a = math.radians(22.5 + 45 * i)
+                cylinder("dot", cx + math.cos(a) * r * 0.88, cy + math.sin(a) * r * 0.88, r * 0.035, FACE + 0.08,
+                         FACE + 0.085, ink)
+            parts = [cylinder("stick", cx, cy, r * 0.62, FACE - 0.1, FACE + 0.22, keycap, bevel=r * 0.18)]
+            parts.append(text("ENTER", cx, cy, FACE + 0.221, r * 0.22, legend, face="BarlowSemiCondensed-SemiBold"))
+            for a, up in ((90, True), (270, False)):
+                parts.append(tri(cx, cy + math.sin(math.radians(a)) * r * 0.42, r * 0.10, up, legend, FACE + 0.221))
+            rd.KEYS.append(parts)
+            continue
+        light_ = k["label"] in lights_keys
+        k = dict(k)
+        if k["label"] in ("\u2227", "\u2228"):
+            k["label"] = "\u25b2" if k["label"] == "\u2227" else "\u25bc"
+        if k["id"] == "play":
+            k["id"] = "cd"   # a source key: its name, not the play sign
+        key(k, FACE, light if light_ else keycap, hole, dark if light_ else legend, min(fit([k]), 0.20),
+            r=0.03, height=0.10, gap=0.03, edge=None)
+    cx, cy, r = knob(L["knob"], FACE, hole, knurl, spun, ridges=120, height=0.42, cap_frac=0.78, r_frac=0.84)
+    cylinder("knob-ring", cx, cy, r * 1.1, FACE - 0.04, FACE + 0.04, edge, bevel=0.02)
+    return lights
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
-         "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix}
+         "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix,
+         "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()
