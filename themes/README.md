@@ -67,6 +67,9 @@ Two-slot units: stacks of units and screens that fill the whole display.
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="2000s/blue-matrix-2004/"><img src="2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004"/></a><br/><b><a href="2000s/blue-matrix-2004/">Blue Matrix 2004</a></b><br/><sub>2000s · big blue dot matrix in dark chrome</sub></td>
+    <td width="50%" valign="top"><a href="2010s/cp-2013/"><img src="2010s/cp-2013/day-night.webp" alt="CP 2013"/></a><br/><b><a href="2010s/cp-2013/">CP 2013</a></b><br/><sub>2010s · a touch screen, the song in thin white type, cyan keys on the shelf</sub></td>
+  </tr>
+  <tr>
     <td width="50%" valign="top"><a href="2020s/modern-glass/"><img src="2020s/modern-glass/day-night.webp" alt="Modern Glass"/></a><br/><b><a href="2020s/modern-glass/">Modern Glass</a></b><br/><sub>2020s · modern screen</sub></td>
   </tr>
 </table>

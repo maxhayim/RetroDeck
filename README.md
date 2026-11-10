@@ -87,6 +87,9 @@
   </tr>
   <tr>
     <td width="50%"><img src="themes/2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004, playing, fading between day and night"/><br/><sub>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over slim keys and two big polished knobs</sub></td>
+    <td width="50%"><img src="themes/2010s/cp-2013/day-night.webp" alt="CP 2013, fading between day and night"/><br/><sub>CP 2013: a 2013 touch screen, the song in thin white type on black glass, and a shelf of cyan keys</sub></td>
+  </tr>
+  <tr>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
   <tr>
@@ -120,7 +123,7 @@
 <h2>Features</h2>
 
 <ul>
-  <li><strong>Twenty-seven skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
+  <li><strong>Twenty-eight skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
@@ -152,6 +155,7 @@
       <li>Twin Dial 2001: two round green fluorescent dials in a wide silver frame, each ringed with fine spokes that follow the music, the volume on the left and the track on the right</li>
       <li>Rainbow 2002: a silver unit with an in-dash CD changer, its wide window's bars running through the rainbow from the bass to the treble</li>
       <li>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over a strip of slim keys and two big polished knobs</li>
+      <li>CP 2013: a touch-screen head unit as the first phone-driven car screens were shown, the song in thin white type on black glass with on-screen transport keys and a progress bar, and a shelf of cyan VOL keys, an amber-ringed power knob and a home key</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>

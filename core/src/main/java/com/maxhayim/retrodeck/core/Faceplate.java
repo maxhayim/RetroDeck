@@ -84,6 +84,7 @@ final class Faceplate {
             case Skins.DIAL:
             case Skins.DIAL_MODERN:
             case Skins.FACTORY_99:
+            case Skins.TOUCH:
             case Skins.TAPE:
             case Skins.RED:
             case Skins.MATTE:

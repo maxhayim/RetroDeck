@@ -33,6 +33,7 @@ public final class Skins {
     public static final String DIAL = "b110factory71";
     public static final String DIAL_MODERN = "b110factory71m";
     public static final String FACTORY_99 = "r34factory99";
+    public static final String TOUCH = "cp13";
 
     private static List<Skin> all;
 
@@ -68,6 +69,7 @@ public final class Skins {
             all.add(twin());
             all.add(rainbow());
             all.add(matrix());
+            all.add(touch());
             all.add(modern());
         }
         return all;
@@ -937,6 +939,44 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, 0.06f, 0.575f, 0.12f, 0.64f)
                 .zone(Zones.CORNER, 0.86f, 0.055f, 0.95f, 0.13f)
                 .zone(Zones.VISUALIZER, 0.19f, 0.752f, 0.36f, 0.788f);
+        return s;
+    }
+
+    /**
+     * A touch-screen head unit of 2013, as the first phone-driven car screens were shown: a glossy black
+     * tablet set in a dark knit surround, the screen flat and black with the song in thin white type,
+     * and under it a shelf with backlit cyan VOL keys, a round power knob glowing amber round its edge,
+     * a home key, and a blue light strip along the foot.
+     */
+    private static Skin touch() {
+        Skin s = new Skin(TOUCH, "CP 2013", "2010s", 2, 0xFF1A1B1E, 0xFF0A0A0C, 0xFF000000, 0xFF000000,
+                0xFF000000, 0xFF101114, 0xFF050506, 0xFFE8EAEC, Skin.LCD_MODERN, 0.012f);
+        s.art = "skins/" + TOUCH;
+        s.knobDots = false;
+        s.touchScreen = true;
+        s.keyLight = 0xFF5FE0F0;
+        s.keyPrint = 0xFF7FD6E2;
+        s.phosphor = 0xFFFFFFFF;
+        // The glass, and on it the song, the transport keys, the progress bar and the status bar.
+        s.lcd = new Box(0.115f, 0.065f, 0.885f, 0.665f);
+        s.lcdText = new Box(0.20f, 0.14f, 0.80f, 0.31f);
+        s.statusBar = new Box(0.13f, 0.605f, 0.87f, 0.655f);
+        s.control(Skin.SOURCE, "\u2261", 0.80f, 0.08f, 0.865f, 0.13f)
+                .control(Skin.PREV, "|<<", 0.31f, 0.33f, 0.41f, 0.43f)
+                .control(Skin.PLAY, "PLAY", 0.45f, 0.33f, 0.55f, 0.43f)
+                .control(Skin.NEXT, ">>|", 0.59f, 0.33f, 0.69f, 0.43f)
+                .control(Skin.DISPLAY, "HOME", new Box(0.48f, 0.605f, 0.52f, 0.655f), true);
+        s.decor("\u2039", 0.135f, 0.08f, 0.20f, 0.13f);
+        // The shelf: VOL keys, the power knob, the home key.
+        s.control(Skin.VOL_DOWN, "\u2228", 0.24f, 0.735f, 0.305f, 0.815f)
+                .control(Skin.VOL_UP, "\u2227", 0.37f, 0.735f, 0.435f, 0.815f)
+                .control(Skin.POWER, "PWR", new Box(0.45f, 0.70f, 0.55f, 0.86f), true)
+                .control(Skin.MENU, "HOME", 0.645f, 0.735f, 0.715f, 0.815f);
+        s.zone(Zones.HEADER, 0.36f, 0.08f, 0.64f, 0.13f)
+                .zone(Zones.LCD, 0.30f, 0.61f, 0.44f, 0.65f)
+                .zone(Zones.VISUALIZER, 0.20f, 0.495f, 0.80f, 0.585f)
+                .zone(Zones.FACEPLATE, 0.13f, 0.745f, 0.22f, 0.805f)
+                .zone(Zones.CORNER, 0.74f, 0.745f, 0.87f, 0.805f);
         return s;
     }
 

@@ -96,6 +96,7 @@ public class SkinRenderTest {
         box(b, "changer", s.changer);
         box(b, "eq", s.eq);
         box(b, "dialScale", s.dialScale);
+        box(b, "statusBar", s.statusBar);
         b.append(",\"units\":[");
         for (int i = 0; i < s.units.size(); i++) b.append(i > 0 ? "," : "").append(arr(s.units.get(i)));
         b.append(']');

@@ -555,6 +555,7 @@ public class StereoView extends View {
         if (skin.dialScale != null) drawNeedle(c, px(skin.dialScale));
         drawOverlay(c, Zones.LCD, false);
         if (skin.segmentFont && loadSegmentFonts()) drawSegmentText(c, px(skin.lcdText), u);
+        else if (skin.touchScreen) drawTouchScreen(c, u);
         else drawTrackText(c, px(skin.lcdText), u);
         finish(c, lcd, u, false);
         c.restoreToCount(save);
@@ -795,6 +796,99 @@ public class StereoView extends View {
             paint.setColor(illumination);
             c.drawRect(t.left, y - u * 0.004f, t.left + t.width() * f, y, paint);
         }
+    }
+
+    private Typeface thin;
+
+    /**
+     * A 2013 touch screen's now-playing page: the title large and thin, centred, the artist in grey
+     * under it, the transport keys at their touch boxes, the progress bar with the time played and
+     * the time left, and the clock at the right of the status bar.
+     */
+    private void drawTouchScreen(Canvas c, float u) {
+        if (thin == null) thin = Typeface.create("sans-serif-light", Typeface.NORMAL);
+        RectF t = px(skin.lcdText);
+        long now = SystemClock.uptimeMillis();
+        text.setTypeface(thin);
+        text.setTextAlign(Paint.Align.CENTER);
+        spacing(text, 0f);
+        text.setColor(0xFFF6F7F9);
+        text.setTextSize(t.height() * 0.42f);
+        c.drawText(fit(state.title, t.width()), t.centerX(), t.top + t.height() * 0.52f, text);
+        text.setTextSize(t.height() * 0.17f);
+        text.setColor(0xFF8E9299);
+        String line = state.artistLine(now);
+        if (state.notice != null && now < state.noticeUntil) postInvalidateDelayed(state.noticeUntil - now + 20);
+        c.drawText(fit(line, t.width()), t.centerX(), t.top + t.height() * 0.86f, text);
+
+        // The transport keys: white, drawn as shapes so play turns to pause.
+        paint.setColor(0xFFF6F7F9);
+        for (Skin.Control k : skin.controls) {
+            if (!Skin.PREV.equals(k.id) && !Skin.PLAY.equals(k.id) && !Skin.NEXT.equals(k.id)) continue;
+            RectF b = px(k.box);
+            float a = Math.min(b.width(), b.height()) * 0.30f, cx = b.centerX(), cy = b.centerY();
+            if (Skin.PLAY.equals(k.id)) {
+                if (state.playing) {
+                    c.drawRect(cx - a * 0.75f, cy - a, cx - a * 0.25f, cy + a, paint);
+                    c.drawRect(cx + a * 0.25f, cy - a, cx + a * 0.75f, cy + a, paint);
+                } else {
+                    triangle(c, cx - a * 0.7f, cy, a * 1.6f, a);
+                }
+            } else {
+                boolean fwd = Skin.NEXT.equals(k.id);
+                float w = a * 1.05f;
+                for (int i = 0; i < 2; i++) {
+                    float x = fwd ? cx - w + i * w : cx + w - i * w;
+                    triangle(c, x, cy, fwd ? w : -w, a * 0.8f);
+                }
+            }
+        }
+
+        // Progress: time played, the bar with its red fill, time left.
+        Box pb = new Box(skin.lcdText.left + 0.06f, 0.455f, skin.lcdText.right - 0.06f, 0.47f);
+        RectF p = px(pb);
+        float f = state.durationMs > 0 ? Math.max(0f, Math.min(1f, state.positionMs / (float) state.durationMs)) : 0f;
+        float bh = Math.max(2f, u * 0.003f), by = p.centerY();
+        paint.setColor(0x55FFFFFF);
+        c.drawRect(p.left, by - bh / 2, p.right, by + bh / 2, paint);
+        paint.setColor(0xFFF0354A);
+        c.drawRect(p.left, by - bh, p.left + p.width() * f, by + bh, paint);
+        text.setTextSize(u * 0.022f);
+        text.setColor(0xFF8E9299);
+        float ty = by + text.getTextSize() * 0.36f;
+        if (state.durationMs > 0) {
+            text.setTextAlign(Paint.Align.RIGHT);
+            c.drawText(time(state.positionMs), p.left - u * 0.012f, ty, text);
+            text.setTextAlign(Paint.Align.LEFT);
+            c.drawText("-" + time(Math.max(0, state.durationMs - state.positionMs)), p.right + u * 0.012f, ty, text);
+        }
+
+        // The page dots, and the clock in the status bar.
+        RectF lcd = px(skin.lcd);
+        float dy = lcd.top + lcd.height() * 0.885f, r = u * 0.005f;
+        for (int i = 0; i < 3; i++) {
+            paint.setColor(i == 1 ? 0xFFF6F7F9 : 0x66FFFFFF);
+            c.drawCircle(lcd.centerX() + (i - 1) * r * 3.2f, dy, r, paint);
+        }
+        if (skin.statusBar != null) {
+            RectF sb = px(skin.statusBar);
+            text.setTextSize(sb.height() * 0.50f);
+            text.setColor(0xFFE8EAEC);
+            text.setTextAlign(Paint.Align.RIGHT);
+            c.drawText(clock.format(new Date()), sb.right - sb.width() * 0.07f, sb.centerY() + text.getTextSize() * 0.36f, text);
+        }
+        text.setTypeface(Typeface.DEFAULT);
+        text.setTextAlign(Paint.Align.LEFT);
+    }
+
+    /** A filled triangle with its flat side at x, pointing right by w (left if w is negative). */
+    private void triangle(Canvas c, float x, float cy, float w, float h) {
+        android.graphics.Path path = new android.graphics.Path();
+        path.moveTo(x, cy - h);
+        path.lineTo(x + w, cy);
+        path.lineTo(x, cy + h);
+        path.close();
+        c.drawPath(path, paint);
     }
 
     private boolean loadSegmentFonts() {

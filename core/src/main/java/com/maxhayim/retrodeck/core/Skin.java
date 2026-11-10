@@ -102,6 +102,14 @@ public final class Skin {
      * it with the song, from the start of the scale to the end, in dialNeedle's colour.
      */
     public Box dialScale;
+    /**
+     * A touch screen of the early 2010s instead of a display: the song's title large and thin in the
+     * middle, the artist under it, transport keys drawn on the glass at the PREV, PLAY and NEXT boxes,
+     * a progress bar with the times, and the clock in a status bar along its foot.
+     */
+    public boolean touchScreen;
+    /** The touch screen's status bar, where the clock goes; null for none. */
+    public Box statusBar;
     public int dialNeedle = 0xFFE0281E;
     /** Round display windows: each is the circle, or on a screen not 16:9 the oval, that its box holds. */
     public boolean roundWindows;

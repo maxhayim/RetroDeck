@@ -1458,11 +1458,129 @@ def r34():
     return lights
 
 
+def touch():
+    """
+    A 2013 touch-screen head unit: a glossy black tablet in a dark knit surround, the screen flat black
+    glass with its fixed marks lit (back, list, signal, battery, the home button), and a shelf under it
+    with backlit cyan VOL chevrons, a round power knob with an amber glow round it, a home key, and a
+    blue light strip along the foot. The app draws the song, transport keys and clock on the glass.
+    """
+    lights = Lights(sun=1500, fill=100, softbox=0.35)
+    knit = material("knit", (0.016, 0.016, 0.018), 0.75, 0.3, bump=0.6, bump_scale=160)
+    gloss = material("gloss", (0.004, 0.004, 0.005), 0.12, 0.5, coat=0.35)
+    shelf = material("shelf", (0.010, 0.010, 0.011), 0.22, 0.5, coat=0.6)
+    satin = material("satin", (0.30, 0.31, 0.33), 0.25, metal=0.9)
+    chrome_ = material("chrome", (0.85, 0.86, 0.88), 0.08, metal=1.0)
+    glass = material("glass", (0.0005, 0.0005, 0.0006), 0.30, 0.2)
+    pixel = emitter("pixel", srgb(0xF2F4F6), 1.6)
+    dim = emitter("pixel-dim", srgb(0x9A9EA6), 1.0)
+    amber = emitter("amber", srgb(0xFF7A1E), 0.45)
+    blue = emitter("blue", srgb(0x2FB8F0), 3.0)
+    legend = legend_material("legend", srgb(0x7FD6E2))
+    box("dash", -1, -1, W + 1, H + 1, -0.6, -0.1, knit)
+    # The tablet: rounded, glossy, the shelf under the glass narrower, as the unit tapers.
+    plate_box(0.085, 0.025, 0.915, 0.70, 0.045 * U, gloss, edge=0.06, edge_mat=satin)
+    plate_box(0.13, 0.62, 0.87, 0.955, 0.06 * U, shelf, edge=0.05, edge_mat=satin)
+    lcd = L["lcd"]
+    x0, y0, x1, y1 = rect(lcd)
+    cut_box(x0, y0, x1, y1, FACE, 0.03, hole, 0.012 * U, floor=glass)
+    # The amber light along the shelf under the glass, and the blue strip along the foot.
+    bx0, by0, bx1, by1 = rect([0.20, 0.698, 0.80, 0.702])
+    box("amber-line", bx0, by0, bx1, by1, FACE + 0.001, FACE + 0.004, amber)
+    cx = X(0.5)
+    for i in range(41):
+        f = (i - 20) / 20
+        x = cx + f * X(0.25)
+        y = Y(0.925) + (f * f) * 0.18
+        box("blue", x - 0.11, y - 0.035, x + 0.11, y + 0.035, FACE - 0.2, FACE + 0.01, blue)
+    z = FACE - 0.022
+    # Fixed marks on the glass: back, list, signal dots and LTE, battery, the home button.
+    def bar(xa, ya, xb, yb, w, mat, zz):
+        mx, my, ln = (xa + xb) / 2, (ya + yb) / 2, math.hypot(xb - xa, yb - ya)
+        o = box("mark", -ln / 2, -w / 2, ln / 2, w / 2, zz, zz + 0.002, mat)
+        o.location = (mx, my, 0)
+        o.rotation_euler = (0, 0, math.atan2(yb - ya, xb - xa))
+        return o
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    bxx, byy = centre(k["\u2039"]["box"])
+    a = 0.012 * U
+    bar(bxx + a * 0.5, byy + a, bxx - a * 0.5, byy, 0.006 * U, pixel, z)
+    bar(bxx - a * 0.5, byy, bxx + a * 0.5, byy - a, 0.006 * U, pixel, z)
+    lx, ly = centre(k["source"]["box"])
+    for i in (-1, 0, 1):
+        cylinder("dot", lx - a * 0.9, ly + i * a * 0.75, 0.0028 * U, z, z + 0.002, pixel)
+        box("line", lx - a * 0.55, ly + i * a * 0.75 - 0.0022 * U, lx + a * 1.0, ly + i * a * 0.75 + 0.0022 * U, z,
+            z + 0.002, pixel)
+    sb = L.get("statusBar") or [0.13, 0.605, 0.87, 0.655]
+    sx0, sy0, sx1, sy1 = rect(sb)
+    sy = (sy0 + sy1) / 2
+    for i in range(5):
+        cylinder("signal", sx0 + 0.25 + i * 0.13, sy, 0.045, z, z + 0.002, pixel)
+    text("LTE", sx0 + 0.25 + 5 * 0.13 + 0.05, sy, z, 0.20, pixel, "LEFT", 1.0)
+    bw, bh = 0.42, 0.16
+    bxr = sx1 - 0.18
+    for xa, ya, xb, yb in ((bxr - bw, sy - bh / 2, bxr, sy - bh / 2 + 0.02), (bxr - bw, sy + bh / 2 - 0.02, bxr, sy + bh / 2),
+                           (bxr - bw, sy - bh / 2, bxr - bw + 0.02, sy + bh / 2), (bxr - 0.02, sy - bh / 2, bxr, sy + bh / 2)):
+        box("battery", xa, ya, xb, yb, z, z + 0.002, pixel)
+    box("battery-fill", bxr - bw + 0.05, sy - bh / 2 + 0.05, bxr - 0.05, sy + bh / 2 - 0.05, z, z + 0.002, pixel)
+    box("battery-tip", bxr + 0.005, sy - 0.035, bxr + 0.035, sy + 0.035, z, z + 0.002, pixel)
+    hx, hy = centre(k["display"]["box"])
+    hr = min(rect(k["display"]["box"])[2] - rect(k["display"]["box"])[0], sy1 - sy0) / 2
+    cylinder("home-ring", hx, hy, hr * 0.92, z, z + 0.001, emitter("home-grey", srgb(0x3A3C40), 1.0))
+    cylinder("home-in", hx, hy, hr * 0.78, z + 0.001, z + 0.002, material("home-dark", (0.004, 0.004, 0.005), 0.3, 0.4))
+    q = hr * 0.30
+    for xa, ya, xb, yb in ((hx - q, hy - q, hx + q, hy - q + 0.012), (hx - q, hy + q - 0.012, hx + q, hy + q),
+                           (hx - q, hy - q, hx - q + 0.012, hy + q), (hx + q - 0.012, hy - q, hx + q, hy + q)):
+        box("home-sq", xa, ya, xb, yb, z + 0.002, z + 0.004, dim)
+    # The shelf: VOL chevrons and the word between them, the power knob, the home key.
+    zt = FACE + 0.002
+    w = 0.006 * U
+    for kid, up in (("vol_down", False), ("vol_up", True)):
+        cx_, cy_ = centre(k[kid]["box"])
+        s_ = 0.014 * U
+        d = s_ * 0.55 * (1 if up else -1)
+        parts = [bar(cx_ - s_, cy_ - d, cx_, cy_ + d, w, legend, zt), bar(cx_, cy_ + d, cx_ + s_, cy_ - d, w, legend, zt)]
+        rd.KEYS.append(parts)
+    vx = (centre(k["vol_down"]["box"])[0] + centre(k["vol_up"]["box"])[0]) / 2
+    text("VOL", vx, centre(k["vol_up"]["box"])[1], zt, 0.024 * U, legend, face="BarlowSemiCondensed-Medium", spacing=1.1)
+    pcx, pcy = centre(k["power"]["box"])
+    px0, py0, px1, py1 = rect(k["power"]["box"])
+    pr = min(px1 - px0, py1 - py0) / 2 * 0.86
+    cylinder("knob-glow", pcx, pcy, pr * 1.045, FACE - 0.05, FACE + 0.02, amber, bevel=0.01)
+    cut_circle(pcx, pcy, pr * 1.02, FACE, 0.1, hole)
+    parts = [cylinder("knob", pcx, pcy, pr, FACE - 0.08, FACE + 0.30, gloss, bevel=pr * 0.12),
+             cylinder("knob-ring", pcx, pcy, pr * 1.0, FACE + 0.12, FACE + 0.16, chrome_, bevel=0.01)]
+    zr = FACE + 0.301
+    gr = pr * 0.30
+    for i in range(26):
+        t = math.radians(-50 + 280 * i / 25 - 90 + 180) if False else math.radians(120 - 300 * i / 25 + 90)
+        x_, y_ = pcx + math.cos(t) * gr, pcy + math.sin(t) * gr
+        o = box("pwr-arc", -gr * 0.08, -gr * 0.045, gr * 0.08, gr * 0.045, zr, zr + 0.002, legend)
+        o.location = (x_, y_, 0)
+        o.rotation_euler = (0, 0, t + math.pi / 2)
+        parts.append(o)
+    parts.append(box("pwr-bar", pcx - gr * 0.07, pcy, pcx + gr * 0.07, pcy + gr * 1.15, zr, zr + 0.002, legend))
+    rd.KEYS.append(parts)
+    hcx, hcy = centre(k["menu"]["box"])
+    s_ = 0.016 * U
+    w = 0.005 * U
+    parts = [bar(hcx - s_ * 1.1, hcy + s_ * 0.05, hcx, hcy + s_ * 1.0, w, legend, zt),
+             bar(hcx, hcy + s_ * 1.0, hcx + s_ * 1.1, hcy + s_ * 0.05, w, legend, zt),
+             bar(hcx - s_ * 0.8, hcy + s_ * 0.25, hcx - s_ * 0.8, hcy - s_ * 0.9, w, legend, zt),
+             bar(hcx + s_ * 0.8, hcy + s_ * 0.25, hcx + s_ * 0.8, hcy - s_ * 0.9, w, legend, zt),
+             bar(hcx - s_ * 0.8, hcy - s_ * 0.9, hcx + s_ * 0.8, hcy - s_ * 0.9, w, legend, zt),
+             bar(hcx - s_ * 0.22, hcy - s_ * 0.9, hcx - s_ * 0.22, hcy - s_ * 0.25, w, legend, zt),
+             bar(hcx + s_ * 0.22, hcy - s_ * 0.9, hcx + s_ * 0.22, hcy - s_ * 0.25, w, legend, zt),
+             bar(hcx - s_ * 0.22, hcy - s_ * 0.25, hcx + s_ * 0.22, hcy - s_ * 0.25, w, legend, zt)]
+    rd.KEYS.append(parts)
+    return lights
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
          "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix,
-         "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34}
+         "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34, "cp13": touch}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()
