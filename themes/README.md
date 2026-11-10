@@ -71,6 +71,10 @@ Two-slot units: stacks of units and screens that fill the whole display.
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="2000s/e150-factory-2008/"><img src="2000s/e150-factory-2008/day-night.webp" alt="E150 Factory 2008"/></a><br/><b><a href="2000s/e150-factory-2008/">E150 Factory 2008</a></b><br/><sub>2000s · an amber-lit LCD, white presets, two knobs</sub></td>
+    <td width="50%" valign="top"><a href="2000s/s35-factory-2008/"><img src="2000s/s35-factory-2008/day-night.webp" alt="S35 Factory 2008"/></a><br/><b><a href="2000s/s35-factory-2008/">S35 Factory 2008</a></b><br/><sub>2000s · an orange display, the presets split by a chrome-ringed knob</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><a href="2000s/res-factory-2008/"><img src="2000s/res-factory-2008/day-night.webp" alt="RES Factory 2008"/></a><br/><b><a href="2000s/res-factory-2008/">RES Factory 2008</a></b><br/><sub>2000s · a dot-matrix display lit teal, a knurled knob each side</sub></td>
     <td width="50%" valign="top"><a href="2000s/xp90-factory-2009/"><img src="2000s/xp90-factory-2009/day-night.webp" alt="XP90 Factory 2009"/></a><br/><b><a href="2000s/xp90-factory-2009/">XP90 Factory 2009</a></b><br/><sub>2000s · silver grey, a green-lit LCD, knobs in chrome rings</sub></td>
   </tr>
   <tr>

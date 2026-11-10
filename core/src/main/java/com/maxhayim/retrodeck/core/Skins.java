@@ -39,6 +39,8 @@ public final class Skins {
     public static final String XP90_09 = "xp90factory09";
     public static final String N70_11 = "n70factory11";
     public static final String N70_12 = "n70factory12";
+    public static final String S35_08 = "s35factory08";
+    public static final String RES_08 = "resfactory08";
 
     private static List<Skin> all;
 
@@ -76,6 +78,8 @@ public final class Skins {
             all.add(matrix());
             all.add(n70factory05());
             all.add(e150factory08());
+            all.add(s35factory08());
+            all.add(resfactory08());
             all.add(xp90factory09());
             all.add(n70factory11());
             all.add(n70factory12());
@@ -1029,6 +1033,100 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, 0.835f, 0.79f, 0.935f, 0.85f)
                 .zone(Zones.CORNER, 0.835f, 0.87f, 0.935f, 0.92f)
                 .zone(Zones.VISUALIZER, 0.25f, 0.365f, 0.75f, 0.43f);
+        return s;
+    }
+
+    /**
+     * A 2008 factory unit with a 6-disc changer and a premium sound system: charcoal plastic, a wide
+     * orange display under a row of format marks, rockers either side of it, a slot under it, and the
+     * presets split by a chrome-ringed PWR·VOL knob in a raised housing, with the source keys under them.
+     */
+    private static Skin s35factory08() {
+        Skin s = new Skin(S35_08, "S35 Factory 2008", "2000s", 2, 0xFF2A2B2D, 0xFF202123, 0xFF0A0A0B, 0xFF050807,
+                0xFF000000, 0xFF26272A, 0xFF101113, 0xFFE4E6E8, Skin.LCD_SEGMENT, 0.006f);
+        s.art = "skins/" + S35_08;
+        s.knobDots = false;
+        s.phosphor = 0xFFFF8A2A;
+        s.lcdGlass = 0xFF0B1614;
+        s.keyLight = 0xFFFF8A2A;
+        s.keyPrint = 0xFFE4E6E8;
+        s.lcd = new Box(0.19f, 0.13f, 0.82f, 0.365f);
+        s.lcdText = new Box(0.23f, 0.15f, 0.79f, 0.26f);
+        s.slot = new Box(0.22f, 0.452f, 0.775f, 0.48f);
+        s.control(Skin.NEXT, "∧", 0.072f, 0.13f, 0.148f, 0.225f)
+                .control(Skin.PREV, "∨", 0.072f, 0.28f, 0.148f, 0.375f)
+                .decor("∧", 0.861f, 0.13f, 0.937f, 0.225f)
+                .decor("∨", 0.861f, 0.28f, 0.937f, 0.375f)
+                .control(null, "LOAD", new Box(0.129f, 0.418f, 0.186f, 0.5196f), true)
+                .control(null, "⏏", new Box(0.836f, 0.418f, 0.893f, 0.5196f), true)
+                .control(Skin.POWER, "PWR", 0.455f, 0.552f, 0.545f, 0.595f);
+        s.knob = new Box(0.437f, 0.603f, 0.563f, 0.827f);
+        s.presetAt = new Box[]{
+                new Box(0.183f, 0.567f, 0.265f, 0.706f), new Box(0.268f, 0.567f, 0.349f, 0.706f),
+                new Box(0.352f, 0.567f, 0.424f, 0.706f), new Box(0.576f, 0.567f, 0.659f, 0.706f),
+                new Box(0.662f, 0.567f, 0.743f, 0.706f), new Box(0.746f, 0.567f, 0.828f, 0.706f)};
+        s.decor("PRESET A·B·C", 0.093f, 0.567f, 0.18f, 0.706f)
+                .control(Skin.MENU, "AUDIO", 0.831f, 0.567f, 0.918f, 0.706f)
+                .control(Skin.DISPLAY, "DISP", 0.093f, 0.726f, 0.18f, 0.845f)
+                .control(Skin.PLAY, "CD", 0.183f, 0.726f, 0.267f, 0.845f)
+                .control(Skin.SOURCE, "RADIO", 0.27f, 0.726f, 0.35f, 0.845f)
+                .decor("AUX", 0.353f, 0.726f, 0.426f, 0.845f)
+                .decor("RDM RPT", 0.576f, 0.726f, 0.657f, 0.845f)
+                .decor("SCAN", 0.66f, 0.726f, 0.741f, 0.845f)
+                .decor("CLOCK", 0.831f, 0.726f, 0.918f, 0.845f);
+        s.zone(Zones.HEADER, 0.43f, 0.045f, 0.57f, 0.11f)
+                .zone(Zones.LCD, 0.195f, 0.15f, 0.225f, 0.25f)
+                .zone(Zones.FACEPLATE, 0.20f, 0.055f, 0.36f, 0.11f)
+                .zone(Zones.CORNER, 0.83f, 0.875f, 0.92f, 0.93f)
+                .zone(Zones.VISUALIZER, 0.23f, 0.27f, 0.79f, 0.355f);
+        return s;
+    }
+
+    /**
+     * A 2008 factory unit shared by many models: a wide black face with a row of keys across the top,
+     * a disc slot, a knurled knob each side with chrome rims, source keys either side of a dot-matrix
+     * display, and the presets along the foot.
+     */
+    private static Skin resfactory08() {
+        Skin s = new Skin(RES_08, "RES Factory 2008", "2000s", 2, 0xFF1A1B1D, 0xFF121314, 0xFF0A0A0B, 0xFF040606,
+                0xFF000000, 0xFF1E1F21, 0xFF0B0C0D, 0xFFE4E6E8, Skin.LCD_DOT, 0.004f);
+        s.art = "skins/" + RES_08;
+        s.knobDots = false;
+        s.phosphor = 0xFF4FD6C8;
+        s.lcdGlass = 0xFF050A0A;
+        s.keyLight = 0xFF4FD6C8;
+        s.keyPrint = 0xFFE4E6E8;
+        s.control(Skin.PREV, "|<<SEEK", 0.033f, 0.127f, 0.137f, 0.284f)
+                .control(Skin.NEXT, "SEEK>>|", 0.141f, 0.127f, 0.245f, 0.284f)
+                .decor("SCAN", 0.249f, 0.127f, 0.354f, 0.284f)
+                .decor("VOICE", 0.358f, 0.127f, 0.459f, 0.284f)
+                .decor("PHONE", 0.463f, 0.127f, 0.564f, 0.284f)
+                .decor("TIME", 0.568f, 0.127f, 0.668f, 0.284f)
+                .control(Skin.DISPLAY, "INFO", 0.672f, 0.127f, 0.772f, 0.284f)
+                .decor("<<RW", 0.776f, 0.127f, 0.872f, 0.284f)
+                .decor("FF>>", 0.876f, 0.127f, 0.97f, 0.284f);
+        s.slot = new Box(0.218f, 0.323f, 0.799f, 0.349f);
+        s.decor("⏏", 0.137f, 0.31f, 0.205f, 0.369f)
+                .decor("RND", 0.809f, 0.31f, 0.873f, 0.369f)
+                .control(Skin.POWER, "PUSH ON", 0.071f, 0.455f, 0.171f, 0.5f);
+        s.knob = new Box(0.054f, 0.506f, 0.188f, 0.744f);
+        s.control(Skin.SOURCE, "AM/FM", 0.205f, 0.448f, 0.302f, 0.555f)
+                .decor("SAT", 0.205f, 0.562f, 0.302f, 0.668f)
+                .control(Skin.PLAY, "DISC", 0.205f, 0.675f, 0.302f, 0.775f);
+        s.lcd = new Box(0.312f, 0.448f, 0.703f, 0.775f);
+        s.lcdText = new Box(0.35f, 0.47f, 0.68f, 0.60f);
+        s.decor("LIST", 0.712f, 0.448f, 0.80f, 0.555f)
+                .decor("MUSIC TYPE", 0.712f, 0.562f, 0.80f, 0.668f)
+                .control(Skin.MENU, "SETUP", 0.712f, 0.675f, 0.80f, 0.775f)
+                .control(null, "TUNE", new Box(0.809f, 0.506f, 0.943f, 0.744f), true);
+        s.presets = new Box(0.174f, 0.787f, 0.728f, 0.88f);
+        s.decor("SET", 0.084f, 0.787f, 0.171f, 0.88f)
+                .decor("AUX", 0.732f, 0.787f, 0.819f, 0.88f);
+        s.zone(Zones.HEADER, 0.42f, 0.385f, 0.58f, 0.435f)
+                .zone(Zones.LCD, 0.316f, 0.47f, 0.346f, 0.60f)
+                .zone(Zones.FACEPLATE, 0.885f, 0.315f, 0.965f, 0.37f)
+                .zone(Zones.CORNER, 0.035f, 0.315f, 0.125f, 0.37f)
+                .zone(Zones.VISUALIZER, 0.35f, 0.62f, 0.68f, 0.755f);
         return s;
     }
 

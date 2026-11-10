@@ -36,6 +36,18 @@ A 2005 factory CD unit: black, a big reflective LCD lit green between two knobs,
 
 A 2008 factory CD unit: black, an amber-lit LCD between two knobs, white presets, phone keys and rockers down both sides.
 
+## [S35 Factory 2008](s35-factory-2008/)
+
+[![S35 Factory 2008, rendered](s35-factory-2008/render-night.jpg)](s35-factory-2008/)
+
+A 2008 factory unit with a 6-disc changer: charcoal plastic, an orange display between rockers, and the presets split by a chrome-ringed PWR·VOL knob.
+
+## [RES Factory 2008](res-factory-2008/)
+
+[![RES Factory 2008, rendered](res-factory-2008/render-night.jpg)](res-factory-2008/)
+
+A 2008 factory radio fitted to many models: a row of keys across the top, a knurled knob each side and a dot-matrix display lit teal.
+
 ## [XP90 Factory 2009](xp90-factory-2009/)
 
 [![XP90 Factory 2009, rendered](xp90-factory-2009/render-night.jpg)](xp90-factory-2009/)

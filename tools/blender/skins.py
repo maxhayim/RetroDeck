@@ -1620,6 +1620,8 @@ def factory_keys(keycap, legend, skip=(), mats=None, legends=None, r=0.02, heigh
             k["label"] = "▲" if lab == "∧" else "▼"
         if lab == "▶":
             k["id"] = "play"
+        elif k["id"] == "play" and lab in ("CD", "DISC"):
+            k["id"] = "cd"   # a source key that plays: its name, not the play sign
         pid = (k["id"] or "")
         m = mats.get(lab) or (mats.get("preset") if pid.startswith("preset") else None) or keycap
         lg = legends.get(lab) or (legends.get("preset") if pid.startswith("preset") else None) or legend
@@ -1828,12 +1830,88 @@ def f14():
     return lights
 
 
+def s35():
+    """2008: charcoal plastic, an orange display between rockers, a slot, presets round a raised knob housing."""
+    lights = Lights(sun=2000, fill=120, softbox=0.6)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.030, 0.031, 0.033), rough=0.62)
+    keycap = material("keycap", (0.028, 0.029, 0.031), 0.55, 0.45, bump=0.12, bump_scale=1100)
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    ink = material("ink", srgb(0xE2E4E6), 0.5)
+    dash()
+    plate_box(0.025, 0.035, 0.975, 0.965, 0.03 * U, plastic, edge=0.05, edge_mat=satin)
+    # The display, a dark window, and the rockers' recessed frames either side of it.
+    window(L["lcd"], 0.010 * U, 0.004 * U, material("lcd", (0.004, 0.010, 0.009), 0.25, 0.4),
+           material("surround", (0.010, 0.010, 0.011), 0.45, 0.3))
+    for b in ([0.064, 0.12, 0.156, 0.385], [0.853, 0.12, 0.945, 0.385]):
+        x0, y0, x1, y1 = rect(b)
+        cut_box(x0, y0, x1, y1, FACE, 0.06, hole, 0.012 * U, floor=material("well", (0.012, 0.012, 0.013), 0.5, 0.3))
+    for x, a, b_ in ((0.11, "SEEK", "TRACK"), (0.899, "TUNE", "FF·REW")):
+        text(a, X(x), Y(0.243), FACE - 0.05, 0.022 * U, ink, "CENTER", 1.0)
+        text(b_, X(x), Y(0.264), FACE - 0.05, 0.022 * U, ink, "CENTER", 1.0)
+    printed("CAT", 0.11, 0.105, 0.022 * U, ink)
+    printed("CH/FOLDER", 0.899, 0.105, 0.022 * U, ink)
+    printed("6CD CHANGER", 0.75, 0.105, 0.022 * U, ink)
+    printed("MP3", 0.29, 0.105, 0.018 * U, ink)
+    printed("AUX IN", 0.786, 0.75, 0.016 * U, ink)
+    slot(L["slot"], satin)
+    jack(X(0.786), Y(0.80), 0.010 * U, satin)
+    # The raised housing round the knob, breaking the two rows of keys.
+    kx0, ky0, kx1, ky1 = rect([0.415, 0.545, 0.585, 0.875])
+    cx, cy = (kx0 + kx1) / 2, (ky0 + ky1) / 2
+    o = cylinder("housing", cx, cy, (kx1 - kx0) / 2, FACE - 0.05, FACE + 0.06, plastic, bevel=0.03)
+    o.scale = (1.0, (ky0 - ky1) / (kx1 - kx0) * -1 if ky0 < ky1 else (ky0 - ky1) / (kx1 - kx0), 1.0)
+    vcx, vcy, vr = vol_knob(L["knob"], grip, gloss, ring=chrome_, r_frac=0.98)
+    zt = FACE + 0.30 + 0.021
+    text("PUSH", vcx, vcy + vr * 0.42, zt, vr * 0.16, ink, "CENTER", 1.0)
+    text("PWR", vcx, vcy + vr * 0.20, zt, vr * 0.24, ink, "CENTER", 1.0)
+    text("VOL", vcx, vcy - vr * 0.38, zt, vr * 0.24, ink, "CENTER", 1.0)
+    for i in range(8):
+        a = 2 * math.pi * i / 8
+        cylinder("tick", vcx + math.cos(a) * vr * 1.10, vcy + math.sin(a) * vr * 1.10, vr * 0.025, FACE + 0.05,
+                 FACE + 0.06, ink)
+    for k in CONTROLS:
+        if k["label"] == "PWR":
+            px_, py_ = centre(k["box"])
+            rd.KEYS.append([text("PWR", px_, py_, FACE + 0.061, 0.020 * U, legend, face="BarlowSemiCondensed-SemiBold")])
+    factory_keys(keycap, legend, skip=("PWR",), r=0.012)
+    return lights
+
+
+def res():
+    """2008: a wide black face, a row of keys across the top, a slot, knurled knobs with chrome rims."""
+    lights = Lights(sun=2000, fill=120, softbox=0.6)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.022, 0.022, 0.024), rough=0.6)
+    keycap = material("keycap", (0.020, 0.020, 0.022), 0.55, 0.45, bump=0.12, bump_scale=1100)
+    knurl = material("knurl", (0.012, 0.012, 0.013), 0.45, 0.5, bump=0.5, bump_scale=2400)
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    ink = material("ink", srgb(0xE2E4E6), 0.5)
+    dash()
+    plate_box(0.022, 0.115, 0.978, 0.89, 0.012 * U, plastic, edge=0.04, edge_mat=satin)
+    # The top row stands proud in its own frame, as the slot band and the lower half are set back.
+    rim([0.03, 0.124, 0.972, 0.288], 0.0, 0.004 * U, satin, FACE - 0.02, FACE + 0.01)
+    window(L["lcd"], 0.006 * U, 0.003 * U, material("lcd", (0.003, 0.006, 0.006), 0.25, 0.4),
+           material("surround", (0.010, 0.010, 0.011), 0.45, 0.3))
+    slot(L["slot"], satin)
+    printed("VOLUME", 0.121, 0.768, 0.016 * U, ink)
+    printed("PUSH AUDIO/SELECT", 0.876, 0.48, 0.016 * U, ink)
+    printed("TUNE/SCROLL", 0.876, 0.768, 0.016 * U, ink)
+    printed("AUX", 0.88, 0.80, 0.014 * U, ink)
+    jack(X(0.88), Y(0.84), 0.010 * U, satin)
+    vol_knob(L["knob"], knurl, gloss, ring=chrome_, r_frac=0.80)
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    push_knob(k["TUNE"]["box"], knurl, gloss, ring=chrome_, r_frac=0.80)
+    print_only("PUSH ON", ink, 0.018 * U)
+    factory_keys(keycap, legend, skip=("TUNE", "PUSH ON"), r=0.008)
+    return lights
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
          "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix,
          "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34, "cp13": touch,
-         "n70factory05": f05, "e150factory08": f07, "xp90factory09": f10, "n70factory11": f12, "n70factory12": f14}
+         "n70factory05": f05, "e150factory08": f07, "xp90factory09": f10, "n70factory11": f12, "n70factory12": f14,
+         "s35factory08": s35, "resfactory08": res}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

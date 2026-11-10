@@ -13,14 +13,14 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   </a>
-  <img src="https://img.shields.io/badge/Skins-33-8A2BE2" alt="33 skins">
+  <img src="https://img.shields.io/badge/Skins-35-8A2BE2" alt="35 skins">
   <img src="https://img.shields.io/badge/Screens-1024%C3%97600%20and%20up-lightgrey" alt="1024x600 and up">
   <img src="https://img.shields.io/badge/Network-GIPHY%20%2B%20update%20checks-FF9F43" alt="Network: GIPHY search and update checks">
 </p>
 
 <h1>RetroDeck</h1>
 
-<p>RetroDeck is an open-source virtual car stereo for Android head units. It turns the head unit's screen into a period faceplate, one of 33 skins from a 1965 chrome radio to a 2013 touch screen, each modelled in 3D after the stereos of its time. It plays your own music, and when the head unit's radio, Bluetooth audio or another music app plays, it shows that song and controls that app instead, with a visualizer that follows what you hear.</p>
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It turns the head unit's screen into a period faceplate, one of 35 skins from a 1965 chrome radio to a 2013 touch screen, each modelled in 3D after the stereos of its time. It plays your own music, and when the head unit's radio, Bluetooth audio or another music app plays, it shows that song and controls that app instead, with a visualizer that follows what you hear.</p>
 
 <p>Its Vehicle Branding module makes it yours: your car's manufacturer and model, your own logos on the faceplate and display, a startup sequence that lights up your badge, a station chime when it comes on, and illumination that matches your dashboard. Themes travel between head units as branding packs.</p>
 
@@ -28,7 +28,7 @@
 
 <h2>Screenshots</h2>
 
-<p>Most clips were recorded from the running app on a TV playing a song: the visualizer follows the music, the display shows the song's own title and artist, and the knob turns as the volume goes up and back down. B110 Factory 1971, its Modern remake, R34 Factory 1999, CP 2013 and the five factory units of 2005 to 2012 show Blender renders of the skin by day and by night until they're recorded too. Each clip starts by day and fades to night. Every skin has its own page in <a href="themes/">themes</a>, with more screenshots and day and night renders.</p>
+<p>Most clips were recorded from the running app on a TV playing a song: the visualizer follows the music, the display shows the song's own title and artist, and the knob turns as the volume goes up and back down. B110 Factory 1971, its Modern remake, R34 Factory 1999, CP 2013 and the seven factory units of 2005 to 2012 show Blender renders of the skin by day and by night until they're recorded too. Each clip starts by day and fades to night. Every skin has its own page in <a href="themes/">themes</a>, with more screenshots and day and night renders.</p>
 
 <p align="center"><img src="themes/1980s/classic-1985/day-night.webp" alt="The Classic 1985 skin playing, fading between day and night"/><br/><sub>Classic 1985, a single-DIN radio set into the dash, with the visualizer screen above it: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</sub></p>
 
@@ -94,6 +94,10 @@
   </tr>
   <tr>
     <td width="50%"><img src="themes/2000s/e150-factory-2008/day-night.webp" alt="E150 Factory 2008, fading between day and night"/><br/><sub>E150 Factory 2008: a late-2000s factory CD unit, black, a reflective LCD lit amber at night between a TUNE·FILE knob and a PWR·VOL knob, white presets, phone keys and rockers down both sides</sub></td>
+    <td width="50%"><img src="themes/2000s/s35-factory-2008/day-night.webp" alt="S35 Factory 2008, fading between day and night"/><br/><sub>S35 Factory 2008: a factory unit with a 6-disc changer, charcoal plastic, an orange display between SEEK·TRACK and TUNE rockers, and the presets and source keys split by a raised, chrome-ringed PWR·VOL knob</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2000s/res-factory-2008/day-night.webp" alt="RES Factory 2008, fading between day and night"/><br/><sub>RES Factory 2008: a factory radio fitted to many models from 2008 to 2013, a wide black face with a row of keys across the top, a knurled, chrome-rimmed knob each side, source keys round a dot-matrix display lit teal, and the presets along the foot</sub></td>
     <td width="50%"><img src="themes/2000s/xp90-factory-2009/day-night.webp" alt="XP90 Factory 2009, fading between day and night"/><br/><sub>XP90 Factory 2009: a factory CD unit in silver grey, a reflective LCD lit green at night, slim silver presets, and two big knobs in knurled chrome rings at the foot</sub></td>
   </tr>
   <tr>
@@ -137,7 +141,7 @@
 <h3>The stereo</h3>
 
 <ul>
-  <li><strong>Thirty-three skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
+  <li><strong>Thirty-five skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
@@ -171,6 +175,8 @@
       <li>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over a strip of slim keys and two big polished knobs</li>
       <li>N70 Factory 2005: a mid-2000s factory CD unit, black, its top arched over the disc slot, a big reflective LCD lit green at night between a TUNE·FILE knob and a PWR·VOL knob, presets, and source keys with a track rocker</li>
       <li>E150 Factory 2008: a late-2000s factory CD unit, black, a reflective LCD lit amber at night between a TUNE·FILE knob and a PWR·VOL knob, white presets, phone keys and rockers down both sides</li>
+      <li>S35 Factory 2008: a factory unit with a 6-disc changer, charcoal plastic, an orange display between SEEK·TRACK and TUNE rockers, and the presets and source keys split by a raised, chrome-ringed PWR·VOL knob</li>
+      <li>RES Factory 2008: a factory radio fitted to many models from 2008 to 2013, a wide black face with a row of keys across the top, a knurled, chrome-rimmed knob each side, source keys round a dot-matrix display lit teal, and the presets along the foot</li>
       <li>XP90 Factory 2009: a factory CD unit in silver grey, a reflective LCD lit green at night, slim silver presets, and two big knobs in knurled chrome rings at the foot</li>
       <li>N70 Factory 2011: a factory unit, black, a colour screen with three presets either side of it, keys outside them, and knobs in the top corners</li>
       <li>N70 Factory 2012: a factory touch-screen unit, gloss black, a volume knob and keys down the left, and the song, transport buttons and a list of presets on the screen</li>

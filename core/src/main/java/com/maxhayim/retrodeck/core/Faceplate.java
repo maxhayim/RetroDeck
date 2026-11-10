@@ -90,6 +90,8 @@ final class Faceplate {
             case Skins.XP90_09:
             case Skins.N70_11:
             case Skins.N70_12:
+            case Skins.S35_08:
+            case Skins.RES_08:
             case Skins.TAPE:
             case Skins.RED:
             case Skins.MATTE:
