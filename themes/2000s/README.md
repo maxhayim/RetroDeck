@@ -23,3 +23,15 @@ A silver double-DIN unit from around 2002 with an in-dash CD changer, its wide w
 [![Blue Matrix 2004, rendered](blue-matrix-2004/render-night.jpg)](blue-matrix-2004/)
 
 A dark chrome double-DIN unit from around 2004 that is nearly all display: a big blue dot-matrix window, a strip of slim keys and two big polished knobs.
+
+## [Factory MP3 2005](factory-mp3-2005/)
+
+[![Factory MP3 2005, rendered](factory-mp3-2005/render-night.jpg)](factory-mp3-2005/)
+
+A mid-2000s factory CD unit: black, a big reflective LCD lit green between two knobs, presets, and a row of source keys with a track rocker.
+
+## [Factory CD 2007](factory-cd-2007/)
+
+[![Factory CD 2007, rendered](factory-cd-2007/render-night.jpg)](factory-cd-2007/)
+
+A late-2000s factory CD unit: black, an amber-lit LCD between two knobs, white presets, phone keys and rockers down both sides.

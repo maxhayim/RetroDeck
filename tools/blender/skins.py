@@ -1576,11 +1576,264 @@ def touch():
     return lights
 
 
+# ---- Factory units of the 2000s and 2010s: black or silver plastic, two knobs, rockers, a slot ----
+
+def push_knob(b, grip, cap, ring=None, r_frac=0.86, height=0.30):
+    """A knob that is also a key: it sinks when pressed, so its parts go with the keys."""
+    cx, cy = centre(b)
+    x0, y0, x1, y1 = rect(b)
+    r = min(x1 - x0, y1 - y0) / 2 * r_frac
+    cut_circle(cx, cy, r * 1.08, FACE, 0.2, hole)
+    parts = []
+    if ring:
+        cylinder("knob-ring", cx, cy, r * 1.16, FACE - 0.04, FACE + 0.05, ring, bevel=0.015)
+    parts.append(cylinder("grip", cx, cy, r * 0.96, FACE - 0.2, FACE + height, grip, bevel=r * 0.05))
+    for i in range(72):
+        a = 2 * math.pi * i / 72
+        rid = box("ridge", -r * 0.03, -r * 0.018, r * 0.03, r * 0.018, FACE + 0.04, FACE + height - 0.03, grip,
+                  bevel=r * 0.008, segments=2)
+        rid.location = (cx + math.cos(a) * r, cy + math.sin(a) * r, 0)
+        rid.rotation_euler = (0, 0, a)
+        parts.append(rid)
+    parts.append(cylinder("cap", cx, cy, r * 0.8, FACE + height - 0.05, FACE + height + 0.02, cap, bevel=r * 0.04))
+    rd.KEYS.append(parts)
+    return cx, cy, r
+
+
+def vol_knob(b, grip, cap, ring=None, r_frac=0.86):
+    cx, cy, r = knob(b, FACE, hole, grip, cap, ridges=72, height=0.30, cap_frac=0.8, r_frac=r_frac)
+    if ring:
+        cylinder("knob-ring", cx, cy, r * 1.16, FACE - 0.04, FACE + 0.05, ring, bevel=0.015)
+    return cx, cy, r
+
+
+def factory_keys(keycap, legend, skip=(), mats=None, legends=None, r=0.02, height=0.10, gap=0.03, size=None):
+    """Every key but those in skip: rockers get triangles, the play key its sign, CALL and END their colours."""
+    mats = mats or {}
+    legends = legends or {}
+    for k in CONTROLS + DECOR:
+        if k["label"] in skip or (k["id"] or "") in skip:
+            continue
+        k = dict(k)
+        lab = k["label"]
+        if lab in ("∧", "∨"):
+            k["label"] = "▲" if lab == "∧" else "▼"
+        if lab == "▶":
+            k["id"] = "play"
+        pid = (k["id"] or "")
+        m = mats.get(lab) or (mats.get("preset") if pid.startswith("preset") else None) or keycap
+        lg = legends.get(lab) or (legends.get("preset") if pid.startswith("preset") else None) or legend
+        key(k, FACE, m, hole, lg, size or min(fit([k]), 0.20), r=r, height=height, gap=gap, edge=None)
+
+
+def print_only(label, mat, size):
+    """A key that is only its print, as PWR·VOL above a knob: it sinks with the keys when pressed."""
+    for k in CONTROLS:
+        if k["label"] == label:
+            cx, cy = centre(k["box"])
+            rd.KEYS.append([text(label, cx, cy, FACE + 0.001, size, mat, face="BarlowSemiCondensed-SemiBold")])
+
+
+def factory_mats(face_rgb, rough=0.55):
+    plastic = material("plastic", face_rgb, rough, 0.4, bump=0.25, bump_scale=900)
+    gloss = material("gloss", (0.006, 0.006, 0.007), 0.10, 0.5, coat=0.8)
+    keycap = material("keycap", (0.014, 0.014, 0.016), 0.40, 0.5, bump=0.05, bump_scale=1200)
+    satin = material("satin", (0.30, 0.30, 0.31), 0.25, metal=0.9)
+    chrome_ = material("chrome", (0.85, 0.86, 0.88), 0.07, metal=1.0)
+    grip = material("grip", (0.02, 0.02, 0.022), 0.35, 0.5)
+    spun = material("spun", (0.42, 0.42, 0.43), 0.16, metal=1.0, rings=True, bump=0.08)
+    return plastic, gloss, keycap, satin, chrome_, grip, spun
+
+
+def lcd_window(b, panel_rgb):
+    window(b, 0.008 * U, 0.004 * U, material("lcd", panel_rgb, 0.3, 0.3),
+           material("surround", (0.010, 0.010, 0.011), 0.5, 0.3))
+
+
+def f05():
+    """Mid-2000s: black, a curved top over the slot, two knobs, a big LCD, presets, a row of source keys."""
+    lights = Lights(sun=2100, fill=120, softbox=0.5)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.022, 0.022, 0.024))
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    ink = material("ink", srgb(0xD8DADC), 0.5)
+    gold = material("gold", srgb(0xC9A24A), 0.35, metal=0.6)
+    dash()
+    # The face: a curved top edge, as the unit's top arches over the disc slot.
+    pts = [(X(0.025), Y(0.95)), (X(0.975), Y(0.95))]
+    for i in range(33):
+        f = i / 32
+        x = 0.975 - f * 0.95
+        y = 0.075 - 0.035 * math.sin(math.pi * f)
+        pts.append((X(x), Y(y)))
+    plate(pts, plastic, edge=0.05, edge_mat=satin)
+    slot(L["slot"], satin)
+    printed("MP3", 0.20, 0.13, 0.022 * U, gold, "CENTER", 1.0)
+    printed("WMA", 0.80, 0.13, 0.018 * U, ink, "CENTER", 1.0)
+    lcd_window(L["lcd"], (0.020, 0.024, 0.018))
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    push_knob(k["menu"]["box"], grip, spun)
+    vol_knob(L["knob"], grip, spun)
+    printed("TUNE·FILE", 0.13, 0.215, 0.020 * U, ink)
+    printed("PUSH", 0.13, 0.485, 0.013 * U, ink)
+    printed("AUDIO CONT", 0.13, 0.505, 0.016 * U, ink)
+    printed("PUSH", 0.87, 0.485, 0.013 * U, ink)
+    printed("SEEK", 0.853, 0.885, 0.016 * U, ink)
+    printed("TRACK", 0.853, 0.905, 0.016 * U, ink)
+    print_only("PWR·VOL", legend, 0.020 * U)
+    factory_keys(keycap, legend, skip=("menu", "PWR·VOL"), r=0.04)
+    return lights
+
+
+def f07():
+    """Late 2000s: black, an amber LCD between two knobs, white presets, phone keys, rockers both sides."""
+    lights = Lights(sun=2100, fill=120, softbox=0.5)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.020, 0.020, 0.022))
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    dark = legend_material("legend-dark", srgb(0x26282B))
+    green = legend_material("legend-green", srgb(0x3CC86A))
+    red_ = legend_material("legend-red", srgb(0xE5483C))
+    ink = material("ink", srgb(0xE2E4E6), 0.5)
+    white = material("keycap-white", (0.72, 0.73, 0.74), 0.35, 0.5)
+    dash()
+    plate_box(0.025, 0.04, 0.975, 0.96, 0.03 * U, plastic, edge=0.05, edge_mat=satin)
+    # A chrome line framing the middle, as these units had round the display and presets.
+    rim([0.195, 0.20, 0.805, 0.70], 0.0, 0.004 * U, satin, FACE - 0.01, FACE + 0.02)
+    slot(L["slot"], satin)
+    lcd_window(L["lcd"], (0.022, 0.022, 0.016))
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    push_knob(k["menu"]["box"], grip, spun)
+    vol_knob(L["knob"], grip, spun)
+    printed("TUNE·FILE", 0.12, 0.215, 0.020 * U, ink)
+    printed("PUSH", 0.12, 0.455, 0.012 * U, ink)
+    printed("AUDIO CTRL", 0.12, 0.475, 0.015 * U, ink)
+    printed("TYPE", 0.115, 0.632, 0.016 * U, ink)
+    printed("FOLDER", 0.115, 0.652, 0.016 * U, ink)
+    printed("SEEK", 0.885, 0.632, 0.016 * U, ink)
+    printed("TRACK", 0.885, 0.652, 0.016 * U, ink)
+    printed("MP3 WMA", 0.885, 0.775, 0.016 * U, ink)
+    jack(X(0.885), Y(0.935), 0.010 * U, satin)
+    print_only("PWR·VOL", legend, 0.020 * U)
+    factory_keys(keycap, legend, skip=("menu", "PWR·VOL"), mats={"preset": white},
+                 legends={"preset": dark, "CALL": green, "END": red_}, r=0.04)
+    return lights
+
+
+def f10():
+    """2010: silver grey, a green dot-matrix LCD, slim presets, two big knobs in chrome rings at the foot."""
+    lights = Lights(sun=2000, fill=130, softbox=0.9)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.03, 0.03, 0.034))
+    silver = material("silver", (0.30, 0.31, 0.32), 0.38, metal=0.6, bump=0.1, bump_scale=900)
+    legend = legend_material("legend", srgb(0xEDEFF2))
+    ink = material("ink", srgb(0x1C1D20), 0.5)
+    silverkey = material("keycap-silver", (0.36, 0.37, 0.38), 0.3, metal=0.7)
+    dark = legend_material("legend-dark", srgb(0x1C1D20))
+    dash()
+    plate_box(0.03, 0.04, 0.97, 0.96, 0.04 * U, plastic, edge=0.05, edge_mat=silver)
+    # The silver frame round the dark inner panel the display and keys sit in.
+    rim([0.06, 0.055, 0.94, 0.945], 0.0, 0.022 * U, silver, FACE - 0.05, FACE + 0.05)
+    slot(L["slot"], satin)
+    lcd_window(L["lcd"], (0.020, 0.026, 0.018))
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    cx, cy, r = push_knob(k["play"]["box"], grip, chrome_, ring=chrome_, r_frac=0.80, height=0.34)
+    rd.KEYS[-1].append(text("ENTER", cx, cy + r * 0.16, FACE + 0.38, r * 0.20, ink, face="BarlowSemiCondensed-SemiBold"))
+    rd.KEYS[-1].append(text("LIST", cx, cy - r * 0.16, FACE + 0.38, r * 0.20, ink, face="BarlowSemiCondensed-SemiBold"))
+    vcx, vcy, vr = vol_knob(L["knob"], grip, gloss, ring=chrome_, r_frac=0.80)
+    printed("TUNE·FILE", 0.14, 0.85, 0.018 * U, legend)
+    printed("VOLUME", 0.86, 0.85, 0.018 * U, legend)
+    printed("SEEK·TRACK", 0.50, 0.735, 0.016 * U, legend)
+    jack(X(0.40), Y(0.805), 0.010 * U, satin)
+    print_only("PWR", legend, 0.022 * U)
+    factory_keys(keycap, legend, skip=("play", "PWR"), mats={"preset": silverkey}, legends={"preset": dark}, r=0.03)
+    return lights
+
+
+def f12():
+    """2012: black, a slot across the top, knobs in the top corners, a screen with presets either side."""
+    lights = Lights(sun=2000, fill=120, softbox=0.5)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.018, 0.018, 0.020))
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    ink = material("ink", srgb(0xE4E6E8), 0.5)
+    glass = material("glass", (0.002, 0.0025, 0.003), 0.08, 0.5, coat=1.0)
+    dash()
+    plate_box(0.03, 0.04, 0.97, 0.96, 0.03 * U, plastic, edge=0.05, edge_mat=satin)
+    slot(L["slot"], satin)
+    window(L["lcd"], 0.010 * U, 0.004 * U, glass, material("surround", (0.008, 0.008, 0.009), 0.4, 0.3))
+    rim([0.205, 0.345, 0.29, 0.685], 0.0, 0.003 * U, satin, FACE - 0.01, FACE + 0.015)
+    rim([0.71, 0.345, 0.795, 0.685], 0.0, 0.003 * U, satin, FACE - 0.01, FACE + 0.015)
+    k = {c["id"] or c["label"]: c for c in L["keys"]}
+    push_knob(k["TUNE"]["box"], grip, spun)
+    vol_knob(L["knob"], grip, spun)
+    printed("TUNE·FILE", 0.105, 0.135, 0.016 * U, ink)
+    printed("SEEK\u00B7TRACK", 0.885, 0.345, 0.014 * U, ink)
+    # A second thin slot at the foot, for a map card, and the aux jack.
+    sb = [0.36, 0.86, 0.64, 0.885]
+    x0, y0, x1, y1 = rect(sb)
+    cut_box(x0, y0, x1, y1, FACE, 0.2, hole, 0.01)
+    jack(X(0.25), Y(0.87), 0.010 * U, satin)
+    print_only("PWR·VOL", legend, 0.018 * U)
+    factory_keys(keycap, legend, skip=("TUNE", "PWR·VOL"), r=0.03)
+    return lights
+
+
+def f14():
+    """2014: gloss black, a slot across the top, a knob and keys down the left, a wide touch screen."""
+    lights = Lights(sun=1700, fill=110, softbox=0.45)
+    plastic, gloss, keycap, satin, chrome_, grip, spun = factory_mats((0.012, 0.012, 0.013), rough=0.3)
+    legend = legend_material("legend", srgb(0xE6E8EA))
+    glass = material("glass", (0.0006, 0.0008, 0.0012), 0.25, 0.3)
+    px = emitter("pixel", srgb(0xE8EEF6), 0.9)
+    dim = emitter("pixel-dim", srgb(0x6E7A88), 0.6)
+    row = emitter("row", srgb(0x16243A), 0.25)
+    hi = emitter("row-hi", srgb(0x2E4C72), 0.30)
+    dash()
+    plate_box(0.025, 0.04, 0.975, 0.96, 0.035 * U, gloss, edge=0.05, edge_mat=satin)
+    slot(L["slot"], satin)
+    lcd = L["lcd"]
+    x0, y0, x1, y1 = rect(lcd)
+    cut_box(x0, y0, x1, y1, FACE, 0.03, hole, 0.006 * U, floor=glass)
+    vol_knob(L["knob"], grip, gloss, ring=satin)
+    # An SD slot beside the keys.
+    sx0, sy0, sx1, sy1 = rect([0.158, 0.44, 0.17, 0.62])
+    cut_box(sx0, sy0, sx1, sy1, FACE, 0.2, hole, 0.003)
+    z = FACE - 0.022
+    # The screen's fixed look: a status line, the preset list's rows, the transport keys' buttons, tabs.
+    def zbox(b, mat, zz=z):
+        a0, b0, a1, b1 = rect(b)
+        return box("ui", a0, b0, a1, b1, zz, zz + 0.002, mat)
+    zbox([0.205, 0.17, 0.945, 0.172], dim)
+    text("FM", X(0.23), Y(0.195), z, 0.020 * U, px, "LEFT", 1.0)
+    for i, kk in enumerate([c for c in CONTROLS if (c["id"] or "").startswith("preset")]):
+        b = kk["box"]
+        parts = [zbox(b, hi if i == 1 else row)]
+        bx0, by0, bx1, by1 = rect(b)
+        parts.append(text("%d." % (i + 1), bx0 + 0.12, (by0 + by1) / 2, z + 0.003, 0.020 * U, px, "LEFT", 1.0))
+        rd.KEYS.append(parts)
+    for kid, mark in (("prev", "|<<"), ("play", None), ("next", ">>|")):
+        c = [c for c in CONTROLS if c["id"] == kid][0]
+        b = c["box"]
+        bx0, by0, bx1, by1 = rect(b)
+        cx, cy = centre(b)
+        parts = [zbox(b, row)]
+        if mark:
+            parts.append(text(mark, cx, cy, z + 0.003, 0.024 * U, px, "CENTER", 1.0))
+        else:
+            parts.append(play_mark(cx + 0.024 * U * 0.2, cy, 0.024 * U * 0.62, px, z + 0.003))
+        rd.KEYS.append(parts)
+    for i, t in enumerate(("Source", "Sound", "Settings")):
+        text(t, X(0.30 + i * 0.22), Y(0.86), z, 0.020 * U, dim, "CENTER", 1.0)
+    zbox([0.205, 0.82, 0.945, 0.822], dim)
+    factory_keys(keycap, legend, skip=("PWR", "preset1", "preset2", "preset3", "preset4", "preset5", "preset6",
+                                       "prev", "play", "next"), r=0.03)
+    print_only("PWR", legend, 0.020 * U)
+    return lights
+
+
 BUILD = {"classic85": classic, "digital96": digital, "modern": modern, "hifi84": hifi, "detach98": detachable,
          "eqstack89": eqstack, "level91": level, "trio93": trio, "spectrum97": spectrum, "multi2000": multi,
          "bt16": bluetooth, "chrome65": chrome, "chrome65m": lambda: chrome(True), "tape87": tape, "red19": red, "cd20": matte, "heritage23": heritage,
          "twin01": twin, "amber21": amber, "dab22": dab, "rainbow02": rainbow, "matrix04": matrix,
-         "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34, "cp13": touch}
+         "b110factory71": dial, "b110factory71m": lambda: dial(True), "r34factory99": r34, "cp13": touch,
+         "factory05": f05, "factory07": f07, "factory10": f10, "factory12": f12, "factory14": f14}
 made = BUILD[L["id"]]()
 lights, on_press = made if isinstance(made, tuple) else (made, None)
 rd.apply_cuts()

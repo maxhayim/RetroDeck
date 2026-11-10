@@ -66,6 +66,8 @@ public final class Skin {
     public int presetRows = 1;
     /** A printed name on each preset key besides its number, as on tape decks (REW, FF), or null. */
     public String[] presetLabels;
+    /** The six preset keys where they don't sit in one block, such as three each side of a screen. */
+    public Box[] presetAt;
     /** Backlit legend colour, or 0 to light them in the illumination colour. */
     public int keyLight;
     /** Legend colour by day, when the backlight is off: the paint printed on the keys. */
@@ -242,6 +244,10 @@ public final class Skin {
     /** The six preset button boxes, left to right and then top to bottom, or an empty list. */
     public List<Box> presetBoxes() {
         List<Box> out = new ArrayList<>();
+        if (presetAt != null) {
+            Collections.addAll(out, presetAt);
+            return out;
+        }
         if (presets == null) return out;
         int rows = presetRows == 2 || presetRows == 6 ? presetRows : 1, cols = 6 / rows;
         float gap = presets.width() * (rows == 2 ? 0.03f : 0.015f);

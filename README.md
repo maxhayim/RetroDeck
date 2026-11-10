@@ -13,19 +13,22 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   </a>
+  <img src="https://img.shields.io/badge/Skins-33-8A2BE2" alt="33 skins">
   <img src="https://img.shields.io/badge/Screens-1024%C3%97600%20and%20up-lightgrey" alt="1024x600 and up">
   <img src="https://img.shields.io/badge/Network-GIPHY%20%2B%20update%20checks-FF9F43" alt="Network: GIPHY search and update checks">
 </p>
 
 <h1>RetroDeck</h1>
 
-<p>RetroDeck is an open-source virtual car stereo for Android head units. It plays your music on a period-correct faceplate (seven of them, from a 1984 hi-fi deck and 1990 and 1994 factory units to a modern glass screen), drawn to look like the real thing, and its Vehicle Branding module lets you make it yours: your car's manufacturer and model, your own logos on the faceplate and LCD, a startup sequence that lights up your badge, and illumination that matches your dashboard.</p>
+<p>RetroDeck is an open-source virtual car stereo for Android head units. It turns the head unit's screen into a period faceplate, one of 33 skins from a 1965 chrome radio to a 2013 touch screen, each modelled in 3D after the stereos of its time. It plays your own music, and when the head unit's radio, Bluetooth audio or another music app plays, it shows that song and controls that app instead, with a visualizer that follows what you hear.</p>
 
-<p>Everything works offline. There is no account and no cloud service; RetroDeck goes online only while you search GIPHY for a visualizer animation, and to check GitHub for a new version of itself, which you can switch off. It needs no root and no Google Play Services. RetroDeck ships with no car logos: you import your own.</p>
+<p>Its Vehicle Branding module makes it yours: your car's manufacturer and model, your own logos on the faceplate and display, a startup sequence that lights up your badge, a station chime when it comes on, and illumination that matches your dashboard. Themes travel between head units as branding packs.</p>
+
+<p>There is no account and no cloud service, and it needs no root and no Google Play Services. RetroDeck goes online only while you search GIPHY for a visualizer animation, and to check GitHub for a new version of itself, which you can switch off. It ships with no car logos: you import your own.</p>
 
 <h2>Screenshots</h2>
 
-<p>Recorded on a TV playing a song: the visualizer follows the music, the display shows the song's own title and artist, and the knob turns as the volume goes up and back down. Each clip starts by day and fades to night. Every skin has its own page in <a href="themes/">themes</a>, with more screenshots and day and night renders.</p>
+<p>Most clips were recorded from the running app on a TV playing a song: the visualizer follows the music, the display shows the song's own title and artist, and the knob turns as the volume goes up and back down. B110 Factory 1971, its Modern remake, R34 Factory 1999, CP 2013 and the five factory units of 2005 to 2014 show Blender renders of the skin by day and by night until they're recorded too. Each clip starts by day and fades to night. Every skin has its own page in <a href="themes/">themes</a>, with more screenshots and day and night renders.</p>
 
 <p align="center"><img src="themes/1980s/classic-1985/day-night.webp" alt="The Classic 1985 skin playing, fading between day and night"/><br/><sub>Classic 1985, a single-DIN radio set into the dash, with the visualizer screen above it: brushed aluminium, a spun-metal knob, a fluorescent display and a cassette door</sub></p>
 
@@ -87,9 +90,18 @@
   </tr>
   <tr>
     <td width="50%"><img src="themes/2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004, playing, fading between day and night"/><br/><sub>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over slim keys and two big polished knobs</sub></td>
+    <td width="50%"><img src="themes/2000s/factory-mp3-2005/day-night.webp" alt="Factory MP3 2005, fading between day and night"/><br/><sub>Factory MP3 2005: a mid-2000s factory CD unit, black, its top arched over the disc slot, a big reflective LCD lit green at night between a TUNE·FILE knob and a PWR·VOL knob, presets, and source keys with a track rocker</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2000s/factory-cd-2007/day-night.webp" alt="Factory CD 2007, fading between day and night"/><br/><sub>Factory CD 2007: a late-2000s factory CD unit, black, a reflective LCD lit amber at night between a TUNE·FILE knob and a PWR·VOL knob, white presets, phone keys and rockers down both sides</sub></td>
+    <td width="50%"><img src="themes/2010s/factory-silver-2010/day-night.webp" alt="Factory Silver 2010, fading between day and night"/><br/><sub>Factory Silver 2010: a factory CD unit in silver grey, a reflective LCD lit green at night, slim silver presets, and two big knobs in knurled chrome rings at the foot</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="themes/2010s/factory-screen-2012/day-night.webp" alt="Factory Screen 2012, fading between day and night"/><br/><sub>Factory Screen 2012: a factory unit, black, a colour screen with three presets either side of it, keys outside them, and knobs in the top corners</sub></td>
     <td width="50%"><img src="themes/2010s/cp-2013/day-night.webp" alt="CP 2013, fading between day and night"/><br/><sub>CP 2013: a 2013 touch screen, the song in thin white type on black glass, and a shelf of cyan keys</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="themes/2010s/factory-touch-2014/day-night.webp" alt="Factory Touch 2014, fading between day and night"/><br/><sub>Factory Touch 2014: a factory touch-screen unit, gloss black, a volume knob and keys down the left, and the song, transport buttons and a list of presets on the screen</sub></td>
     <td width="50%"><img src="themes/2020s/modern-glass/day-night.webp" alt="Modern Glass, playing, fading between day and night"/><br/><sub>Modern Glass: one sheet of black glass over the display</sub></td>
   </tr>
   <tr>
@@ -122,8 +134,10 @@
 
 <h2>Features</h2>
 
+<h3>The stereo</h3>
+
 <ul>
-  <li><strong>Twenty-eight skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
+  <li><strong>Thirty-three skins</strong>, modelled in 3D after the stereos of their era, with no brand names on them. Vehicle Branding → Radio Skin shows them as a gallery drawn at your screen's shape, filtered by single or double DIN and by decade, with the ones that fill your screen marked.
     <br/>Single DIN. On a single-DIN head unit's own wide screen (about 8:3, such as 1280×480 or 1920×720) the radio fills the screen. On a bigger screen it sits at its real slim shape across the lower half, set into the dash, with a screen above it for the visualizer, the song and the clock:
     <ul>
       <li>Chrome 1965: a thick chrome frame, a black face ribbed in silver, two big chrome knobs, fluted chrome push-buttons and a blue-white window, in the style of the 1960s, with no visualizer</li>
@@ -155,40 +169,69 @@
       <li>Twin Dial 2001: two round green fluorescent dials in a wide silver frame, each ringed with fine spokes that follow the music, the volume on the left and the track on the right</li>
       <li>Rainbow 2002: a silver unit with an in-dash CD changer, its wide window's bars running through the rainbow from the bass to the treble</li>
       <li>Blue Matrix 2004: dark chrome, nearly all display, a big blue dot-matrix window over a strip of slim keys and two big polished knobs</li>
+      <li>Factory MP3 2005: a mid-2000s factory CD unit, black, its top arched over the disc slot, a big reflective LCD lit green at night between a TUNE·FILE knob and a PWR·VOL knob, presets, and source keys with a track rocker</li>
+      <li>Factory CD 2007: a late-2000s factory CD unit, black, a reflective LCD lit amber at night between a TUNE·FILE knob and a PWR·VOL knob, white presets, phone keys and rockers down both sides</li>
+      <li>Factory Silver 2010: a factory CD unit in silver grey, a reflective LCD lit green at night, slim silver presets, and two big knobs in knurled chrome rings at the foot</li>
+      <li>Factory Screen 2012: a factory unit, black, a colour screen with three presets either side of it, keys outside them, and knobs in the top corners</li>
       <li>CP 2013: a touch-screen head unit as the first phone-driven car screens were shown, the song in thin white type on black glass with on-screen transport keys and a progress bar, and a shelf of cyan VOL keys, an amber-ringed power knob and a home key</li>
+      <li>Factory Touch 2014: a factory touch-screen unit, gloss black, a volume knob and keys down the left, and the song, transport buttons and a list of presets on the screen</li>
       <li>Modern Glass: one sheet of black glass over the display</li>
     </ul>
     Keys a real unit had but RetroDeck doesn't need (FM/AM, TUNE, DISC SELECT, tape switches) are there for the look and do nothing.</li>
-  <li><strong>Vehicle profiles</strong>: any manufacturer, model, year and trim, typed in (no online database); create, duplicate, switch and delete profiles without reinstalling</li>
-  <li><strong>Your own logos</strong>: a manufacturer logo and a separate model badge, imported as PNG, JPEG, WebP or SVG, transparency kept</li>
-  <li><strong>Logo editor</strong>: crop, rotate, opacity, brightness and colour tint, all non-destructive; aspect ratio always kept unless you turn it off</li>
-  <li><strong>Placement</strong>: put each logo in the radio display header, the LCD, the faceplate, a corner badge, behind the visualizer, on the startup screen or on the standby screen; drag it or use sliders, with a live preview before saving</li>
-  <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text</li>
-  <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting ("HELLO" and the car's name, or your own text in any language), then the stereo; six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it</li>
-  <li><strong>Record a video</strong> (Vehicle Branding → Record a Video, Android 6 and newer): a silent tour of your theme to share, drawn by the app as it records: the startup animation, the stereo by day and by night with the playing song's title scrolling, the full-screen visualizer and standby. About 40 seconds, saved as an MP4 with no sound track in Movies/RetroDeck, with a Share button; full HD where the head unit's encoder allows, otherwise 720p</li>
-  <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights. At night the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too. On Z32 Factory 1990 the legends are white, printed by day and backlit at night</li>
-  <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the visualizer is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text. GIFs travel in branding packs</li>
-  <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the buttons, LCD, visualizer and volume dial; plus an accent colour</li>
-  <li><strong>Your own colours</strong> for the visualizer, the background behind it, and the radio itself: the radio's greys and blacks take the colour keeping their shading, while its displays, lamps and print keep theirs</li>
-  <li><strong>Branding packs</strong>: export one or all profiles with their logos as a ZIP and import them on another head unit, offline; packs are checked before anything is imported</li>
-  <li><strong>Music</strong>: plays audio files from the device; SRC adds files (or songs from the music folder), the knob sets the volume</li>
-  <li><strong>Music in other apps, found by itself</strong>: when the head unit's radio, a music player, Bluetooth audio or another app plays, the stereo shows it (the app as the source, such as RADIO or BT), its keys play, pause and skip in that app, and the visualizer follows what the head unit plays. Song titles need Notification access, offered once (RetroDeck reads only which song is playing); without it the keys still work as media keys. SRC lists the head unit's radio and music apps. RetroDeck's own music and the other app pause each other, as two players do</li>
-  <li><strong>Volume, found by itself</strong>: the knob uses Android's music volume, or the volume of whatever is playing where a head unit keeps its radio on another, and says USE THE CAR'S VOLUME where the head unit allows neither</li>
-  <li><strong>Full-screen visualizer</strong>: the visualizer (or your GIF) over the whole screen, with the song and clock along the bottom. Hold DISP or press a key set to it, or let it come on by itself after a while without a touch while music plays (Settings → Display; off until you choose a time). A touch or key brings the stereo back; media keys and presets keep working while it shows</li>
-  <li><strong>Melody box</strong>: a short station chime, like the melodies Japanese train platforms play, when the stereo comes on. Four original tunes (Departure, Morning Line, Harbour, Last Train) on a synthesized bell, or your own sound files. A shut-down chime can be switched on too (Settings → Audio)</li>
-  <li><strong>Presets 1–6</strong>: a favourite song on each. Tap to play it; hold for a moment to save the song that's playing, like saving a radio station</li>
-  <li><strong>Buttons</strong>: every key on the stereo works by touch, and any head-unit, steering-wheel or remote key can be given any action (play/pause, next, previous, volume, mute, a preset, SRC, DISP, the full-screen visualizer, power, Settings) under Settings → Buttons. Media keys, Menu and the number keys 1–6 work out of the box; any key wakes the stereo from standby</li>
-  <li><strong>Updates</strong>: Off, Notify only or Automatic (Settings → Updates; Notify only to start with). RetroDeck checks GitHub every few hours while it's open. Notify only says once when there's a new version, to install from Settings. Automatic also downloads it and installs it when you switch the stereo off with PWR or the head unit's screen goes off, never while music plays. Android 12 and newer install without asking once RetroDeck has updated itself once; older Android asks for one tap. An update signed with a different key is refused</li>
-  <li><strong>Old head units</strong>: Android 4.4 and newer, large images downsampled on import, 512 px logos on low-memory devices, the static faceplate drawn once and cached</li>
+  <li><strong>Music in other apps, found by itself</strong>: when the head unit's radio, a music player, Bluetooth audio or another app plays, the stereo switches to it. It shows the app as the source (RADIO, BT or the app's name) with the song's title and artist, its keys play, pause and skip in that app, and the visualizer follows what the head unit plays. SRC lists the head unit's radio and music apps, and RetroDeck's own music to switch back. RetroDeck's music and the other app pause each other, as two players do.</li>
+  <li><strong>Your own music</strong>: audio files from the device, picked with SRC or dropped into RetroDeck's music folder.</li>
+  <li><strong>Presets 1–6</strong>: a favourite song on each. Tap to play it; hold for a moment to save the song that's playing, like saving a radio station.</li>
+  <li><strong>Volume, found by itself</strong>: the knob uses Android's music volume, or the volume of whatever is playing where a head unit keeps its radio on another, and says USE THE CAR'S VOLUME where the head unit allows neither.</li>
+  <li><strong>Live visualizer</strong>: spectrum bars, a level ladder or an oscilloscope, drawn from the sound the head unit plays, in the display's own style (segments, dot matrix, fluorescent, LCD). DISP cycles them.</li>
+  <li><strong>Full-screen visualizer</strong>: the visualizer (or your GIF) over the whole screen, with the song and clock along the bottom. Hold DISP or press a key set to it, or let it come on by itself after a while without a touch while music plays (Settings → Display; off until you choose a time). A touch or key brings the stereo back; media keys and presets keep working while it shows.</li>
+  <li><strong>Animation visualizer</strong>: any GIF on the display, like the animated displays of late-1990s head units. Search GIPHY from the head unit, or import a GIF file (up to 800 pixels a side, 500 frames and 8 MB). It runs faster when the music is busy and stops when the music is paused; it can glow in the display's own colour or keep its colours, and fill the visualizer strip or the whole display behind the track text.</li>
+  <li><strong>Song titles in any script</strong>: segment and dot-matrix displays show Japanese, Hebrew, Russian and other titles, with wide characters taking two cells, right-to-left text in order, and long titles scrolling.</li>
+  <li><strong>Key lighting</strong>: the key legends light up at night and are plain printed paint by day, like keys that come on with the headlights, and the faceplate goes dark around them. Auto switches by the clock (lit from 19:00 to 07:00); Always on and Off are there too.</li>
+  <li><strong>Melody box</strong>: a short station chime, like the melodies Japanese train platforms play, when the stereo comes on. Four original tunes (Departure, Morning Line, Harbour, Last Train) on a synthesized bell, or your own sound files. A shut-down chime can be switched on too (Settings → Audio).</li>
+  <li><strong>Buttons</strong>: every key on the stereo works by touch, and any head-unit, steering-wheel or remote key can be given any action (play/pause, next, previous, volume, mute, a preset, SRC, DISP, the full-screen visualizer, power, Settings) under Settings → Buttons. Media keys, Menu and the number keys 1–6 work out of the box; any key wakes the stereo from standby.</li>
+</ul>
+
+<h3>Vehicle Branding</h3>
+
+<ul>
+  <li><strong>Vehicle profiles</strong>: any manufacturer, model, year and trim, typed in (no online database); create, duplicate, switch and delete profiles without reinstalling.</li>
+  <li><strong>Your own logos</strong>: a manufacturer logo, a model badge and an audio brand logo (the sound system's or stereo maker's), imported as PNG, JPEG, WebP or SVG, transparency kept.</li>
+  <li><strong>Logo editor</strong>: crop, rotate, opacity, brightness and colour tint, all non-destructive; aspect ratio always kept unless you turn it off.</li>
+  <li><strong>Placement</strong>: put each logo in the radio display header, the LCD, the faceplate, a corner badge, behind the visualizer, on the startup screen or on the standby screen; drag it or use sliders, with a live preview before saving.</li>
+  <li><strong>Branding zones</strong>: every skin declares where branding may go, and a logo can never leave its zone, so it never covers a button or the track text.</li>
+  <li><strong>Startup sequence</strong>: black screen, your logo lights up, the model badge appears, the dial lamps power on and the LCD types a greeting ("HELLO" and the car's name, or your own text in any language), then the stereo. Six styles (incandescent glow, 1980s green LCD, 1990s digital scan, CRT power-on, modern fade, minimal instant), 1–6 seconds or off; a tap skips it.</li>
+  <li><strong>Dashboard illumination</strong>: amber, green, blue, red, white, any RGB colour, or a colour taken from your logos, on the keys, display, visualizer and volume dial; plus an accent colour.</li>
+  <li><strong>Your own colours</strong> for the visualizer, the background behind it, and the radio itself: the radio's greys and blacks take the colour keeping their shading, while its displays, lamps and print keep theirs.</li>
+  <li><strong>Branding packs</strong>: export one or all profiles as a ZIP, with their logos, GIF, screenshots and a video, and import them on another head unit, offline. Packs are checked before anything is imported. A pack opens straight into RetroDeck from a file manager, LocalSend or a chat app.</li>
+  <li><strong>Record a video</strong> (Android 6 and newer): a silent tour of your theme to share, drawn by the app as it records: the startup animation, the stereo by day and by night with the playing song's title scrolling, the full-screen visualizer and standby. About 40 seconds, saved as an MP4 in Movies/RetroDeck, with a Share button; full HD where the head unit's encoder allows, otherwise 720p.</li>
+</ul>
+
+<h3>The app</h3>
+
+<ul>
+  <li><strong>Updates</strong>: Off, Notify only or Automatic (Settings → Updates; Notify only to start with). RetroDeck checks GitHub every few hours while it's open. Notify only says once when there's a new version, to install from Settings. Automatic also downloads it and installs it when you switch the stereo off with PWR or the head unit's screen goes off, never while music plays. Android 12 and newer install without asking once RetroDeck has updated itself once; older Android asks for one tap. An update signed with a different key is refused.</li>
+  <li><strong>Diagnostics</strong> (Settings → About → Diagnostics): one page that shows what RetroDeck finds on your head unit, to share as text in a bug report. It lists the device and Android version (no serial number, MAC or IP address, or accounts), the permissions, every app that says what it's playing, the radio and music apps SRC lists, whether the visualizer hears the head unit, and how the volume answers. Buttons on the page test the media keys and the volume.</li>
+  <li><strong>Old head units</strong>: Android 4.4 and newer, large images downsampled on import, 512 px logos on low-memory devices, the static faceplate drawn once and cached.</li>
 </ul>
 
 <h2>Requirements</h2>
 
 <ul>
-  <li>An Android head unit, tablet or phone on <strong>Android 4.4 (KitKat) or newer</strong>, landscape; designed for 1024×600 and scales up</li>
+  <li>An Android head unit, tablet or phone on <strong>Android 4.4 (KitKat) or newer</strong>, landscape; designed for 1024×600 and up, including the wide 8:3 screens of single-DIN head units (1280×480, 1920×720)</li>
+  <li>Android 5 or newer for song titles from other apps, and Android 6 or newer to record a video</li>
   <li>Your own logo images, if you want logos (names alone work too)</li>
-  <li>To install: the APK on a USB stick or SD card and a file manager on the head unit, or a computer with <a href="https://developer.android.com/tools/releases/platform-tools">ADB</a></li>
+  <li>To install: the APK on a USB stick or SD card and a file manager on the head unit, <a href="https://github.com/localsend/localsend">LocalSend</a>, or a computer with <a href="https://developer.android.com/tools/releases/platform-tools">ADB</a></li>
 </ul>
+
+<h3>Permissions</h3>
+
+<table>
+  <tr><th>Permission</th><th>What it's for</th></tr>
+  <tr><td><strong>Record audio</strong></td><td>The visualizer reads the sound the head unit is playing, never the microphone. Asked once; without it the bars move on their own.</td></tr>
+  <tr><td><strong>Notification access</strong></td><td>Lets RetroDeck see which app is playing and what song. It reads only the players' song information, never your notifications. Offered once, the first time music plays in another app; without it the keys are sent as media keys.</td></tr>
+  <tr><td><strong>Internet</strong></td><td>GIPHY search and update checks only.</td></tr>
+  <tr><td><strong>Install packages</strong></td><td>Installing RetroDeck's own updates.</td></tr>
+</table>
 
 <h2>Installation and Setup</h2>
 
@@ -196,12 +239,14 @@
 
 <ol>
   <li>Download <code>RetroDeck-x.y.z.apk</code> from the <a href="../../releases/latest">latest release</a>.</li>
-  <li>Copy it to the head unit and open it with the file manager (allow installing from unknown sources if asked), or install it from a computer:
+  <li>Copy it to the head unit (USB stick, SD card or LocalSend) and open it with a file manager, allowing installs from unknown sources if asked, or install it from a computer:
 <pre>
-adb install RetroDeck-0.1.0.apk
+adb install -r RetroDeck-x.y.z.apk
 </pre>
   </li>
 </ol>
+
+<p>After that, RetroDeck updates itself from Settings → Updates. Every release is signed with the same key and installs over the one before, keeping your profiles and logos.</p>
 
 <h3>From source</h3>
 
@@ -209,22 +254,36 @@ adb install RetroDeck-0.1.0.apk
 
 <pre>
 ./gradlew assembleDebug                       # app/build/outputs/apk/debug/app-debug.apk
-./gradlew testDebugUnitTest :app:lintDebug    # JVM tests, and lint for anything newer than Android 4.4
+./gradlew test lint                           # JVM tests, and lint for anything newer than Android 4.4
 </pre>
 
 <h2>Usage</h2>
 
 <h3>The stereo</h3>
 
+<p>Each skin lays out and labels its keys its own way, like the unit it's modelled on. On A80 Factory 1994, for example, CD is SRC and EQ is MENU, and on CP 2013 the transport keys are on the screen.</p>
+
 <table>
   <tr><th>Control</th><th>What it does</th></tr>
-  <tr><td><strong>PWR</strong></td><td>Standby: a black screen with the clock and your standby logo. Tap anywhere to turn it back on.</td></tr>
-  <tr><td><strong>SRC</strong></td><td>Adds music files from the device.</td></tr>
-  <tr><td><strong>|&lt;&lt; PLAY &gt;&gt;|</strong></td><td>Previous (or back to the start of the track), play/pause, next.</td></tr>
-  <tr><td><strong>1–6</strong></td><td>Jump to tracks 1 to 6.</td></tr>
-  <tr><td><strong>Knob</strong> or <strong>VOL−/VOL+</strong></td><td>Drag the knob up or down, or tap its top or bottom half. Sets the device's media volume.</td></tr>
-  <tr><td><strong>DISP</strong></td><td>Cycles the visualizer: spectrum bars, level ladder, oscilloscope, off. The choice is saved in the vehicle profile.</td></tr>
+  <tr><td><strong>PWR</strong></td><td>Standby: a black screen with the clock and your standby logo. Tap anywhere or press any key to turn it back on.</td></tr>
+  <tr><td><strong>SRC</strong></td><td>Chooses what plays: RetroDeck's music, or one of the head unit's radio and music apps. Also adds music files.</td></tr>
+  <tr><td><strong>|&lt;&lt; PLAY &gt;&gt;|</strong></td><td>Previous (or back to the start of the track), play/pause, next, in RetroDeck's music or the app that's playing.</td></tr>
+  <tr><td><strong>1–6</strong></td><td>Tap to play the song saved there; hold to save the song that's playing.</td></tr>
+  <tr><td><strong>Knob</strong> or <strong>VOL−/VOL+</strong></td><td>Drag the knob up or down, or tap its top or bottom half. Sets the volume the head unit answers to.</td></tr>
+  <tr><td><strong>DISP</strong></td><td>Cycles the visualizer: spectrum bars, level ladder, oscilloscope, animation (if you've chosen one), off. Hold it for the full-screen visualizer.</td></tr>
   <tr><td><strong>MENU</strong></td><td>Settings.</td></tr>
+</table>
+
+<h3>Settings</h3>
+
+<table>
+  <tr><th>Section</th><th>What's in it</th></tr>
+  <tr><td><strong>Personalization</strong></td><td>Vehicle Branding (below).</td></tr>
+  <tr><td><strong>Audio</strong></td><td>The start and shut-down chimes, the music files, and clearing the music list.</td></tr>
+  <tr><td><strong>Display</strong></td><td>When the full-screen visualizer comes on by itself.</td></tr>
+  <tr><td><strong>Buttons</strong></td><td>Head-unit and steering-wheel keys: press a key, then pick its action.</td></tr>
+  <tr><td><strong>Updates</strong></td><td>Off, Notify only or Automatic, and Check for updates now.</td></tr>
+  <tr><td><strong>About</strong></td><td>The version, Diagnostics, privacy and open-source notices.</td></tr>
 </table>
 
 <h3>Settings → Personalization → Vehicle Branding</h3>
@@ -233,15 +292,17 @@ adb install RetroDeck-0.1.0.apk
   <tr><th>Row</th><th>What it does</th></tr>
   <tr><td><strong>Vehicle Profiles</strong></td><td>Switch, create, duplicate or delete profiles.</td></tr>
   <tr><td><strong>Manufacturer, Model, Model Year, Trim or Edition</strong></td><td>Any names you like; the year is four digits.</td></tr>
-  <tr><td><strong>Import Manufacturer Logo / Import Model Badge</strong></td><td>Pick an image, then adjust it. Tap again to replace, adjust or remove it.</td></tr>
+  <tr><td><strong>Import Manufacturer Logo / Model Badge / Audio Brand Logo</strong></td><td>Pick an image, then adjust it. Tap again to replace, adjust or remove it.</td></tr>
   <tr><td><strong>Adjust Logo Image</strong></td><td>Crop, rotation, opacity, brightness, tint and aspect ratio.</td></tr>
   <tr><td><strong>Edit Logo Placement</strong></td><td>Choose a zone and a logo, then show it, size it and drag it into place.</td></tr>
-  <tr><td><strong>Radio Skin, Visualizer</strong></td><td>The profile's preferred skin and visualizer.</td></tr>
-  <tr><td><strong>Dashboard Illumination, Accent Colour</strong></td><td>Preset colours, RGB sliders or the colour of your logos.</td></tr>
+  <tr><td><strong>Radio Skin</strong></td><td>The skin gallery.</td></tr>
+  <tr><td><strong>Visualizer, Animation</strong></td><td>The profile's visualizer, and a GIF from GIPHY or a file.</td></tr>
+  <tr><td><strong>Dashboard Illumination, Accent Colour, Key Lighting</strong></td><td>Preset colours, RGB sliders or the colour of your logos, and when the key legends light up.</td></tr>
   <tr><td><strong>Visualizer Colour, Visualizer Background, Radio Colour</strong></td><td>RGB sliders or the colour of your logos, or the skin's own. The background is behind the full-screen visualizer and the screen above a single-DIN radio.</td></tr>
-  <tr><td><strong>Startup Animation</strong></td><td>Style, length, the power-on and LCD steps, or off. Plays as you choose.</td></tr>
+  <tr><td><strong>Startup Animation</strong></td><td>Style, length, the power-on and LCD steps, the greeting, or off. Plays as you choose.</td></tr>
   <tr><td><strong>Preview</strong></td><td>The whole thing full screen: startup, stereo and (with PWR) standby.</td></tr>
-  <tr><td><strong>Import/Export Branding Pack</strong></td><td>ZIP files with profiles and logos.</td></tr>
+  <tr><td><strong>Record a Video</strong></td><td>The silent tour of your theme, saved to Movies/RetroDeck.</td></tr>
+  <tr><td><strong>Import/Export Branding Pack</strong></td><td>ZIP files with profiles, logos, GIFs, screenshots and a video.</td></tr>
   <tr><td><strong>Restore Defaults</strong></td><td>Reset this profile's layout, colours, skin and startup (names and logos stay), or delete everything.</td></tr>
 </table>
 
@@ -275,20 +336,24 @@ adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim
 
 <h2>How It Works</h2>
 
-<p>RetroDeck is three Gradle modules:</p>
+<p>RetroDeck is plain Java in three Gradle modules, and its only library is AndroidSVG:</p>
 
 <table>
   <tr><th>Module</th><th>What's in it</th></tr>
-  <tr><td><code>core</code></td><td>Skins and their branding zones, the photoreal faceplates (<code>Faceplate</code>, drawn once at screen resolution), the stereo renderer (<code>StereoView</code>), illumination colours, the <code>RetroDeckModule</code> interface and the shared settings look.</td></tr>
-  <tr><td><code>branding</code></td><td>The Vehicle Branding module: profiles and storage, logo import and editing, placement, the startup sequence and branding packs. It draws into the stereo through <code>StereoView.Overlay</code>, so the stereo doesn't depend on it.</td></tr>
-  <tr><td><code>app</code></td><td>The shell: the stereo screen, the music player, and Settings, which lists the rows each registered module asks for.</td></tr>
+  <tr><td><code>core</code></td><td>Skins and their branding zones, the rendered faceplates, the stereo renderer (<code>StereoView</code>), the display fonts and text, the visualizer maths, the GIF decoder, illumination colours, the <code>RetroDeckModule</code> interface and the shared settings look.</td></tr>
+  <tr><td><code>branding</code></td><td>The Vehicle Branding module: profiles and storage, logo import and editing, placement, the skin gallery, the startup sequence, GIPHY, video recording and branding packs. It draws into the stereo through <code>StereoView.Overlay</code>, so the stereo doesn't depend on it.</td></tr>
+  <tr><td><code>app</code></td><td>The shell: the stereo screen, the music player, following other apps (<code>OtherApps</code>), the live visualizer (<code>LiveLevels</code>), the melody box, updates, Diagnostics, and Settings, which lists the rows each registered module asks for.</td></tr>
 </table>
 
-<p><strong>Branding zones.</strong> Each skin lays out its controls and zones as fractions of the screen. A logo is fitted into its zone with its aspect ratio kept, scaled by at most 100 % and clamped inside the zone. A unit test checks that no zone of any skin touches a button, the knob, the presets or the track text.</p>
+<p><strong>Skins.</strong> Each skin lays out its controls, display and zones as fractions of the screen (<code>Skins.java</code>). The faceplates are modelled and lit in Blender (<code>tools/blender</code>) from that same layout, rendered by day, by night and with keys pressed, and shipped as WebP images in <code>core/src/main/assets/skins</code>. The app draws the displays, the visualizer, the knob and your logos over them as it runs, and tints the night legends with your illumination colour.</p>
+
+<p><strong>Branding zones.</strong> A logo is fitted into its zone with its aspect ratio kept, scaled by at most 100 % and clamped inside the zone. A unit test checks that no zone of any skin touches a button, the knob, the presets or the track text.</p>
+
+<p><strong>Other apps.</strong> With Notification access, RetroDeck reads the media sessions other apps publish: who's playing, the title and artist, and which keys the app takes. It switches to an app when it starts playing and back when it stops. Without that access it can still tell that something is playing, and sends the keys as media keys. The visualizer reads the head unit's output mix while following another app.</p>
 
 <p><strong>Images.</strong> An imported file is copied to a temporary file (25 MB limit), recognised by its content, decoded with a power-of-two sample size so a huge photo never loads at full size, turned upright from its EXIF data, scaled to 1024 px (512 px on low-memory devices), trimmed of transparent margins and saved as PNG in the profile's folder. SVGs are drawn by AndroidSVG at that size. Crop, rotation and colour edits are applied when drawing and cached, so the stored image never changes.</p>
 
-<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it. Animations are GIF files next to them, checked when they come in and kept as they are. Nothing is sent anywhere except by GIPHY search and update checks. While GIPHY's screen is open, the words you search for and RetroDeck's API key go to GIPHY, and the pictures come from GIPHY's servers over HTTPS. Unless Updates is Off, RetroDeck asks GitHub for its latest release every few hours while it's open, and downloads the APK from GitHub when you install it or in Automatic. Those are the only uses of the <code>INTERNET</code> permission.</p>
+<p><strong>Storage.</strong> Profiles are one JSON file in the app's private storage, written atomically; logos are PNG files next to it, and animations are GIF files kept as they came in. Nothing is sent anywhere except by GIPHY search and update checks. While GIPHY's screen is open, the words you search for and RetroDeck's API key go to GIPHY, and the pictures come from GIPHY's servers over HTTPS. Unless Updates is Off, RetroDeck asks GitHub for its latest release every few hours while it's open, and downloads the APK from GitHub when you install it or in Automatic. Those are the only uses of the <code>INTERNET</code> permission.</p>
 
 <p><strong>Startup.</strong> The sequence is a pure function of time (<code>StartupTimeline</code>), drawn over the stereo, which is already running underneath; a tap skips it and it never runs longer than six seconds. Each frame only draws the cached logo bitmaps with alpha and colour filters on a hardware layer.</p>
 
@@ -296,28 +361,32 @@ adb shell cp /sdcard/Download/halcyon-logo.svg /sdcard/Android/data/com.maxhayim
 
 <pre>
 my-vehicle.zip
-├── manifest.json        {"format": "retrodeck-branding-pack", "formatVersion": 1, "name": ..., "profiles": [...]}
+├── manifest.json        {"format": "retrodeck-branding-pack", "formatVersion": 4, "name": ..., "profiles": [...], "video": ...}
 └── assets/
     ├── p0-manufacturer.png
-    └── p0-model.png
+    ├── p0-model.png
+    ├── p0-audio.png
+    ├── p0-animation.gif
+    ├── p0-screenshot-day.png
+    └── tour.mp4
 </pre>
 
-<p>Each profile in <code>profiles</code> holds the names, palette (illumination, custom and accent colours, and the visualizer, screen and body colours when set), skin, visualizer, startup settings, logo adjustments, placements per zone, and <code>"assets": {"manufacturer": "assets/...", "model": "assets/..."}</code>. Unknown fields are ignored, so newer packs of format 1 still import; a newer format version is refused. Before importing, RetroDeck checks:</p>
+<p>Each profile in <code>profiles</code> holds the names, palette (illumination, custom and accent colours, and the visualizer, screen and body colours when set), skin, visualizer, key lighting, startup settings, logo adjustments, placements per zone, <code>"assets"</code> for its logos and animation, and <code>"screenshots"</code>. A pack is written at the lowest format version that holds what's in it (2 with an animation, 3 with an audio brand logo, 4 with a video), so an older RetroDeck says it needs an update instead of dropping what it doesn't know. Unknown fields are ignored; a newer format version is refused. Before importing, RetroDeck checks:</p>
 
 <ul>
-  <li>only <code>manifest.json</code> and <code>assets/*.png|jpg|jpeg|webp|svg</code>; anything else (a script, an APK) fails the pack, and nothing in a pack is ever run</li>
+  <li>only <code>manifest.json</code> and <code>assets/*.png|jpg|jpeg|webp|svg|gif|mp4</code>; anything else (a script, an APK) fails the pack, and nothing in a pack is ever run</li>
   <li>no <code>..</code>, absolute paths, backslashes or drive letters (zip slip)</li>
-  <li>sizes counted while unpacking (24 MB packed, 8 MB a file, 32 MB in all, 40 files), so a zip bomb stops early</li>
+  <li>sizes counted while unpacking (40 MB packed, 8 MB a file, 20 MB for the video, 48 MB in all, 40 files, 16 profiles), so a zip bomb stops early</li>
   <li>each image's real format matches its extension, and its header says at most 4096 pixels a side</li>
   <li>SVGs have no DOCTYPE or entities, scripts, embedded HTML or external links</li>
   <li>every value is put back in range; unknown skins, presets and colours get defaults</li>
 </ul>
 
-<p>Logos from a pack are decoded and saved again as new PNG files, like a picked image. More in <a href="SECURITY.md">SECURITY.md</a>.</p>
+<p>Logos from a pack are decoded and saved again as new PNG files, like a picked image. Screenshots and the video are shown before importing and are not kept. More in <a href="SECURITY.md">SECURITY.md</a>.</p>
 
 <h3>Custom themes</h3>
 
-<p>Make a theme for a real radio on a computer: a theme file picks the skin and puts each of your logos where the real unit had its marks, and <code>tools/make_pack.py</code> builds it into a branding pack, checked the way RetroDeck checks one. Work in <a href="custom-themes/">custom-themes</a>: git ignores everything there except its guide and a template, so your logos and packs never reach GitHub. Each pack gets screenshots (the stereo by day and by night, the full-screen visualizer by day and by night, and the startup screen), drawn by the app's own importer and renderer, so people can see it before importing it. Packs exported in the app carry the same screenshots, showing the song that's playing.</p>
+<p>Make a theme for a real radio on a computer: a theme file picks the skin and puts each of your logos where the real unit had its marks, and <code>tools/make_pack.py</code> builds it into a branding pack, checked the way RetroDeck checks one, optionally with a video tour (<code>--video</code>). Work in <a href="custom-themes/">custom-themes</a>: git ignores everything there except its guide, so your logos and packs never reach GitHub; a template is in <code>tools/template-z32.json</code>. Each pack gets screenshots (the stereo by day and by night, the full-screen visualizer and the startup screen), drawn by the app's own importer and renderer, so people can see it before importing it. Packs exported in the app carry the same screenshots, showing the song that's playing.</p>
 
 <h2>Logos and Trademarks</h2>
 
@@ -328,7 +397,7 @@ my-vehicle.zip
   <li><strong>RetroDeck ships no real logos</strong>, and its skins carry no brand names. The places where a maker's badge sat on the real units are branding zones that you fill yourself.</li>
   <li><strong>Screenshots and demos use made-up brands</strong>, like Halcyon and the Mesa GT, Takane Motors, and the stereo makers MIZAR, Kazetone and ryusei, all in <a href="docs/demo/">docs/demo</a>. They are original designs, not copies or look-alikes of real badges: a logo that's confusingly similar to a real one can infringe too.</li>
   <li><strong>Branding packs</strong> include the logos you imported. Only share a pack publicly if you have the right to share its logos, for example ones you made yourself. RetroDeck reminds you of this when you export.</li>
-  <li><strong>Skins modelled on real units</strong> copy the period look (materials, layout, key shapes), never brand names or logos. A skin may name a car in plain words to say what it's modelled on.</li>
+  <li><strong>Skins modelled on real units</strong> copy the period look (materials, layout, key shapes), never brand names or logos. A skin may name a car's chassis code to say what it's modelled on.</li>
 </ul>
 
 <p>This is not legal advice; the rules differ between countries.</p>
@@ -336,54 +405,36 @@ my-vehicle.zip
 <h2>Known Limitations</h2>
 
 <ul>
-  <li><strong>The visualizer follows the music</strong> only with Android's "record audio" permission, which RetroDeck asks for once and uses only to read the sound being played, never the microphone. Without it, or on a head unit whose Visualizer gives silence, the bars move on their own (as does an animation's speed).</li>
   <li><strong>RetroDeck has no tuner of its own.</strong> The radio, Bluetooth audio and other players are the head unit's own apps, shown and controlled from the stereo. A radio app that publishes no song title shows its name, and one that ignores media keys can't be controlled from RetroDeck's keys.</li>
+  <li><strong>The visualizer follows the music</strong> only with the Record audio permission. Without it, or on a head unit whose visualizer gives silence, the bars move on their own (as does an animation's speed).</li>
+  <li><strong>Some head units keep their volume to themselves</strong>; the knob then says USE THE CAR'S VOLUME.</li>
   <li><strong>GIPHY search</strong> uses a free key that allows 100 searches an hour for everyone using the same copy of RetroDeck. If it runs out, wait an hour, paste your own free key from GIPHY's developer site, or import a GIF file instead.</li>
-  <li><strong>Animated WebP and GIF</strong> logos aren't supported (a GIF can be the visualizer animation instead); WebP files with transparency need Android 4.3 or newer, which RetroDeck's minimum already covers.</li>
+  <li><strong>Animated WebP and GIF</strong> logos aren't supported (a GIF can be the visualizer animation instead).</li>
   <li><strong>SVG support</strong> is AndroidSVG's: text uses the device's fonts, and filters and some CSS are ignored. For an exact look, export the logo as PNG.</li>
-  <li><strong>Some head units</strong> keep their own status bar or volume overlay on top of full-screen apps.</li>
+  <li><strong>Some head units</strong> keep their own status bar or volume overlay on top of full-screen apps, and some video encoders limit recordings to 720p.</li>
 </ul>
 
 <h2>Tested On</h2>
 
-<p>MOKA R8G (Android 14, 32-bit ARM), an Android TV box, using the signed v0.1.0 release APK and driven with a mouse and adb taps. It ran at 1024×600 and 160 dpi, like a 7-inch head unit, and at 1920×1080 and 240 dpi, like an HD one. Checked:</p>
+<p><strong>An Android TV box</strong> (MOKA R8G, Android 14, 32-bit ARM), set to 1920×1080 at 240 dpi like an HD head unit, and to 1024×600 at 160 dpi and 1920×720 for single-DIN screens. Driven with a mouse, a remote and adb. Checked there across releases:</p>
 
 <ul>
-  <li>Typing a manufacturer, model, year and trim.</li>
-  <li>Importing an SVG logo and a PNG badge from the import folder. This device's document picker is an empty stub, which is why the import folder exists.</li>
-  <li>Crop, rotation and brightness on a logo. Opacity and tint were not changed.</li>
-  <li>Dragging logos in the header and corner zones, and the show/hide switch. The default placements filled the LCD and faceplate zones.</li>
-  <li>The Amber and Green illumination presets, and "From logos".</li>
-  <li>The glow, green LCD, digital scan and CRT startup styles in the editor, and the glow style when the app opens. Modern fade and minimal instant startup were not watched.</li>
-  <li>Classic 1985, Digital 1996 and Modern Glass, at both sizes, and the standby screen.</li>
-  <li>Z32 Factory 1990, modelled in 3D (v0.4.0): Auto at 19:24 (night look), Off (day look), and a pressed key by day and night.</li>
-  <li>The other five skins, modelled in 3D (v0.5.0): Auto at 20:10 with the dash lit blue (night look, legends tinted blue), Off (day look), and a pressed key at night. Always on has only been drawn by the render tests.</li>
-  <li>Hi-Fi 1984, Z32 Factory 1990 and Detachable 1998 at 1920×1080 only, imported from a pack, with the round PLAY key, PROG as the menu key and the encoder's volume taps. Tapping RPT, a design-only key, did nothing.</li>
-  <li>Exporting a pack to Download/RetroDeck and importing an edited copy as a second profile.</li>
-  <li>A pack holding a <code>../</code> path, which was refused.</li>
+  <li>every skin shown full screen, most of them by day and by night with their keys tapped; the skin gallery; the wide single-DIN layout at 1920×720;</li>
+  <li>playing music from the music folder, presets, the live visualizer following a song, the full-screen visualizer (hold DISP, a key, the idle timer);</li>
+  <li>the melody box at start, wake and shut-down;</li>
+  <li>mapping remote keys under Settings → Buttons;</li>
+  <li>profiles, logo import (SVG and PNG), the logo editor, placement, illumination, the startup styles;</li>
+  <li>GIPHY search and GIF files as the visualizer;</li>
+  <li>exporting and importing packs, a pack with a <code>../</code> path being refused, and opening a pack from Amaze;</li>
+  <li>recording a video (720p, the box's encoder limit);</li>
+  <li>self-update, Notify only and Automatic, waiting for PWR before installing.</li>
 </ul>
 
-<p>Not tried:</p>
+<p><strong>A car head unit</strong> (an aftermarket Android head unit in a car, Android 8.1): RetroDeck runs there, and following its radio and Bluetooth audio was built from what it showed. Song titles, keys and the visualizer with the head unit's own apps, the volume, and Diagnostics are still to be reported from it.</p>
 
-<ul>
-  <li>A real car head unit.</li>
-  <li>Android below 14. Lint checks every call against minSdk 19, but nothing older has run it.</li>
-  <li>WebP and JPEG logos on a device. They are covered by the JVM tests.</li>
-  <li>Playing your own music, which needs a file picker.</li>
-  <li>A real file picker.</li>
-</ul>
+<p>Not tried yet: a 1080p video recording, importing a pack with a video, the greeting text in Hebrew or Russian, Android between 5 and 7, and JPEG and WebP logos on a device (they are covered by the JVM tests).</p>
 
-<p>The JVM tests cover:</p>
-
-<ul>
-  <li>zone layout and overlap;</li>
-  <li>placement and crop maths;</li>
-  <li>colours and colour extraction;</li>
-  <li>image format sniffing;</li>
-  <li>startup timing;</li>
-  <li>profile JSON;</li>
-  <li>pack validation: paths, sizes, formats, dimensions and SVG content.</li>
-</ul>
+<p>The JVM tests cover zone layout and overlap, placement and crop maths, colours and colour extraction, image format sniffing, startup timing, profile JSON, pack validation (paths, sizes, formats, dimensions and SVG content), key mapping, display text in any script, finding radio and music apps by name, and the update check.</p>
 
 <p><code>./gradlew :core:testDebugUnitTest :branding:testDebugUnitTest -Prender</code> also draws every skin with Android's own graphics on your computer (add <code>-Prender.size=1920x1080</code> for HD) and writes PNGs to <code>core/build/skin-renders</code> and <code>branding/build/branding-renders</code>. It's for checking skin changes without a device; the first run downloads Robolectric's Android runtime.</p>
 

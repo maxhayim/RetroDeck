@@ -34,6 +34,11 @@ public final class Skins {
     public static final String DIAL_MODERN = "b110factory71m";
     public static final String FACTORY_99 = "r34factory99";
     public static final String TOUCH = "cp13";
+    public static final String FACTORY_05 = "factory05";
+    public static final String FACTORY_07 = "factory07";
+    public static final String FACTORY_10 = "factory10";
+    public static final String FACTORY_12 = "factory12";
+    public static final String FACTORY_14 = "factory14";
 
     private static List<Skin> all;
 
@@ -69,7 +74,12 @@ public final class Skins {
             all.add(twin());
             all.add(rainbow());
             all.add(matrix());
+            all.add(factory05());
+            all.add(factory07());
+            all.add(factory10());
+            all.add(factory12());
             all.add(touch());
+            all.add(factory14());
             all.add(modern());
         }
         return all;
@@ -939,6 +949,193 @@ public final class Skins {
                 .zone(Zones.FACEPLATE, 0.06f, 0.575f, 0.12f, 0.64f)
                 .zone(Zones.CORNER, 0.86f, 0.055f, 0.95f, 0.13f)
                 .zone(Zones.VISUALIZER, 0.19f, 0.752f, 0.36f, 0.788f);
+        return s;
+    }
+
+    /**
+     * A mid-2000s factory CD unit: black, a curved top over the disc slot, TUNE·FILE and PWR·VOL knobs
+     * either side of a big reflective LCD, a row of presets, and a row of source keys with a track rocker.
+     */
+    private static Skin factory05() {
+        Skin s = new Skin(FACTORY_05, "Factory MP3 2005", "2000s", 2, 0xFF1C1D1F, 0xFF141516, 0xFF0A0A0B, 0xFF8E9A86,
+                0xFF0A0B0C, 0xFF232426, 0xFF0E0F11, 0xFFD8DADC, Skin.LCD_REFLECTIVE, 0.008f);
+        s.art = "skins/" + FACTORY_05;
+        s.knobDots = false;
+        s.backlight = 0xFF7FD06A;
+        s.panelDay = 0xFF77806C;
+        s.keyLight = 0xFF8CE07A;
+        s.keyPrint = 0xFFD8DADC;
+        s.slot = new Box(0.24f, 0.10f, 0.76f, 0.135f);
+        s.decor("⏏", 0.83f, 0.09f, 0.92f, 0.165f)
+                .control(Skin.MENU, "AUDIO", new Box(0.07f, 0.24f, 0.19f, 0.4533f), true)
+                .control(Skin.POWER, "PWR·VOL", 0.815f, 0.175f, 0.925f, 0.225f);
+        s.knob = new Box(0.81f, 0.24f, 0.93f, 0.4533f);
+        s.lcd = new Box(0.22f, 0.21f, 0.78f, 0.48f);
+        s.lcdText = new Box(0.26f, 0.25f, 0.74f, 0.36f);
+        s.control(Skin.DISPLAY, "TEXT", new Box(0.085f, 0.525f, 0.155f, 0.6494f), true)
+                .control(Skin.PLAY, "MUTE", new Box(0.845f, 0.525f, 0.915f, 0.6494f), true);
+        s.presets = new Box(0.21f, 0.535f, 0.79f, 0.625f);
+        s.decor("AUTO·P", 0.07f, 0.735f, 0.165f, 0.855f)
+                .decor("SCAN", 0.17f, 0.735f, 0.265f, 0.855f)
+                .control(Skin.SOURCE, "DISC", 0.29f, 0.735f, 0.43f, 0.855f)
+                .decor("FM", 0.44f, 0.735f, 0.58f, 0.855f)
+                .decor("AM", 0.59f, 0.735f, 0.73f, 0.855f)
+                .control(Skin.PREV, "∨", 0.775f, 0.735f, 0.85f, 0.855f)
+                .control(Skin.NEXT, "∧", 0.855f, 0.735f, 0.93f, 0.855f);
+        s.zone(Zones.HEADER, 0.43f, 0.648f, 0.57f, 0.71f)
+                .zone(Zones.LCD, 0.225f, 0.25f, 0.255f, 0.36f)
+                .zone(Zones.FACEPLATE, 0.40f, 0.885f, 0.60f, 0.935f)
+                .zone(Zones.CORNER, 0.09f, 0.08f, 0.19f, 0.15f)
+                .zone(Zones.VISUALIZER, 0.26f, 0.39f, 0.74f, 0.46f);
+        return s;
+    }
+
+    /**
+     * A late-2000s factory CD unit: black, a reflective LCD lit amber between TUNE·FILE and PWR·VOL
+     * knobs, white presets under it, phone keys, rockers down both sides and a row of source keys.
+     */
+    private static Skin factory07() {
+        Skin s = new Skin(FACTORY_07, "Factory CD 2007", "2000s", 2, 0xFF1E1F21, 0xFF151618, 0xFF0A0A0B, 0xFFA8A27E,
+                0xFF0A0B0C, 0xFF232426, 0xFF0E0F11, 0xFFE2E4E6, Skin.LCD_REFLECTIVE, 0.006f);
+        s.art = "skins/" + FACTORY_07;
+        s.knobDots = false;
+        s.backlight = 0xFFFFA444;
+        s.panelDay = 0xFF9C9776;
+        s.keyLight = 0xFFFF9A3C;
+        s.keyPrint = 0xFFE2E4E6;
+        s.slot = new Box(0.25f, 0.12f, 0.75f, 0.15f);
+        s.decor("SCAN", 0.06f, 0.08f, 0.17f, 0.15f)
+                .decor("⏏", 0.83f, 0.08f, 0.94f, 0.15f)
+                .control(Skin.MENU, "AUDIO", new Box(0.065f, 0.235f, 0.175f, 0.4306f), true)
+                .control(Skin.POWER, "PWR·VOL", 0.83f, 0.17f, 0.93f, 0.225f);
+        s.knob = new Box(0.825f, 0.235f, 0.935f, 0.4306f);
+        s.lcd = new Box(0.21f, 0.215f, 0.79f, 0.445f);
+        s.lcdText = new Box(0.25f, 0.25f, 0.75f, 0.355f);
+        s.presets = new Box(0.21f, 0.475f, 0.79f, 0.555f);
+        s.decor("CALL", 0.27f, 0.59f, 0.36f, 0.67f)
+                .control(Skin.PLAY, "▶", 0.455f, 0.59f, 0.545f, 0.67f)
+                .decor("END", 0.64f, 0.59f, 0.73f, 0.67f)
+                .decor("∧", 0.06f, 0.53f, 0.17f, 0.62f)
+                .decor("∨", 0.06f, 0.66f, 0.17f, 0.75f)
+                .control(Skin.NEXT, "∧", 0.83f, 0.53f, 0.94f, 0.62f)
+                .control(Skin.PREV, "∨", 0.83f, 0.66f, 0.94f, 0.75f)
+                .decor("USB", 0.06f, 0.81f, 0.17f, 0.90f)
+                .control(Skin.DISPLAY, "TEXT", 0.21f, 0.81f, 0.345f, 0.90f)
+                .control(Skin.SOURCE, "DISC·AUX", 0.355f, 0.81f, 0.49f, 0.90f)
+                .decor("FM", 0.51f, 0.81f, 0.645f, 0.90f)
+                .decor("AM", 0.655f, 0.81f, 0.79f, 0.90f);
+        s.zone(Zones.HEADER, 0.42f, 0.065f, 0.58f, 0.11f)
+                .zone(Zones.LCD, 0.215f, 0.25f, 0.245f, 0.355f)
+                .zone(Zones.FACEPLATE, 0.835f, 0.79f, 0.935f, 0.85f)
+                .zone(Zones.CORNER, 0.835f, 0.87f, 0.935f, 0.92f)
+                .zone(Zones.VISUALIZER, 0.25f, 0.365f, 0.75f, 0.43f);
+        return s;
+    }
+
+    /**
+     * A 2010 factory CD unit in silver grey: a green dot-matrix LCD under the disc slot, slim presets,
+     * and two big knobs in chrome rings at the foot, ENTER·LIST and PWR·VOLUME, with the track keys between.
+     */
+    private static Skin factory10() {
+        Skin s = new Skin(FACTORY_10, "Factory Silver 2010", "2010s", 2, 0xFF6C6E72, 0xFF55575B, 0xFF1A1B1D, 0xFFA9C08E,
+                0xFF0A0B0C, 0xFF2A2B2E, 0xFF0E0F11, 0xFFE8EAEC, Skin.LCD_REFLECTIVE, 0.006f);
+        s.art = "skins/" + FACTORY_10;
+        s.knobDots = false;
+        s.backlight = 0xFFB4E27A;
+        s.panelDay = 0xFF9DB08A;
+        s.keyLight = 0xFFE6EEFF;
+        s.keyPrint = 0xFFE8EAEC;
+        s.slot = new Box(0.22f, 0.065f, 0.78f, 0.10f);
+        s.decor("⏏", 0.07f, 0.065f, 0.17f, 0.135f)
+                .control(Skin.SOURCE, "SOURCE", 0.07f, 0.19f, 0.17f, 0.27f)
+                .decor("SCAN", 0.07f, 0.30f, 0.17f, 0.38f)
+                .decor("RPT", 0.83f, 0.065f, 0.93f, 0.135f)
+                .decor("RAND", 0.83f, 0.19f, 0.93f, 0.27f)
+                .decor("TEL", 0.83f, 0.30f, 0.93f, 0.38f);
+        s.lcd = new Box(0.22f, 0.15f, 0.78f, 0.40f);
+        s.lcdText = new Box(0.26f, 0.18f, 0.74f, 0.29f);
+        s.presets = new Box(0.24f, 0.43f, 0.76f, 0.48f);
+        s.control(Skin.PLAY, "ENTER", new Box(0.06f, 0.53f, 0.22f, 0.8144f), true)
+                .control(Skin.POWER, "PWR", 0.80f, 0.475f, 0.92f, 0.52f);
+        s.knob = new Box(0.78f, 0.53f, 0.94f, 0.8144f);
+        s.control(Skin.MENU, "SETUP", 0.27f, 0.63f, 0.37f, 0.71f)
+                .control(Skin.PREV, "∨", 0.39f, 0.63f, 0.495f, 0.71f)
+                .control(Skin.NEXT, "∧", 0.505f, 0.63f, 0.61f, 0.71f)
+                .control(Skin.DISPLAY, "TITLE", 0.63f, 0.63f, 0.73f, 0.71f)
+                .decor("USB", 0.45f, 0.77f, 0.56f, 0.84f);
+        s.zone(Zones.HEADER, 0.43f, 0.108f, 0.57f, 0.142f)
+                .zone(Zones.LCD, 0.225f, 0.18f, 0.255f, 0.29f)
+                .zone(Zones.FACEPLATE, 0.27f, 0.76f, 0.34f, 0.84f)
+                .zone(Zones.CORNER, 0.62f, 0.77f, 0.73f, 0.84f)
+                .zone(Zones.VISUALIZER, 0.26f, 0.31f, 0.74f, 0.38f);
+        return s;
+    }
+
+    /**
+     * A 2012 factory unit: black, a disc slot across the top, TUNE·FILE and PWR·VOL knobs in the top
+     * corners, a colour screen in the middle with three presets either side of it, and keys outside them.
+     */
+    private static Skin factory12() {
+        Skin s = new Skin(FACTORY_12, "Factory Screen 2012", "2010s", 2, 0xFF1C1D1F, 0xFF131415, 0xFF0A0A0B, 0xFF05080B,
+                0xFF000000, 0xFF242527, 0xFF0E0F11, 0xFFE4E6E8, Skin.LCD_MODERN, 0.006f);
+        s.art = "skins/" + FACTORY_12;
+        s.knobDots = false;
+        s.keyLight = 0xFFFFFFFF;
+        s.keyPrint = 0xFFE4E6E8;
+        s.slot = new Box(0.17f, 0.07f, 0.83f, 0.10f);
+        s.control(null, "TUNE", new Box(0.06f, 0.16f, 0.15f, 0.32f), true)
+                .control(Skin.POWER, "PWR·VOL", 0.855f, 0.115f, 0.935f, 0.15f);
+        s.knob = new Box(0.85f, 0.16f, 0.94f, 0.32f);
+        s.lcd = new Box(0.30f, 0.20f, 0.70f, 0.76f);
+        s.lcdText = new Box(0.33f, 0.25f, 0.67f, 0.40f);
+        s.presetAt = new Box[]{
+                new Box(0.215f, 0.36f, 0.28f, 0.45f), new Box(0.215f, 0.47f, 0.28f, 0.56f),
+                new Box(0.215f, 0.58f, 0.28f, 0.67f), new Box(0.72f, 0.36f, 0.785f, 0.45f),
+                new Box(0.72f, 0.47f, 0.785f, 0.56f), new Box(0.72f, 0.58f, 0.785f, 0.67f)};
+        s.control(Skin.MENU, "AUDIO", 0.06f, 0.36f, 0.17f, 0.45f)
+                .control(Skin.SOURCE, "DISC·AUX", 0.06f, 0.47f, 0.17f, 0.56f)
+                .control(Skin.DISPLAY, "TEXT", 0.06f, 0.58f, 0.17f, 0.67f)
+                .control(Skin.NEXT, "∧", 0.83f, 0.36f, 0.94f, 0.45f)
+                .control(Skin.PREV, "∨", 0.83f, 0.47f, 0.94f, 0.56f)
+                .control(Skin.PLAY, "▶", 0.83f, 0.58f, 0.94f, 0.67f);
+        s.zone(Zones.HEADER, 0.43f, 0.12f, 0.57f, 0.18f)
+                .zone(Zones.LCD, 0.305f, 0.25f, 0.325f, 0.32f)
+                .zone(Zones.FACEPLATE, 0.06f, 0.78f, 0.17f, 0.85f)
+                .zone(Zones.CORNER, 0.83f, 0.78f, 0.94f, 0.85f)
+                .zone(Zones.VISUALIZER, 0.33f, 0.45f, 0.67f, 0.72f);
+        return s;
+    }
+
+    /**
+     * A 2014 factory touch-screen unit: gloss black, a disc slot across the top, a volume knob and
+     * a few keys down the left, and a wide touch screen with the transport keys and the presets on it.
+     */
+    private static Skin factory14() {
+        Skin s = new Skin(FACTORY_14, "Factory Touch 2014", "2010s", 2, 0xFF141516, 0xFF0D0E0F, 0xFF060607, 0xFF0A1A2C,
+                0xFF000000, 0xFF1E1F21, 0xFF0B0C0D, 0xFFDDE2E8, Skin.LCD_MODERN, 0.006f);
+        s.art = "skins/" + FACTORY_14;
+        s.knobDots = false;
+        s.keyLight = 0xFFFFFFFF;
+        s.keyPrint = 0xFFDDE2E8;
+        s.slot = new Box(0.20f, 0.075f, 0.85f, 0.105f);
+        s.decor("⏏", 0.06f, 0.065f, 0.14f, 0.12f)
+                .control(Skin.POWER, "PWR", 0.06f, 0.14f, 0.14f, 0.185f);
+        s.knob = new Box(0.05f, 0.20f, 0.15f, 0.3778f);
+        s.control(Skin.SOURCE, "AUDIO", 0.055f, 0.43f, 0.145f, 0.51f)
+                .control(Skin.DISPLAY, "DISP", 0.055f, 0.54f, 0.145f, 0.62f)
+                .control(Skin.MENU, "SETUP", 0.055f, 0.65f, 0.145f, 0.73f);
+        s.lcd = new Box(0.20f, 0.16f, 0.95f, 0.90f);
+        s.lcdText = new Box(0.25f, 0.22f, 0.58f, 0.36f);
+        s.control(Skin.PREV, "|<<", 0.25f, 0.66f, 0.34f, 0.74f)
+                .control(Skin.PLAY, "▶", 0.36f, 0.66f, 0.47f, 0.74f)
+                .control(Skin.NEXT, ">>|", 0.49f, 0.66f, 0.58f, 0.74f);
+        s.presets = new Box(0.63f, 0.22f, 0.92f, 0.76f);
+        s.presetRows = 6;
+        s.zone(Zones.HEADER, 0.42f, 0.115f, 0.58f, 0.15f)
+                .zone(Zones.LCD, 0.205f, 0.22f, 0.24f, 0.30f)
+                .zone(Zones.FACEPLATE, 0.05f, 0.80f, 0.15f, 0.88f)
+                .zone(Zones.CORNER, 0.86f, 0.112f, 0.94f, 0.15f)
+                .zone(Zones.VISUALIZER, 0.25f, 0.42f, 0.58f, 0.62f);
         return s;
     }
 

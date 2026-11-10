@@ -67,9 +67,18 @@ Two-slot units: stacks of units and screens that fill the whole display.
   </tr>
   <tr>
     <td width="50%" valign="top"><a href="2000s/blue-matrix-2004/"><img src="2000s/blue-matrix-2004/day-night.webp" alt="Blue Matrix 2004"/></a><br/><b><a href="2000s/blue-matrix-2004/">Blue Matrix 2004</a></b><br/><sub>2000s · big blue dot matrix in dark chrome</sub></td>
+    <td width="50%" valign="top"><a href="2000s/factory-mp3-2005/"><img src="2000s/factory-mp3-2005/day-night.webp" alt="Factory MP3 2005"/></a><br/><b><a href="2000s/factory-mp3-2005/">Factory MP3 2005</a></b><br/><sub>2000s · a big reflective LCD lit green, between two knobs</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><a href="2000s/factory-cd-2007/"><img src="2000s/factory-cd-2007/day-night.webp" alt="Factory CD 2007"/></a><br/><b><a href="2000s/factory-cd-2007/">Factory CD 2007</a></b><br/><sub>2000s · an amber-lit LCD, white presets, two knobs</sub></td>
+    <td width="50%" valign="top"><a href="2010s/factory-silver-2010/"><img src="2010s/factory-silver-2010/day-night.webp" alt="Factory Silver 2010"/></a><br/><b><a href="2010s/factory-silver-2010/">Factory Silver 2010</a></b><br/><sub>2010s · silver grey, a green-lit LCD, knobs in chrome rings</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><a href="2010s/factory-screen-2012/"><img src="2010s/factory-screen-2012/day-night.webp" alt="Factory Screen 2012"/></a><br/><b><a href="2010s/factory-screen-2012/">Factory Screen 2012</a></b><br/><sub>2010s · a colour screen between columns of presets</sub></td>
     <td width="50%" valign="top"><a href="2010s/cp-2013/"><img src="2010s/cp-2013/day-night.webp" alt="CP 2013"/></a><br/><b><a href="2010s/cp-2013/">CP 2013</a></b><br/><sub>2010s · a touch screen, the song in thin white type, cyan keys on the shelf</sub></td>
   </tr>
   <tr>
+    <td width="50%" valign="top"><a href="2010s/factory-touch-2014/"><img src="2010s/factory-touch-2014/day-night.webp" alt="Factory Touch 2014"/></a><br/><b><a href="2010s/factory-touch-2014/">Factory Touch 2014</a></b><br/><sub>2010s · a touch screen, the presets as a list</sub></td>
     <td width="50%" valign="top"><a href="2020s/modern-glass/"><img src="2020s/modern-glass/day-night.webp" alt="Modern Glass"/></a><br/><b><a href="2020s/modern-glass/">Modern Glass</a></b><br/><sub>2020s · modern screen</sub></td>
   </tr>
 </table>
